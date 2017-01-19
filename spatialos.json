@@ -1,0 +1,8 @@
+{
+    "name": "unreal_top_down",
+    "project_version": "0.0.1",
+    "sdk_version": "8.0.0",
+    "dependencies": [
+        {"name": "CoreLibrary", "version": "8.0.0"}
+    ]
+}

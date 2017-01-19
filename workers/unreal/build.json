@@ -1,0 +1,66 @@
+{
+  "Tasks": [
+    {
+      "Name": "Codegen",
+      "Steps": [
+        {
+          "Name": "Install dependencies",
+          "Arguments": [
+            "worker_package",
+            "unpack"
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "Build",
+      "Steps": [
+        {
+          "Name": "Codegen",
+          "Arguments": [
+            "exec",
+            "codegen"
+          ]
+        },
+        {
+          "Name": "Compile",
+          "Arguments": [
+            "invoke",
+            "unreal",
+            "build"
+          ]
+        },
+        {
+          "Name": "Build unreal workers",
+          "Command": "bash",
+          "Arguments": ["build_workers.sh"]
+        }
+      ]
+    },
+    {
+      "Name": "Clean",
+      "Steps": [
+        {
+          "Name": "Dependencies",
+          "Arguments": [
+            "worker_package",
+            "clean"
+          ]
+        },
+        {
+          "Name": "Unreal",
+          "Arguments": [
+            "invoke",
+            "unreal",
+            "clean"
+          ]
+        },
+        {
+          "Name": "Clean unreal workers",
+          "Command": "bash",
+          "Arguments": ["clean_workers.sh"]
+        }
+      ]
+    }
+  ]
+}

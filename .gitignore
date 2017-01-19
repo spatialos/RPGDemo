@@ -1,0 +1,16 @@
+toolbelt.log
+spatialos_worker_packages.json
+build/
+.idea/
+
+## Ignore schema.iml files
+/schema/schema.iml
+
+## Ignore ./logs folder
+/logs
+
+## Ignore spatial.log files
+spatial.log
+
+## Ignore zip_toolbelt.log files
+*zip_toolbelt.log
