@@ -1,0 +1,13 @@
+{
+  "targets": [
+    {
+      "path": "Plugins/SpatialOS",
+      "type": "unreal",
+      "packages": [
+        {
+          "name":  "improbable_sdk_plugin"
+        }
+      ]
+    }
+  ]
+}
