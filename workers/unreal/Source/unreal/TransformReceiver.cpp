@@ -20,8 +20,6 @@ UTransformReceiver::UTransformReceiver()
 
 	mLocation = FVector();
 	mRotation = FQuat();
-
-	EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
 }
 
 FVector UTransformReceiver::GetLocation() const
@@ -59,7 +57,7 @@ void UTransformReceiver::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
 	
 }
 
