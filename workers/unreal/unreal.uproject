@@ -10,8 +10,18 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"AIModule",
-				"Engine"
+				"Engine",
+				"SpatialOS"
 			]
 		}
+	],
+	"Plugins": [
+		{
+			"Name": "SpatialOS",
+			"Enabled": true
+		}
+	],
+	"AdditionalPluginDirectories": [
+		"/unreal/Plugins"
 	]
 }
