@@ -33,11 +33,11 @@ void AOtherPlayerController::Tick(float DeltaTime)
 
 void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
-	APawn* const Pawn = GetPawn();
-	if (Pawn)
+	const APawn* OtherPawn = GetPawn();
+	if (OtherPawn)
 	{
 		UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-		float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
+		float const Distance = FVector::Dist(DestLocation, OtherPawn->GetActorLocation());
 
 		// Issue move command only if far enough in order for walk animation to play correctly
 		if (NavSys && (Distance > 120.0f))

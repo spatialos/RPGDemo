@@ -3,7 +3,10 @@
 #include "unreal.h"
 #include "TransformReceiver.h"
 #include "Conversions.h"
+#include "WorkerConnection.h"
+#include "unrealGameMode.h"
 
+using namespace improbable::unreal::core;
 
 // Sets default values for this component's properties
 UTransformReceiver::UTransformReceiver()
@@ -13,11 +16,12 @@ UTransformReceiver::UTransformReceiver()
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
-	mSpatialComponent = nullptr;
 	mCallbacks = nullptr;
 
 	mLocation = FVector();
 	mRotation = FQuat();
+
+	EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
 }
 
 FVector UTransformReceiver::GetLocation() const
@@ -32,7 +36,6 @@ FQuat UTransformReceiver::GetRotation() const
 
 void UTransformReceiver::OnTransformComponentUpdate(const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op)
 {
-	if (!IsInitialised() || op.EntityId != mSpatialComponent->EntityId) return;
 	ParseTransformStateUpdate(op);
 }
 
@@ -71,12 +74,6 @@ void UTransformReceiver::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 void UTransformReceiver::Initialise()
 {
-	if (mSpatialComponent == nullptr)
-	{
-		mSpatialComponent = GetOwner()->FindComponentByClass<USpatialEntityStorageComponent>();
-	}
-
-	if (mSpatialComponent == nullptr) return;
 	if (!mCallbacks.IsValid())
 	{
 		worker::Option<improbable::corelibrary::transforms::TransformStateData> transform = GetEntity()->Get<improbable::corelibrary::transforms::TransformState>();
@@ -91,25 +88,16 @@ void UTransformReceiver::Initialise()
 			UE_LOG(LogTemp, Warning, TEXT("Set initial position for entity's actor"))
 		}
 
-		mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(*mSpatialComponent->View));
-		mCallbacks->Add(mSpatialComponent->View->OnComponentUpdate<improbable::corelibrary::transforms::TransformState>(
+		mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(FWorkerConnection::GetView()));
+		mCallbacks->Add(FWorkerConnection::GetView().OnComponentUpdate<improbable::corelibrary::transforms::TransformState>(
 			std::bind(&UTransformReceiver::OnTransformComponentUpdate, this, std::placeholders::_1)));
 	}
 }
 
-bool UTransformReceiver::IsInitialised() const
-{
-	if (mSpatialComponent == nullptr || GetEntity() == nullptr || !mCallbacks.IsValid())
-	{
-		return false;
-	}
-	return true;
-}
-
 worker::Entity* UTransformReceiver::GetEntity() const
 {
-	auto it = mSpatialComponent->View->Entities.find(mSpatialComponent->EntityId);
-	if (it == mSpatialComponent->View->Entities.end())
+	auto it = FWorkerConnection::GetView().Entities.find(EntityId);
+	if (it == FWorkerConnection::GetView().Entities.end())
 	{
 		return nullptr;
 	}

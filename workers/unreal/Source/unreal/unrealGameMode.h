@@ -13,6 +13,9 @@ class AunrealGameMode : public AGameMode
 
 public:
 	AunrealGameMode();
+	virtual ~AunrealGameMode();
+
+	static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner() { return Instance->Spawner.GetOwnedPointer(); }
 
 private:
 	void StartPlay() override;
@@ -27,6 +30,8 @@ private:
 
 	static void AunrealGameMode::MakeWindowed(int32 Width, int32 Height);
 	static UGameUserSettings* AunrealGameMode::GetGameUserSettings();
+
+	static AunrealGameMode* Instance;
 };
 
 

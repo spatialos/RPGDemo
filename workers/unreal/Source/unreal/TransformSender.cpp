@@ -4,18 +4,17 @@
 #include "TransformSender.h"
 #include "improbable/corelibrary/transforms/transform_state.h"
 #include "Conversions.h"
+#include "WorkerConnection.h"
+#include "unrealGameMode.h"
+
+using namespace improbable::unreal::core;
 
 // Sets default values for this component's properties
 UTransformSender::UTransformSender()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-
-	mSpatialComponent = nullptr;
 }
 
 
@@ -23,6 +22,7 @@ UTransformSender::UTransformSender()
 void UTransformSender::BeginPlay()
 {
 	Super::BeginPlay();
+	EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
 }
 
 
@@ -31,8 +31,6 @@ void UTransformSender::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	Initialise();
-	if (!IsInitialised()) return;
 	if (!HasAuthority()) return;
 
 	FVector location = GetOwner()->GetActorLocation();
@@ -50,8 +48,8 @@ void UTransformSender::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 		UE_LOG(LogTemp, Warning, TEXT("Sending transform state update"))
 		GetEntity()->Update<improbable::corelibrary::transforms::TransformState>(update);
-		mSpatialComponent->Connection->SendComponentUpdate<improbable::corelibrary::transforms::TransformState>(
-			mSpatialComponent->EntityId,
+		FWorkerConnection::GetConnection().SendComponentUpdate<improbable::corelibrary::transforms::TransformState>(
+			EntityId,
 			update
 		);
 	}
@@ -59,34 +57,13 @@ void UTransformSender::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 bool UTransformSender::HasAuthority() const
 {
-	if (!IsInitialised())
-	{
-		return false;
-	}
 	return GetEntity()->HasAuthority<improbable::corelibrary::transforms::TransformState>();
-}
-
-void UTransformSender::Initialise()
-{
-	if (mSpatialComponent == nullptr)
-	{
-		mSpatialComponent = GetOwner()->FindComponentByClass<USpatialEntityStorageComponent>();
-	}
-}
-
-bool UTransformSender::IsInitialised() const
-{
-	if (mSpatialComponent == nullptr || GetEntity() == nullptr)
-	{
-		return false;
-	}
-	return true;
 }
 
 worker::Entity* UTransformSender::GetEntity() const
 {
-	auto it = mSpatialComponent->View->Entities.find(mSpatialComponent->EntityId);
-	if (it == mSpatialComponent->View->Entities.end())
+	auto it = FWorkerConnection::GetView().Entities.find(EntityId);
+	if (it == FWorkerConnection::GetView().Entities.end())
 	{
 		return nullptr;
 	}

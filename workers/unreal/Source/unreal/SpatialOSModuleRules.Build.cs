@@ -50,7 +50,7 @@ public class SpatialOSModuleRules : ModuleRules
     /// Manage a SpatialOS worker package.
     /// If UEBuildConfiguration.bCleanProject is true, TargetDir is removed.
     /// Otherwise, a package of the version matching the application's current Sdk version is downloaded.
-    /// 
+    ///
     /// See `spatialos.json`, "sdk_version".
     /// </summary>
     /// <param name="Type">The type of the package.</param>
@@ -79,7 +79,21 @@ public class SpatialOSModuleRules : ModuleRules
         var basePath = Path.GetFullPath(ModuleDirectory);
         var moduleDir = Path.GetFileName(basePath);
 
-        WorkerPackage("worker_sdk", "windows_x64", WorkerSdkDir);
+        string platform = "<Unknown_Platform>";
+        switch(Target.Platform)
+        {
+          case UnrealTargetPlatform.Linux:
+            platform = "linux_x64";
+            break;
+          case UnrealTargetPlatform.Win32:
+            platform = "windows_x86";
+            break;
+          case UnrealTargetPlatform.Win64:
+            platform = "windows_x64";
+            break;
+        }
+        WorkerPackage("worker_sdk", platform, WorkerSdkDir);
+        RunSpatial(string.Format("invoke unreal sanitize_cpp_files \"{0}/**/*.pb.h\"", WorkerSdkDir));
 
         if (UEBuildConfiguration.bCleanProject)
         {
@@ -96,8 +110,9 @@ public class SpatialOSModuleRules : ModuleRules
             Path.Combine(GeneratedCodeDir),
             Path.Combine(WorkerSdkDir, "include"),
         });
-
     }
+    
+
 
     protected void RunSpatial(string command)
     {

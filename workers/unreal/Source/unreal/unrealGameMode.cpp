@@ -14,6 +14,8 @@ const static bool IS_FSIM = true;
 const std::string WorkerType = (IS_FSIM ? "UnrealFsim" : "UnrealClient");
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
+AunrealGameMode* AunrealGameMode::Instance;
+
 AunrealGameMode::AunrealGameMode()
 {
 	// Set the default player controller class
@@ -24,6 +26,13 @@ AunrealGameMode::AunrealGameMode()
 
 	// No need for default pawn class
 	DefaultPawnClass = nullptr;
+
+	Instance = this;
+}
+
+AunrealGameMode::~AunrealGameMode()
+{
+	Instance = nullptr;
 }
 
 void AunrealGameMode::StartPlay()
@@ -55,7 +64,7 @@ void AunrealGameMode::ConfigureWindowSize()
 void AunrealGameMode::CreateWorkerConnection()
 {
 	using namespace improbable::unreal::core;
-	FWorkerConnection::SetComponentMetaClasses(worker::GetComponentMetaclasses());
+	FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
 	Connection.Reset(new FWorkerConnection());
 	Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect)
 	{
@@ -64,7 +73,7 @@ void AunrealGameMode::CreateWorkerConnection()
 	worker::ConnectionParameters Params;
 	Params.WorkerType = WorkerType;
 	Params.WorkerId = Params.WorkerType + TCHAR_TO_ANSI(*FGuid::NewGuid().ToString());
-	Connection->Connect(Params, GetWorld());
+	Connection->Connect("127.0.1.1", 7777, Params, GetWorld());
 }
 
 void AunrealGameMode::RegisterEntityBlueprints()
