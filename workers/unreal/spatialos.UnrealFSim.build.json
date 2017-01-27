@@ -1,14 +1,11 @@
 {
   "tasks": [
     {
-      "name": "Codegen",
-      "steps": [
+		"name": "Codegen",
+		"steps": [
         {
-          "name": "Install dependencies",
-          "arguments": [
-            "worker_package",
-            "unpack"
-          ]
+			"name": "Install dependencies",
+			"arguments": ["worker_package", "unpack"]
         }
       ]
     },
@@ -18,8 +15,8 @@
         {
           "name": "Codegen",
           "arguments": [
-            "exec",
-            "codegen"
+            "invoke-task",
+            "Codegen"
           ]
         },
         {
@@ -29,6 +26,11 @@
             "unreal",
             "build"
           ]
+        },
+        {
+          "name": "Build unreal workers",
+          "command": "bash",
+          "arguments": ["build_workers.sh"]
         }
       ]
     },
@@ -49,6 +51,11 @@
             "unreal",
             "clean"
           ]
+        },
+        {
+          "name": "Clean unreal workers",
+          "command": "bash",
+          "arguments": ["clean_workers.sh"]
         }
       ]
     }

@@ -16,7 +16,7 @@ fi
 rm -rf $OUTPUT_DIR # remove the output directory if already exists
 
 WORKER_ASSEMBLY_DIR=$PROJECT_PATH"../../build/assembly/worker/"
-FSIM_ZIP="UnrealFsim@Windows.zip"
+FSIM_ZIP="UnrealFSim@Windows.zip"
 CLIENT_FOLDER="UnrealClient@Windows"
 
 echo "Removing worker builds... "

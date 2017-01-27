@@ -1,0 +1,41 @@
+{
+  "build": {
+    "tasks_filename": "spatialos.UnrealClient.build.json",
+	"generated_build_scripts_type": "unreal"
+  },
+  "bridge": {
+    "worker_claim": {
+      "claims": [
+        "visual"
+      ]
+    },
+    "entity_interest": {
+      "range_entity_interest": {
+        "radius": 2
+      }
+    },
+    "streaming_query": [],
+    "component_delivery": {
+      "default": "RELIABLE_ORDERED",
+      "checkout_all_initially": true
+    },
+    "asset_context": {
+      "use_player_context_if_authoritative": false
+    }
+  },
+  "external": {
+	"default": {
+		"run_type": "EXECUTABLE",
+		"windows": {
+			"command": "../../build/assembly/worker/UnrealClient@Windows/UnrealClient@Windows.exe",
+			"arguments": [
+				"+assetDatabaseStrategy", 
+				"Local", 
+				"+localAssetDatabasePath", 
+				"${IMPROBABLE_PROJECT_ROOT}/build/assembly", 
+				"+appName", "${IMPROBABLE_PROJECT_NAME}"
+			]
+		}
+	}
+  }
+}

@@ -11,7 +11,7 @@ const static bool IS_FSIM = false;
 const static bool IS_FSIM = true;
 #endif
 
-const std::string WorkerType = (IS_FSIM ? "UnrealFsim" : "UnrealClient");
+const std::string WorkerType = (IS_FSIM ? "UnrealFSim" : "UnrealClient");
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
 AunrealGameMode::AunrealGameMode()
@@ -55,7 +55,7 @@ void AunrealGameMode::ConfigureWindowSize()
 void AunrealGameMode::CreateWorkerConnection()
 {
 	using namespace improbable::unreal::core;
-	FWorkerConnection::SetComponentMetaClasses(worker::GetComponentMetaclasses());
+	FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
 	Connection.Reset(new FWorkerConnection());
 	Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect)
 	{
@@ -64,7 +64,26 @@ void AunrealGameMode::CreateWorkerConnection()
 	worker::ConnectionParameters Params;
 	Params.WorkerType = WorkerType;
 	Params.WorkerId = Params.WorkerType + TCHAR_TO_ANSI(*FGuid::NewGuid().ToString());
-	Connection->Connect(Params, GetWorld());
+	Params.Network.UseExternalIp = false;
+
+	FString hostName;
+	const FString receptionistIpProperty = "receptionistIp";
+
+	if (!FParse::Value(FCommandLine::Get(), *receptionistIpProperty, hostName)) {
+		hostName = "127.0.0.1";
+	}
+	
+	FString portString;
+	const FString receptionistPort = "receptionistPort";
+
+	if(!FParse::Value(FCommandLine::Get(), *receptionistPort, portString))
+	{
+		portString = "7777";
+	}
+
+	const int port = FCString::Atoi(*portString);
+
+	Connection->Connect(hostName, port, Params, GetWorld());
 }
 
 void AunrealGameMode::RegisterEntityBlueprints()

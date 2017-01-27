@@ -8,7 +8,7 @@ import improbable.util.UnrealFsimConstraintSatisfier
 
 object UnrealFsimBridgeSettings extends BridgeSettingsResolver {
 
-  val UNREAL_FSIM_TYPE = "UnrealFsim"
+  val UNREAL_FSIM_TYPE = "UnrealFSim"
 
   private val UNREAL_FSIM_BRIDGE_SETTINGS = BridgeSettings(
     FSimAssetContextDiscriminator(),

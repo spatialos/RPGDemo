@@ -21,6 +21,71 @@ public class SpatialOSModuleRules : ModuleRules
     {
         get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
     }
+	
+	/// <summary>
+	/// Schema files for the standard SpatialOS library are processed and output to this folder.
+	/// It should be within the current module so the types are accessible to the game.
+	protected string GeneratedStdCodeDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Std")); }
+	}
+	
+	/// <summary>
+	/// Path to the generated codegen cache for the Spatial standard library.
+	protected string GeneratedStdCodegenCacheDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", ".spatialos", "schema_codegen_cache_std")); }
+	}
+	
+	/// <summary>
+	/// Path to the generated codegen proto for user schemas.
+	protected string GeneratedStdCodegenProtoDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", ".spatialos", "schema_codegen_proto_std")); }
+	}
+	
+	/// <summary>
+	/// User schema files are processed and output to this folder.
+	/// It should be within the current module so the types are accessible to the game.
+	protected string GeneratedUserCodeDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Usr")); }
+	}
+	
+	/// <summary>
+	/// Path to the generated codegen cache for user schemas.
+	protected string GeneratedUserCodegenCacheDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", ".spatialos", "schema_codegen_cache_usr")); }
+	}
+	
+	/// <summary>
+	/// Path to the generated codegen proto for the Spatial standard library.
+	protected string GeneratedUserCodegenProtoDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", ".spatialos", "schema_codegen_proto_usr")); }
+	}
+	
+	/// <summary>
+	/// Path to the location of the WorkerSdkSchema schemas
+	protected string WorkerSdkSchemasPath
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "build", "dependencies", "schema", "WorkerSdkSchema")); }
+	}
+	
+	/// <summary>
+	/// Path to the location of the user schemas
+	protected string UserSchemasPath
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "schema")); }
+	}
+	
+	/// <summary>
+	/// Path to the location of the user schemas repository
+	protected string UserSchemasRepositoryPath
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "build", "dependencies", "schema")); }
+	}
 
     /// <summary>
     /// The default location of the SpatialOS Unreal plugin.
@@ -83,11 +148,40 @@ public class SpatialOSModuleRules : ModuleRules
 
         if (UEBuildConfiguration.bCleanProject)
         {
-            RunSpatial("process_schema clean --language=cpp_unreal " + QuoteString(GeneratedCodeDir));
+			var cleanCommand = String.Format("process_schema clean --language=cpp_unreal {0} {1} {2} {3} {4} {5} {6}",
+				QuoteString(GeneratedCodeDir),
+				QuoteString(GeneratedStdCodeDir),
+				QuoteString(GeneratedUserCodeDir),
+				QuoteString(GeneratedStdCodegenCacheDir),
+				QuoteString(GeneratedStdCodegenProtoDir),
+				QuoteString(GeneratedUserCodegenCacheDir),
+				QuoteString(GeneratedUserCodegenProtoDir));
+				
+			Console.WriteLine("About to call: " + cleanCommand);
+            RunSpatial(cleanCommand);
         }
         else
         {
             RunSpatial("process_schema --use_worker_defaults --language=cpp_unreal --output=" + QuoteString(GeneratedCodeDir));
+			
+			var standardLibraryGenerationCommand = String.Format("process_schema --cachePath={0} --output={1} --intermediate_proto_dir={2} --input={3} --language=cpp_unreal", 
+				GeneratedStdCodegenCacheDir,
+				GeneratedStdCodeDir,
+				GeneratedStdCodegenProtoDir,
+				WorkerSdkSchemasPath);
+				
+			RunSpatial(standardLibraryGenerationCommand);
+			
+			var userSchemaGenerationCommand = String.Format("process_schema --cachePath={0} --output={1} --intermediate_proto_dir={2} --input={3} --repository={4} --language=cpp_unreal",
+				GeneratedUserCodegenCacheDir,
+				GeneratedUserCodeDir,
+				GeneratedUserCodegenProtoDir,
+				UserSchemasPath,
+				UserSchemasRepositoryPath
+			);
+
+			RunSpatial(userSchemaGenerationCommand);
+			
             PublicDependencyModuleNames.Add("SpatialOS");
         }
 
@@ -95,6 +189,8 @@ public class SpatialOSModuleRules : ModuleRules
         {
             Path.Combine(GeneratedCodeDir),
             Path.Combine(WorkerSdkDir, "include"),
+			GeneratedStdCodeDir,
+			GeneratedUserCodeDir
         });
 
     }
@@ -164,8 +260,8 @@ spatial invoke unreal editor -- -server -stdout -nowrite -unattended -nologtimes
             Directory.CreateDirectory(TempDir);
 
             var Content = string.Format(BatchScript, Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..")));
-            File.WriteAllText(Path.Combine(TempDir, string.Format("UnrealFsim.bat", ModuleName)), Content);
-            RunSpatial(string.Format("file zip --basePath=\"{0}\" --output=../../build/assembly/worker/UnrealFsim@Windows *.bat", TempDir, ModuleName));
+            File.WriteAllText(Path.Combine(TempDir, string.Format("UnrealFSim.bat", ModuleName)), Content);
+            RunSpatial(string.Format("file zip --basePath=\"{0}\" --output=../../build/assembly/worker/UnrealFSim@Windows *.bat", TempDir, ModuleName));
         }
         finally
         {

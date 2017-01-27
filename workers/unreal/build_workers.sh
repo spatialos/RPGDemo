@@ -30,7 +30,7 @@ eval \"$BUILD_TOOL\" BuildCookRun -project=\"$PROJECT_PATH$PROJECT_NAME.uproject
 
 WORKER_ASSEMBLY_DIR=$PROJECT_PATH"../../build/assembly/worker/"
 
-FSIM_NAME="UnrealFsim@Windows"
+FSIM_NAME="UnrealFSim@Windows"
 CLIENT_NAME="UnrealClient@Windows"
 
 GENERATED_FOLDER="WindowsNoEditor/"
@@ -45,7 +45,7 @@ popd
 
 pushd $CLIENT_DIR$GENERATED_FOLDER
 mv $GENERATED_EXE $CLIENT_NAME".exe"
-# jar -cMf $CLIENT_NAME".zip" "."
+jar -cMf $CLIENT_NAME".zip" "."
 popd
 
 mkdir -p $WORKER_ASSEMBLY_DIR
@@ -56,21 +56,16 @@ if [ -f $FSIM_NAME".zip" ]; then
 	rm -rf $FSIM_NAME".zip"
 fi
 
-if [ -d $CLIENT_NAME ]; then
-	rm -rf $CLIENT_NAME
+if [ -f $CLIENT_NAME".zip" ]; then
+	rm -rf $CLIENT_NAME".zip"
 fi
 
 popd
 
 mv $FSIM_DIR$GENERATED_FOLDER$FSIM_NAME".zip" $WORKER_ASSEMBLY_DIR$FSIM_NAME".zip"
 
-cp -r $CLIENT_DIR$GENERATED_FOLDER $WORKER_ASSEMBLY_DIR
-pushd $WORKER_ASSEMBLY_DIR
-mv $GENERATED_FOLDER $CLIENT_NAME
-popd
+mv $CLIENT_DIR$GENERATED_FOLDER$CLIENT_NAME".zip" $WORKER_ASSEMBLY_DIR$CLIENT_NAME".zip"
 
 rm -rf $TEMP_DIR # remove the output directory as no longer need it
 
 echo "Finished building workers"
-
-# mv $CLIENT_DIR$GENERATED_FOLDER$CLIENT_NAME".zip" $WORKER_ASSEMBLY_DIR$CLIENT_NAME".zip"

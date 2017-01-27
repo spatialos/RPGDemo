@@ -18,8 +18,8 @@
         {
           "name": "Codegen",
           "arguments": [
-            "exec",
-            "codegen"
+            "invoke-task",
+            "Codegen"
           ]
         },
         {
@@ -29,6 +29,11 @@
             "unreal",
             "build"
           ]
+        },
+        {
+          "name": "Build unreal workers",
+          "command": "bash",
+          "arguments": ["build_workers.sh"]
         }
       ]
     },
@@ -49,6 +54,11 @@
             "unreal",
             "clean"
           ]
+        },
+        {
+          "name": "Clean unreal workers",
+          "command": "bash",
+          "arguments": ["clean_workers.sh"]
         }
       ]
     }
