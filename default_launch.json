@@ -38,12 +38,10 @@
 	    {
 	      "worker_type": "UnrealFSim",
 	      "flags" : [],
-	      "load_balancing": {
-	        "auto_hex_grid": {
-	          "num_workers": 1
-	        }
-	      },
-	      "permissions": [
+		  "load_balancing": {
+				"singleton_worker": {}
+			},
+		  "permissions": [
 	        {
 	          "all": {}
 	        }

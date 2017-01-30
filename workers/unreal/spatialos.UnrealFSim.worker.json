@@ -42,14 +42,15 @@
 		"run_type": "EXECUTABLE_ZIP",
 		"windows": {
 			"artifact_name": "UnrealFSim@Windows.zip",
-			"command": "UnrealFSim@Windows.exe",
+			"command": "./UnrealFSim@Windows.exe",
 			"arguments": [
-				"+assetDatabaseStrategy", 
-				"Local", 
-				"+localAssetDatabasePath", 
-				"${IMPROBABLE_PROJECT_ROOT}/build/assembly/worker", 
-				"+appName", 
-				"${IMPROBABLE_PROJECT_NAME}"
+				"-server",
+				"-stdout",
+				"-nowrite",
+				"-unattended",
+				"-nologtimes",
+				"-nopause",
+				"-noini"
 			]
 		}
 	}

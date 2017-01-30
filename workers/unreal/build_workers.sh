@@ -22,7 +22,7 @@ CLIENT_DIR=$TEMP_DIR"client/"
 
 echo "Building unreal fsim worker..."
 
-eval \"$BUILD_TOOL\" BuildCookRun -project=\"$PROJECT_PATH$PROJECT_NAME.uproject\" -noP4 -platform=Win64 -clientconfig=Shipping -cook -allmaps -build -stage -pak -archive -archivedirectory=\"$FSIM_DIR\"
+eval \"$BUILD_TOOL\" BuildCookRun -project=\"$PROJECT_PATH$PROJECT_NAME.uproject\" -noP4 -platform=Win64 -clientconfig=Development -cook -allmaps -build -stage -pak -archive -archivedirectory=\"$FSIM_DIR\"
 
 echo "Building unreal client worker..."
 
