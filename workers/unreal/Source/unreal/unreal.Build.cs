@@ -12,6 +12,14 @@ public class unreal : SpatialOSModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[] { "SpatialOSGenerated" });
 
+	    PublicIncludePaths.AddRange(new[]
+	    {
+	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "CoreLibrary")),
+	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "Usr")),
+	    });
+
+	    System.Console.WriteLine(Path.Combine(ModuleDirectory, "SpatialOSGenerated", "CoreLibrary"));
+
         switch (Target.Configuration)
         {
             case UnrealTargetConfiguration.Shipping:

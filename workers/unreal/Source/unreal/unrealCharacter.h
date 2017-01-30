@@ -22,10 +22,10 @@ public:
 	FORCEINLINE class UTransformReceiver* GetTransformReceiver() const { return TransformReceiver; }
 
 private:
-	void AunrealCharacter::UpdateCursorPosition() const;
-	void AunrealCharacter::Initialise();
-	void AunrealCharacter::InitialiseAsOwnPlayer();
-	void AunrealCharacter::InitialiseAsOtherPlayer();
+	void UpdateCursorPosition() const;
+	void Initialise();
+	void InitialiseAsOwnPlayer();
+	void InitialiseAsOtherPlayer();
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
