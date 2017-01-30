@@ -1,9 +1,9 @@
 {
     "name": "unreal_top_down",
     "project_version": "0.0.1",
-    "sdk_version": "9.1.0",
+    "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
     "dependencies": [
-        {"name": "CoreLibrary", "version": "9.1.0"},
-		{"name": "WorkerSdkSchema", "version": "9.1.0"}
+        {"name": "CoreLibrary", "version": "999.9.9-LOCAL-SNAPSHOT"},
+		{"name": "WorkerSdkSchema", "version": "999.9.9-LOCAL-SNAPSHOT"}
     ]
 }
