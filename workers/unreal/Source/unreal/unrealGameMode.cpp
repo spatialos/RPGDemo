@@ -14,6 +14,8 @@ const static bool IS_FSIM = true;
 const std::string WorkerType = (IS_FSIM ? "UnrealFSim" : "UnrealClient");
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
+AunrealGameMode* AunrealGameMode::Instance;
+
 AunrealGameMode::AunrealGameMode()
 {
 	// Set the default player controller class
@@ -24,6 +26,13 @@ AunrealGameMode::AunrealGameMode()
 
 	// No need for default pawn class
 	DefaultPawnClass = nullptr;
+
+	Instance = this;
+}
+
+AunrealGameMode::~AunrealGameMode()
+{
+	Instance = nullptr;
 }
 
 void AunrealGameMode::StartPlay()

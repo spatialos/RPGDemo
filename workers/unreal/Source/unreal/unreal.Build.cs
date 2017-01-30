@@ -5,20 +5,20 @@ using System.IO;
 
 public class unreal : SpatialOSModuleRules
 {
-    private string CoreLibraryDir
-    {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "CoreLibrary")); }
-    }
 
     public unreal(TargetInfo Target) : base(Target)
 	{
-        // Add a dependency on CoreLibrary.
-        WorkerPackage("unreal", "improbable_corelibrary", CoreLibraryDir);
-        PrivateIncludePaths.Add(Path.Combine(CoreLibraryDir, "Generated"));
-
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
+        PrivateDependencyModuleNames.AddRange(new string[] { "SpatialOSGenerated" });
+
+	    PublicIncludePaths.AddRange(new[]
+	    {
+	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "CoreLibrary")),
+	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "Usr")),
+	    });
+
+	    System.Console.WriteLine(Path.Combine(ModuleDirectory, "SpatialOSGenerated", "CoreLibrary"));
 
         switch (Target.Configuration)
         {

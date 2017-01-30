@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class unrealTarget : TargetRules
+public class unrealServerTarget : TargetRules
 {
-	public unrealTarget(TargetInfo Target)
+	public unrealServerTarget(TargetInfo Target)
 	{
-		Type = TargetType.Game;
+		Type = TargetType.Server;
 	}
 
 	//
@@ -20,6 +20,6 @@ public class unrealTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-        OutExtraModuleNames.AddRange(new[] { "unreal", "SpatialOSGenerated" });
-    }
+		OutExtraModuleNames.AddRange(new [] { "unreal", "SpatialOSGenerated" });
+	}
 }

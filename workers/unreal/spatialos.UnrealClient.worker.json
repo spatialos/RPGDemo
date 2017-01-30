@@ -1,6 +1,6 @@
 {
   "build": {
-    "tasks_filename": "spatialos.UnrealClient.build.json",
+    "tasks_filename": "spatialos.unreal.client.build.json",
 	"generated_build_scripts_type": "unreal"
   },
   "bridge": {
@@ -25,15 +25,19 @@
   },
   "external": {
 	"default": {
-		"run_type": "EXECUTABLE",
+		"run_type": "EXECUTABLE_ZIP",
 		"windows": {
-			"command": "../../build/assembly/worker/UnrealClient@Windows/UnrealClient@Windows.exe",
+			"artifactName": "UnityClient@Windows.zip",
+			"command": "./UnityClient@Windows.exe",
 			"arguments": [
-				"+assetDatabaseStrategy", 
-				"Local", 
-				"+localAssetDatabasePath", 
-				"${IMPROBABLE_PROJECT_ROOT}/build/assembly", 
-				"+appName", "${IMPROBABLE_PROJECT_NAME}"
+				"+appName",
+				"${IMPROBABLE_PROJECT_NAME}",
+				"+localAssetDatabasePath",
+				"${IMPROBABLE_PROJECT_ROOT}/build/assembly",
+				"+useInternalIpForBridge",
+				"true",
+				"+linkProtocol",
+				"RakNet"
 			]
 		}
 	}

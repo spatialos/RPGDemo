@@ -4,16 +4,30 @@
 	"Category": "",
 	"Description": "",
 	"Modules": [
-		{
-			"Name": "unreal",
+    {
+      "Name": "unreal",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "AIModule",
+        "Engine",
+        "SpatialOS",
+        "SpatialOSGenerated"
+      ]
+    },
+    {
+			"Name": "SpatialOSGenerated",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"AIModule",
-				"Engine"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
+		{
+			"Name": "SpatialOS",
+			"Enabled": true
+		}
+	],
+	"AdditionalPluginDirectories": [
+		"/unreal/Plugins"
 	]
 }

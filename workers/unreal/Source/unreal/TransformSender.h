@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include "improbable/worker.h"
 #include "Components/ActorComponent.h"
-#include "SpatialEntityStorageComponent.h"
 #include "TransformSender.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,9 +25,6 @@ public:
 	bool HasAuthority() const;
 
 private:
-	USpatialEntityStorageComponent* mSpatialComponent;
-	void Initialise();
-	bool IsInitialised() const;
 	worker::Entity* GetEntity() const;
-
+	worker::EntityId EntityId;
 };

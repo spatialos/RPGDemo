@@ -4,7 +4,6 @@
 
 #include "Components/ActorComponent.h"
 #include <improbable/worker.h>
-#include "SpatialOS/Public/SpatialEntityStorageComponent.h"
 #include "ScopedViewCallbacks.h"
 #include "improbable/corelibrary/transforms/transform_state.h"
 #include "TransformReceiver.generated.h"
@@ -32,14 +31,13 @@ public:
 
 private:
 
-	USpatialEntityStorageComponent* mSpatialComponent;
 	TAutoPtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
 	void OnTransformComponentUpdate(const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op);
 	void ParseTransformStateUpdate(const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op);
 	void Initialise();
-	bool IsInitialised() const;
 	worker::Entity* GetEntity() const;
 
 	FVector mLocation;
 	FQuat mRotation;
+	worker::EntityId EntityId;
 };
