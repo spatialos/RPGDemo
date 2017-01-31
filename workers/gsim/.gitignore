@@ -8,6 +8,7 @@ spatialos_pack_plugin.sbt
 SpatialOSBuild.scala
 .idea/
 logs/
+/.spatialos
 
 #Standard Scala Ignores
 *.class

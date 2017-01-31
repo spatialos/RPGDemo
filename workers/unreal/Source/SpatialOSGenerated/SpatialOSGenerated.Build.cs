@@ -44,11 +44,10 @@ public class SpatialOSGenerated : SpatialOSModuleRules
         PublicIncludePaths.AddRange(new string[]
         {
 			Path.GetFullPath(StandardLibraryDir),
-            Path.GetFullPath(UserGeneratedCodeDir),
             Path.GetFullPath(CoreLibraryDir)
         });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Engine" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "Engine" });
         PrivateDependencyModuleNames.AddRange(new string[] { });
     }
 }

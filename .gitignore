@@ -2,6 +2,8 @@ toolbelt.log
 build/
 .idea/
 
+/.spatialos
+
 ## Ignore schema.iml files
 /schema/schema.iml
 

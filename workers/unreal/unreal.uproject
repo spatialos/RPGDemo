@@ -1,21 +1,21 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.12",
+	"EngineAssociation": "{E896020E-49C0-3CA6-B829-85B1305F9370}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
-    {
-      "Name": "unreal",
-      "Type": "Runtime",
-      "LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "AIModule",
-        "Engine",
-        "SpatialOS",
-        "SpatialOSGenerated"
-      ]
-    },
-    {
+		{
+			"Name": "unreal",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"AIModule",
+				"Engine",
+				"SpatialOS",
+				"SpatialOSGenerated"
+			]
+		},
+		{
 			"Name": "SpatialOSGenerated",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"

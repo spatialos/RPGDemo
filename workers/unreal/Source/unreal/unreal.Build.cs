@@ -6,9 +6,26 @@ using System.IO;
 
 public class unreal : SpatialOSModuleRules
 {
+	/// <summary>
+    /// Schema files are processed and output to this folder. It should be within
+    /// the current module so the types are accessible to the game.
+    /// </summary>
+    protected string GeneratedCodeDir
+    {
+        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
+    }
 
     public unreal(TargetInfo Target) : base(Target)
 	{
+		if (UEBuildConfiguration.bCleanProject)
+        {
+            RunSpatial("process_schema clean --language=cpp_unreal " + QuoteString(GeneratedCodeDir));
+        }
+        else
+        {
+            RunSpatial("process_schema --use_worker_defaults --language=cpp_unreal --output=" + QuoteString(GeneratedCodeDir));       
+        }
+		
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "SpatialOSGenerated" });
@@ -18,6 +35,11 @@ public class unreal : SpatialOSModuleRules
 	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "CoreLibrary")),
 	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "Usr")),
 	    });
+		
+		PrivateIncludePaths.AddRange(new[]
+		{
+			Path.GetFullPath(Path.Combine(GeneratedCodeDir))
+		});
 
 	    System.Console.WriteLine(Path.Combine(ModuleDirectory, "SpatialOSGenerated", "CoreLibrary"));
 
