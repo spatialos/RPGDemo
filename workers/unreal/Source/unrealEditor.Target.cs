@@ -20,6 +20,6 @@ public class unrealEditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-        OutExtraModuleNames.AddRange(new[] { "unreal", "SpatialOSGenerated" });
+        OutExtraModuleNames.AddRange(new[] { "unreal" });
     }
 }

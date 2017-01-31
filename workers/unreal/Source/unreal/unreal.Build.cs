@@ -14,6 +14,21 @@ public class unreal : SpatialOSModuleRules
     {
         get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
     }
+	
+	private string CoreLibraryDir
+    {
+        get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "CoreLibrary")); }
+    }
+	
+	private string StandardLibraryDir
+	{
+		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Std")); }
+	}
+	
+	private string UserSchemaDir
+	{
+		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Usr")); }
+	}
 
     public unreal(TargetInfo Target) : base(Target)
 	{
@@ -22,26 +37,40 @@ public class unreal : SpatialOSModuleRules
             RunSpatial("process_schema clean --language=cpp_unreal " + QuoteString(GeneratedCodeDir));
         }
         else
-        {
-            RunSpatial("process_schema --use_worker_defaults --language=cpp_unreal --output=" + QuoteString(GeneratedCodeDir));       
+        {				
+            var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
+                " --output=" + QuoteString(CoreLibraryDir) +
+                " --language=cpp_unreal" +
+                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_cl" +
+                " --input=../../build/dependencies/schema/CoreLibrary";
+
+            RunSpatial(cl);
+			
+			var std = "process_schema --cachePath=.spatialos/schema_codegen_cache_std" +
+                " --output=" + QuoteString(StandardLibraryDir) +
+                " --language=cpp_unreal" +
+                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
+                " --input=../../build/dependencies/schema/WorkerSdkSchema";
+
+			RunSpatial(std);
+			
+			var user = "process_schema --cachePath=.spatialos/schema_codegen_cache_usr" +
+                " --output=" + QuoteString(UserSchemaDir) +
+                " --language=cpp_unreal" +
+                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
+                " --input=../../schema";
+				
+            RunSpatial(user);       
         }
 		
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "SpatialOSGenerated" });
-
 	    PublicIncludePaths.AddRange(new[]
 	    {
-	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "CoreLibrary")),
-	        Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "SpatialOSGenerated", "Usr")),
+	        Path.GetFullPath(CoreLibraryDir),
+	        Path.GetFullPath(StandardLibraryDir),
+			Path.GetFullPath(UserSchemaDir)
 	    });
-		
-		PrivateIncludePaths.AddRange(new[]
-		{
-			Path.GetFullPath(Path.Combine(GeneratedCodeDir))
-		});
-
-	    System.Console.WriteLine(Path.Combine(ModuleDirectory, "SpatialOSGenerated", "CoreLibrary"));
 
         switch (Target.Configuration)
         {

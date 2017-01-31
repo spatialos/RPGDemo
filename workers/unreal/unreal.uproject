@@ -11,14 +11,8 @@
 			"AdditionalDependencies": [
 				"AIModule",
 				"Engine",
-				"SpatialOS",
-				"SpatialOSGenerated"
+				"SpatialOS"
 			]
-		},
-		{
-			"Name": "SpatialOSGenerated",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
