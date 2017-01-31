@@ -1,5 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
+using System;
 using UnrealBuildTool;
 using System.IO;
 
@@ -9,15 +10,11 @@ public class SpatialOSGenerated : SpatialOSModuleRules
     {
         get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "CoreLibrary")); }
     }
-
-    /// <summary>
-    /// Schema files are processed and output to this folder. It should be within
-    /// the current module so the types are accessible to the game.
-    /// </summary>
-    protected string UserGeneratedCodeDir
-    {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Usr")); }
-    }
+	
+	private string StandardLibraryDir
+	{
+		get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Std")); }
+	}
 
     public SpatialOSGenerated(TargetInfo Target) : base(Target)
     {
@@ -27,14 +24,13 @@ public class SpatialOSGenerated : SpatialOSModuleRules
         }
         else
         {
-            var usr = "process_schema --cachePath=.spatialos/schema_codegen_cache_usr" +
-                " --output=" + QuoteString(UserGeneratedCodeDir) +
+			var std = "process_schema --cachePath=.spatialos/schema_codegen_cache_std" +
+                " --output=" + QuoteString(StandardLibraryDir) +
                 " --language=cpp_unreal" +
-                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
-                " --input=../../schema" +
-                " --repository=../../build/dependencies/schema";
+                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
+                " --input=../../build/dependencies/schema/WorkerSdkSchema";
 
-            RunSpatial(usr);
+			RunSpatial(std);
 
             var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
                 " --output=" + QuoteString(CoreLibraryDir) +
@@ -47,6 +43,7 @@ public class SpatialOSGenerated : SpatialOSModuleRules
         }
         PublicIncludePaths.AddRange(new string[]
         {
+			Path.GetFullPath(StandardLibraryDir),
             Path.GetFullPath(UserGeneratedCodeDir),
             Path.GetFullPath(CoreLibraryDir)
         });

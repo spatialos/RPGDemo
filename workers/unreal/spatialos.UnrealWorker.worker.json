@@ -1,11 +1,11 @@
 {
   "build": {
     "tasks_filename": "spatialos.unreal.worker.build.json",
-	"generated_build_scripts_type": "unreal"
+    "generated_build_scripts_type": "unreal"
   },
   "bridge": {
-    "worker_attribute_set": {
-      "attributes": [
+    "worker_claim": {
+      "claims": [
         "unrealfsim"
       ]
     },
@@ -19,40 +19,39 @@
       "default": "RELIABLE_ORDERED",
       "checkout_all_initially": true
     },
-    "asset_context": {
-    }
+    "asset_context": {}
   },
   "managed": {
-	"windows": {
-		"artifact_name": "UnrealFSim@Windows.zip",
-		"command": "UnrealFSim@Windows.exe",
-		"arguments": [
-			"-server",
-			"-stdout",
-			"-nowrite",
-			"-unattended",
-			"-nologtimes",
-			"-nopause",
-			"-noini"
-		]
-	} 
+    "windows": {
+      "artifact_name": "UnrealFSim@Windows.zip",
+      "command": "UnrealFSim@Windows.exe",
+      "arguments": [
+        "-server",
+        "-stdout",
+        "-nowrite",
+        "-unattended",
+        "-nologtimes",
+        "-nopause",
+        "-noini"
+      ]
+    }
   },
   "external": {
-	"default": {
-		"run_type": "EXECUTABLE_ZIP",
-		"windows": {
-			"artifact_name": "UnrealFSim@Windows.zip",
-			"command": "./UnrealFSim@Windows.exe",
-			"arguments": [
-				"-server",
-				"-stdout",
-				"-nowrite",
-				"-unattended",
-				"-nologtimes",
-				"-nopause",
-				"-noini"
-			]
-		}
-	}
+    "default": {
+      "run_type": "EXECUTABLE_ZIP",
+      "windows": {
+        "artifact_name": "UnrealFSim@Windows.zip",
+        "command": "./UnrealFSim@Windows.exe",
+        "arguments": [
+          "-server",
+          "-stdout",
+          "-nowrite",
+          "-unattended",
+          "-nologtimes",
+          "-nopause",
+          "-noini"
+        ]
+      }
+    }
   }
 }

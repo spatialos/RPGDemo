@@ -7,19 +7,18 @@
 #include "ExportSnapshotCommandlet.generated.h"
 
 /**
- * 
+ *
  */
 
 UCLASS()
-class UNREAL_API UExportSnapshotCommandlet : public UCommandlet
-{
-	GENERATED_BODY()
+class UNREAL_API UExportSnapshotCommandlet : public UCommandlet {
+  GENERATED_BODY()
 public:
-	UExportSnapshotCommandlet();
-	~UExportSnapshotCommandlet();
+  UExportSnapshotCommandlet();
+  ~UExportSnapshotCommandlet();
 
-	virtual int32 Main(const FString& Params) override;
+  virtual int32 Main(const FString& Params) override;
 
 private:
-	worker::SnapshotEntity CreateNPCSnapshotEntity() const;
+  worker::SnapshotEntity CreateNPCSnapshotEntity() const;
 };

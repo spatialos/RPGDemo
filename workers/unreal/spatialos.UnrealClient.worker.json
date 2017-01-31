@@ -4,8 +4,8 @@
 	"generated_build_scripts_type": "unreal"
   },
   "bridge": {
-    "worker_attribute_set": {
-      "attributes": [
+    "worker_claim": {
+      "claims": [
         "visual"
       ]
     },

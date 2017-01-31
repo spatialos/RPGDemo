@@ -6,21 +6,20 @@
 #include "OtherPlayerController.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class UNREAL_API AOtherPlayerController : public AAIController
-{
-	GENERATED_BODY()
-	
+class UNREAL_API AOtherPlayerController : public AAIController {
+  GENERATED_BODY()
+
 public:
-	AOtherPlayerController();
+  AOtherPlayerController();
 
 protected:
-	void Initialise();
-	bool IsInitialised() const;
-	virtual void Tick(float DeltaTime) override;
+  void Initialise();
+  bool IsInitialised() const;
+  virtual void Tick(float DeltaTime) override;
 
-	class AunrealCharacter* mControlledCharacter;
-	void SetNewMoveDestination(const FVector DestLocation);
+  class AunrealCharacter* mControlledCharacter;
+  void SetNewMoveDestination(const FVector DestLocation);
 };

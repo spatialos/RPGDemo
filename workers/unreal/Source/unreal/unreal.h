@@ -7,5 +7,4 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(Logunreal, Log, All);
 
-
 #endif
