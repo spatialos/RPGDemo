@@ -11,7 +11,7 @@ const static bool IS_FSIM = false;
 const static bool IS_FSIM = true;
 #endif
 
-const std::string WorkerType = (IS_FSIM ? "UnrealFSim" : "UnrealClient");
+const std::string WorkerType = (IS_FSIM ? "UnrealWorker" : "UnrealClient");
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
 AunrealGameMode* AunrealGameMode::Instance;

@@ -27,17 +27,9 @@
 	"default": {
 		"run_type": "EXECUTABLE_ZIP",
 		"windows": {
-			"artifactName": "UnityClient@Windows.zip",
-			"command": "./UnityClient@Windows.exe",
+			"artifactName": "UnrealClient@Windows.zip",
+			"command": "./unreal.exe",
 			"arguments": [
-				"+appName",
-				"${IMPROBABLE_PROJECT_NAME}",
-				"+localAssetDatabasePath",
-				"${IMPROBABLE_PROJECT_ROOT}/build/assembly",
-				"+useInternalIpForBridge",
-				"true",
-				"+linkProtocol",
-				"RakNet"
 			]
 		}
 	}

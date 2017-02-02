@@ -43,7 +43,8 @@ UExportSnapshotCommandlet::UExportSnapshotCommandlet() {}
 UExportSnapshotCommandlet::~UExportSnapshotCommandlet() {}
 
 int32 UExportSnapshotCommandlet::Main(const FString& Params) {
-  FString combinedPath = FPaths::Combine(*FPaths::GameDir(), TEXT("../../snapshots"));
+  FString combinedPath = FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../snapshots"));
+  UE_LOG(LogTemp, Display, TEXT("Combined path %s"), *combinedPath);
   if (FPaths::CollapseRelativeDirectories(combinedPath)) {
     FString fullPath = FPaths::Combine(*combinedPath, TEXT("default.snapshot"));
 
@@ -77,7 +78,7 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
       Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
   snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
 
-  improbable::WorkerPredicate fsimPredicate({{{{{"unrealfsim"}}}}});
+  improbable::WorkerPredicate fsimPredicate({{{{{"UnrealWorker"}}}}});
 
   worker::Map<std::uint32_t, improbable::WorkerPredicate> componentAuthority;
 

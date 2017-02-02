@@ -6,7 +6,7 @@
   "bridge": {
     "worker_claim": {
       "claims": [
-        "unrealfsim"
+        "UnrealWorker"
       ]
     },
     "entity_interest": {
@@ -23,8 +23,8 @@
   },
   "managed": {
     "windows": {
-      "artifact_name": "UnrealFSim@Windows.zip",
-      "command": "UnrealFSim@Windows.exe",
+      "artifact_name": "UnrealWorker@Windows.zip",
+      "command": "unrealServer.exe",
       "arguments": [
         "-server",
         "-stdout",
@@ -40,8 +40,8 @@
     "default": {
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
-        "artifact_name": "UnrealFSim@Windows.zip",
-        "command": "./UnrealFSim@Windows.exe",
+        "artifact_name": "UnrealWorker@Windows.zip",
+        "command": "./unrealServer.exe",
         "arguments": [
           "-server",
           "-stdout",
