@@ -72,9 +72,9 @@ public class unreal : SpatialOSModuleRules
 			Path.GetFullPath(UserSchemaDir)
 	    });
 
-        switch (Target.Configuration)
+        switch (Target.Type)
         {
-            case UnrealTargetConfiguration.Shipping:
+            case TargetRules.TargetType.Server:
                 Definitions.Add("UNREAL_FSIM=1");
                 break;
 

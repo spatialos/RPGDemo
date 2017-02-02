@@ -23,5 +23,12 @@
 	],
 	"AdditionalPluginDirectories": [
 		"/unreal/Plugins"
-	]
+	],
+	"PostBuildSteps":
+	{
+		"Win64": [
+			"cd $(ProjectDir)",
+			"spatial invoke unreal package $(EngineDir) $(ProjectDir) $(ProjectFile) $(TargetPlatform) $(TargetType)"
+		]
+	}
 }
