@@ -5,13 +5,12 @@
 #include "unrealGameMode.h"
 #include "unrealPlayerController.h"
 
-#ifdef UNREAL_CLIENT
-const static bool IS_FSIM = false;
+#if UE_SERVER
+const std::string WorkerType = "UnrealWorker";
 #else
-const static bool IS_FSIM = true;
+const std::string WorkerType = "UnrealClient";
 #endif
 
-const std::string WorkerType = (IS_FSIM ? "UnrealWorker" : "UnrealClient");
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
 AunrealGameMode* AunrealGameMode::Instance;
@@ -46,11 +45,11 @@ void AunrealGameMode::Tick(float DeltaTime) {
 }
 
 void AunrealGameMode::ConfigureWindowSize() {
-  if (IS_FSIM) {
+#if UE_SERVER
     MakeWindowed(10, 10);
-  } else {
+#else
     MakeWindowed(1280, 720);
-  }
+#endif
 }
 
 void AunrealGameMode::CreateWorkerConnection() {

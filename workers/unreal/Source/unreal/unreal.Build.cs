@@ -71,16 +71,5 @@ public class unreal : SpatialOSModuleRules
 	        Path.GetFullPath(StandardLibraryDir),
 			Path.GetFullPath(UserSchemaDir)
 	    });
-
-        switch (Target.Type)
-        {
-            case TargetRules.TargetType.Server:
-                Definitions.Add("UNREAL_FSIM=1");
-                break;
-
-            default:
-                Definitions.Add("UNREAL_CLIENT=1");
-                break;
-        }
     }
 }

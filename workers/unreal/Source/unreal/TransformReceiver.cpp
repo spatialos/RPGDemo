@@ -5,6 +5,7 @@
 #include "Conversions.h"
 #include "WorkerConnection.h"
 #include "unrealGameMode.h"
+#include "EntityId.h"
 
 using namespace improbable::unreal::core;
 
@@ -31,7 +32,14 @@ FQuat UTransformReceiver::GetRotation() const {
 
 void UTransformReceiver::OnTransformComponentUpdate(
     const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op) {
-  ParseTransformStateUpdate(op);
+
+  if(EntityId != -1)
+  {
+	  if(op.EntityId == EntityId)
+	  {
+		  ParseTransformStateUpdate(op);
+	  }
+  }
 }
 
 void UTransformReceiver::ParseTransformStateUpdate(
@@ -43,9 +51,11 @@ void UTransformReceiver::ParseTransformStateUpdate(
 
   if (!loc.empty()) {
     mLocation = ToUnrealVector(*loc);
+	UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Received actor (%s) position update (%s)"), *GetOwner()->GetName(), *mLocation.ToString())
   }
   if (!rot.empty()) {
     mRotation = ToUnrealQuaternion((*rot).quaternion());
+	UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Received actor (%s) rotation update (%s)"), *GetOwner()->GetName(), *mRotation.ToString())
   }
 }
 
@@ -54,6 +64,7 @@ void UTransformReceiver::BeginPlay() {
   Super::BeginPlay();
 
   EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+  UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Initial entity id got set to (%s)"), *ToString(EntityId))
 }
 
 // Called every frame
@@ -65,33 +76,49 @@ void UTransformReceiver::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 void UTransformReceiver::Initialise() {
-  if (!mCallbacks.IsValid()) {
-    worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
-        GetEntity()->Get<improbable::corelibrary::transforms::TransformState>();
-    if (!transform.empty()) {
-      mLocation = ToUnrealVector(transform->local_position());
-      mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
-      // GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
-      // have commented above out as setting the initial rotation from the initial transform state
-      // seems to skew the rotation of the actor, probably due to the conversions not being accurate
-      // yet
-      GetOwner()->SetActorLocation(mLocation);
-      UE_LOG(LogTemp, Warning, TEXT("Set initial position for entity's actor"))
-    }
 
-    mCallbacks.Reset(
-        new improbable::unreal::callbacks::FScopedViewCallbacks(FWorkerConnection::GetView()));
-    mCallbacks->Add(
-        FWorkerConnection::GetView()
-            .OnComponentUpdate<improbable::corelibrary::transforms::TransformState>(std::bind(
-                &UTransformReceiver::OnTransformComponentUpdate, this, std::placeholders::_1)));
+  if(EntityId == -1)
+  {
+	  EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+	  UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Entity id not set to a valid entity id, getting new entity id %s"), *ToString(EntityId))
+	  return;
+  }
+
+  if (!mCallbacks.IsValid()) {
+	auto entity = GetEntity();
+
+	if(entity != nullptr)
+	{
+		worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
+			entity->Get<improbable::corelibrary::transforms::TransformState>();
+		if (!transform.empty()) {
+			mLocation = ToUnrealVector(transform->local_position());
+			mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
+			// GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
+			// have commented above out as setting the initial rotation from the initial transform state
+			// seems to skew the rotation of the actor, probably due to the conversions not being accurate
+			// yet
+			GetOwner()->SetActorLocation(mLocation);
+			UE_LOG(LogTemp, Warning, TEXT("Set initial position for actor (%s), position, (%s) rotation (%s)"), *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
+		}
+
+		mCallbacks.Reset(
+			new improbable::unreal::callbacks::FScopedViewCallbacks(FWorkerConnection::GetView()));
+		mCallbacks->Add(
+			FWorkerConnection::GetView()
+			.OnComponentUpdate<improbable::corelibrary::transforms::TransformState>(std::bind(
+				&UTransformReceiver::OnTransformComponentUpdate, this, std::placeholders::_1)));
+	}
   }
 }
 
 worker::Entity* UTransformReceiver::GetEntity() const {
+  UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: trying to get entity %s on Actor %s"), *ToString(EntityId), *GetOwner()->GetName())
   auto it = FWorkerConnection::GetView().Entities.find(EntityId);
   if (it == FWorkerConnection::GetView().Entities.end()) {
+	  UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: returned nullptr trying to get entity %s on Actor %s"), *ToString(EntityId), *GetOwner()->GetName())
     return nullptr;
   }
+  UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: successfully got entity %s on Actor %s"), *ToString(EntityId), *GetOwner()->GetName())
   return &(it->second);
 }

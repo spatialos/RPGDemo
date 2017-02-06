@@ -6,7 +6,7 @@
   "bridge": {
     "worker_claim": {
       "claims": [
-        "visual"
+        "UnrealClient"
       ]
     },
     "entity_interest": {

@@ -70,18 +70,23 @@ void AunrealCharacter::Tick(float DeltaSeconds) {
 
   Initialise();
 
+#if !UE_SERVER
   if (TransformSender->HasAuthority()) {
     UpdateCursorPosition();
   }
+#endif
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
 void AunrealCharacter::Initialise() {
+#if !UE_SERVER
   if (TransformSender->HasAuthority()) {
     InitialiseAsOwnPlayer();
-  } else {
+  } else 
+#endif
+  {
     InitialiseAsOtherPlayer();
   }
 }
@@ -96,6 +101,7 @@ void AunrealCharacter::InitialiseAsOwnPlayer() {
 
     playerController->UnPossess();
     playerController->Possess(this);
+	UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOwnPlayer creating own player controller for actor %s"), *GetName())
   }
 
   if (!CursorToWorld->IsActive()) {
@@ -109,15 +115,22 @@ void AunrealCharacter::InitialiseAsOwnPlayer() {
 }
 
 void AunrealCharacter::InitialiseAsOtherPlayer() {
+
+	AController* currentController = GetController();
+
+#if !UE_SERVER
   APlayerController* playerController = GetWorld()->GetFirstPlayerController();
-  AController* currentController = GetController();
   if (currentController == playerController) {
     playerController->UnPossess();
     currentController = GetController();
   }
+#endif
+
   if (currentController == nullptr) {
     AOtherPlayerController* otherPlayerController =
         Cast<AOtherPlayerController>(GetWorld()->SpawnActor(AOtherPlayerController::StaticClass()));
+
+	UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOtherPlayer creating other player controller for actor %s"), *GetName())
     otherPlayerController->Possess(this);
   }
 

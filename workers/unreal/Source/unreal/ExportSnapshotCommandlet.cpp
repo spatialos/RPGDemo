@@ -58,17 +58,18 @@ int32 UExportSnapshotCommandlet::Main(const FString& Params) {
 }
 
 worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const {
-  auto snapshotEntity = worker::SnapshotEntity();
+  auto snapshotEntity = worker::SnapshotEntity(); 
+  snapshotEntity.Prefab = "Npc";
   snapshotEntity.Add<Physicality>(Physicality::Data(true));
   snapshotEntity.Add<Visuality>(Visuality::Data(true));
   snapshotEntity.Add<Prefab>(Prefab::Data("Npc"));
   snapshotEntity.Add<TagsData>(TagsData::Data(worker::List<std::string>()));
   snapshotEntity.Add<TransformState>(
-      TransformState::Data(FixedPointVector3(worker::List<std::int64_t>({0, 0, 0})),
+      TransformState::Data(FixedPointVector3(worker::List<std::int64_t>({0, 4, 0})),
                            Quaternion32(ToQuaternion32(0, 0, 0, 1)), Parent(-1, ""),
                            Vector3d(0, 0, 0), Vector3f(0, 0, 0), Vector3f(0, 0, 0), false, 0.0f));
   snapshotEntity.Add<GlobalTransformState>(GlobalTransformState::Data(
-      Coordinates(0, 0, 0), Quaternion(0, 0, 0, 1), Vector3d(0, 0, 0), 0.0f));
+      Coordinates(0, 4, 0), Quaternion(0, 0, 0, 1), Vector3d(0, 0, 0), 0.0f));
   snapshotEntity.Add<TransformExceptionState>(
       TransformExceptionState::Data(worker::Option<worker::EntityId>()));
   snapshotEntity.Add<GlobalTransformPublisherState>(GlobalTransformPublisherState::Data(
@@ -78,16 +79,23 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
       Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
   snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
 
-  improbable::WorkerPredicate fsimPredicate({{{{{"UnrealWorker"}}}}});
+  improbable::WorkerPredicate workerPredicate({{{{{"UnrealWorker"}}}}});
+  improbable::WorkerPredicate clientPredicate({ { { { { "UnrealClient" } } } } });
 
   worker::Map<std::uint32_t, improbable::WorkerPredicate> componentAuthority;
 
-  componentAuthority.emplace(Prefab::ComponentId, fsimPredicate);
-  componentAuthority.emplace(TransformState::ComponentId, fsimPredicate);
+  componentAuthority.emplace(Prefab::ComponentId, workerPredicate);
+  componentAuthority.emplace(TransformState::ComponentId, clientPredicate);
 
   improbable::ComponentAcl componentAcl(componentAuthority);
 
-  snapshotEntity.Add<EntityAcl>(EntityAcl::Data(fsimPredicate, componentAcl));
+  auto workerClaimAtomList = worker::List< ::improbable::WorkerClaimAtom >({ worker::Option<std::string>("UnrealWorker") });
+  auto clientClaimAtomList = worker::List< ::improbable::WorkerClaimAtom >({ worker::Option<std::string>("UnrealClient") });
+  auto workerClaims = worker::List< ::improbable::WorkerClaim >({ { workerClaimAtomList }, { clientClaimAtomList } });
+
+  improbable::WorkerPredicate workerClientPredicate(workerClaims);
+
+  snapshotEntity.Add<EntityAcl>(EntityAcl::Data(workerClientPredicate, componentAcl));
 
   return snapshotEntity;
 }
