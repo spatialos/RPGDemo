@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "unreal.h"
 #include "OtherPlayerController.h"
 #include "TransformReceiver.h"
-#include "unreal.h"
 #include "unrealCharacter.h"
 
 AOtherPlayerController::AOtherPlayerController()

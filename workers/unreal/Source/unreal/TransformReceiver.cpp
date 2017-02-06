@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "unreal.h"
 #include "TransformReceiver.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
-#include "unreal.h"
 #include "unrealGameMode.h"
 
 using namespace improbable::unreal::core;
