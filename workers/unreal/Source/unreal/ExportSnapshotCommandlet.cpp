@@ -101,11 +101,11 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     improbable::ComponentAcl componentAcl(componentAuthority);
 
     auto workerClaimAtomList =
-        worker::List<::improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealWorker")});
+        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealWorker")});
     auto clientClaimAtomList =
-        worker::List<::improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealClient")});
+        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealClient")});
     auto workerClaims =
-        worker::List<::improbable::WorkerClaim>({{workerClaimAtomList}, {clientClaimAtomList}});
+        worker::List<improbable::WorkerClaim>({{workerClaimAtomList}, {clientClaimAtomList}});
 
     improbable::WorkerPredicate workerClientPredicate(workerClaims);
 
