@@ -9,7 +9,8 @@
  *
  */
 UCLASS()
-class UNREAL_API AOtherPlayerController : public AAIController {
+class UNREAL_API AOtherPlayerController : public AAIController
+{
   GENERATED_BODY()
 
 public:

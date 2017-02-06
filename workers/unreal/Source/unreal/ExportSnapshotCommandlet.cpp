@@ -38,27 +38,37 @@ using namespace improbable::corelibrary::transforms::teleport;
 using namespace improbable::corelib::math;
 using namespace improbable::corelibrary::subscriptions;
 
-UExportSnapshotCommandlet::UExportSnapshotCommandlet() {}
+UExportSnapshotCommandlet::UExportSnapshotCommandlet()
+{
+}
 
-UExportSnapshotCommandlet::~UExportSnapshotCommandlet() {}
+UExportSnapshotCommandlet::~UExportSnapshotCommandlet()
+{
+}
 
-int32 UExportSnapshotCommandlet::Main(const FString& Params) {
-  FString combinedPath = FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../snapshots"));
+int32 UExportSnapshotCommandlet::Main(const FString& Params)
+{
+  FString combinedPath =
+      FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../snapshots"));
   UE_LOG(LogTemp, Display, TEXT("Combined path %s"), *combinedPath);
-  if (FPaths::CollapseRelativeDirectories(combinedPath)) {
+  if (FPaths::CollapseRelativeDirectories(combinedPath))
+  {
     FString fullPath = FPaths::Combine(*combinedPath, TEXT("default.snapshot"));
 
     worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), {{454, CreateNPCSnapshotEntity()}});
     UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
-  } else {
+  }
+  else
+  {
     UE_LOG(LogTemp, Display, TEXT("bye world!"));
   }
 
   return 0;
 }
 
-worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const {
-  auto snapshotEntity = worker::SnapshotEntity(); 
+worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const
+{
+  auto snapshotEntity = worker::SnapshotEntity();
   snapshotEntity.Prefab = "Npc";
   snapshotEntity.Add<Physicality>(Physicality::Data(true));
   snapshotEntity.Add<Visuality>(Visuality::Data(true));
@@ -80,7 +90,7 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
   snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
 
   improbable::WorkerPredicate workerPredicate({{{{{"UnrealWorker"}}}}});
-  improbable::WorkerPredicate clientPredicate({ { { { { "UnrealClient" } } } } });
+  improbable::WorkerPredicate clientPredicate({{{{{"UnrealClient"}}}}});
 
   worker::Map<std::uint32_t, improbable::WorkerPredicate> componentAuthority;
 
@@ -89,9 +99,12 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
 
   improbable::ComponentAcl componentAcl(componentAuthority);
 
-  auto workerClaimAtomList = worker::List< ::improbable::WorkerClaimAtom >({ worker::Option<std::string>("UnrealWorker") });
-  auto clientClaimAtomList = worker::List< ::improbable::WorkerClaimAtom >({ worker::Option<std::string>("UnrealClient") });
-  auto workerClaims = worker::List< ::improbable::WorkerClaim >({ { workerClaimAtomList }, { clientClaimAtomList } });
+  auto workerClaimAtomList =
+      worker::List<::improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealWorker")});
+  auto clientClaimAtomList =
+      worker::List<::improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealClient")});
+  auto workerClaims =
+      worker::List<::improbable::WorkerClaim>({{workerClaimAtomList}, {clientClaimAtomList}});
 
   improbable::WorkerPredicate workerClientPredicate(workerClaims);
 

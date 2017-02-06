@@ -4,7 +4,8 @@
 #include "unrealPlayerController.generated.h"
 
 UCLASS()
-class AunrealPlayerController : public APlayerController {
+class AunrealPlayerController : public APlayerController
+{
   GENERATED_BODY()
 
 public:

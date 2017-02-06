@@ -7,14 +7,16 @@
 #include "unrealGameMode.generated.h"
 
 UCLASS(minimalapi)
-class AunrealGameMode : public AGameMode {
+class AunrealGameMode : public AGameMode
+{
   GENERATED_BODY()
 
 public:
   AunrealGameMode();
   virtual ~AunrealGameMode();
 
-  static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner() {
+  static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
+  {
     return Instance->Spawner.GetOwnedPointer();
   }
 

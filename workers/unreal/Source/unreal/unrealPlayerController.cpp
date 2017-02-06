@@ -4,21 +4,25 @@
 #include "AI/Navigation/NavigationSystem.h"
 #include "unrealPlayerController.h"
 
-AunrealPlayerController::AunrealPlayerController() {
+AunrealPlayerController::AunrealPlayerController()
+{
   bShowMouseCursor = true;
   DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
-void AunrealPlayerController::PlayerTick(float DeltaTime) {
+void AunrealPlayerController::PlayerTick(float DeltaTime)
+{
   Super::PlayerTick(DeltaTime);
 
   // keep updating the destination every tick while desired
-  if (bMoveToMouseCursor) {
+  if (bMoveToMouseCursor)
+  {
     MoveToMouseCursor();
   }
 }
 
-void AunrealPlayerController::SetupInputComponent() {
+void AunrealPlayerController::SetupInputComponent()
+{
   // set up gameplay key bindings
   Super::SetupInputComponent();
 
@@ -34,50 +38,59 @@ void AunrealPlayerController::SetupInputComponent() {
                             &AunrealPlayerController::MoveToTouchLocation);
 }
 
-void AunrealPlayerController::MoveToMouseCursor() {
+void AunrealPlayerController::MoveToMouseCursor()
+{
   // Trace to see what is under the mouse cursor
   FHitResult Hit;
   GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-  if (Hit.bBlockingHit) {
+  if (Hit.bBlockingHit)
+  {
     // We hit something, move there
     SetNewMoveDestination(Hit.ImpactPoint);
   }
 }
 
 void AunrealPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex,
-                                                  const FVector Location) {
+                                                  const FVector Location)
+{
   FVector2D ScreenSpaceLocation(Location);
 
   // Trace to see what is under the touch location
   FHitResult HitResult;
   GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-  if (HitResult.bBlockingHit) {
+  if (HitResult.bBlockingHit)
+  {
     // We hit something, move there
     SetNewMoveDestination(HitResult.ImpactPoint);
   }
 }
 
-void AunrealPlayerController::SetNewMoveDestination(const FVector DestLocation) {
+void AunrealPlayerController::SetNewMoveDestination(const FVector DestLocation)
+{
   APawn* const Pawn = GetPawn();
-  if (Pawn) {
+  if (Pawn)
+  {
     UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
     float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
 
     // We need to issue move command only if far enough in order for walk animation to play
     // correctly
-    if (NavSys && (Distance > 120.0f)) {
+    if (NavSys && (Distance > 120.0f))
+    {
       NavSys->SimpleMoveToLocation(this, DestLocation);
     }
   }
 }
 
-void AunrealPlayerController::OnSetDestinationPressed() {
+void AunrealPlayerController::OnSetDestinationPressed()
+{
   // set flag to keep updating destination until released
   bMoveToMouseCursor = true;
 }
 
-void AunrealPlayerController::OnSetDestinationReleased() {
+void AunrealPlayerController::OnSetDestinationReleased()
+{
   // clear flag to indicate we should stop updating the destination
   bMoveToMouseCursor = false;
 }

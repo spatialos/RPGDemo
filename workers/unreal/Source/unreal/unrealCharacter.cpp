@@ -8,7 +8,8 @@
 #include "TransformSender.h"
 #include "unrealCharacter.h"
 
-AunrealCharacter::AunrealCharacter() {
+AunrealCharacter::AunrealCharacter()
+{
   // Set size for player capsule
   GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -42,7 +43,8 @@ AunrealCharacter::AunrealCharacter() {
   CursorToWorld->SetupAttachment(RootComponent);
   static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(
       TEXT("Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'"));
-  if (DecalMaterialAsset.Succeeded()) {
+  if (DecalMaterialAsset.Succeeded())
+  {
     CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
   }
   CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
@@ -65,13 +67,15 @@ AunrealCharacter::AunrealCharacter() {
   SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
 
-void AunrealCharacter::Tick(float DeltaSeconds) {
+void AunrealCharacter::Tick(float DeltaSeconds)
+{
   Super::Tick(DeltaSeconds);
 
   Initialise();
 
 #if !UE_SERVER
-  if (TransformSender->HasAuthority()) {
+  if (TransformSender->HasAuthority())
+  {
     UpdateCursorPosition();
   }
 #endif
@@ -80,73 +84,93 @@ void AunrealCharacter::Tick(float DeltaSeconds) {
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
-void AunrealCharacter::Initialise() {
+void AunrealCharacter::Initialise()
+{
 #if !UE_SERVER
-  if (TransformSender->HasAuthority()) {
+  if (TransformSender->HasAuthority())
+  {
     InitialiseAsOwnPlayer();
-  } else 
+  }
+  else
 #endif
   {
     InitialiseAsOtherPlayer();
   }
 }
 
-void AunrealCharacter::InitialiseAsOwnPlayer() {
+void AunrealCharacter::InitialiseAsOwnPlayer()
+{
   APlayerController* playerController = GetWorld()->GetFirstPlayerController();
   AController* currentController = GetController();
-  if (currentController != playerController) {
-    if (currentController != nullptr) {
+  if (currentController != playerController)
+  {
+    if (currentController != nullptr)
+    {
       currentController->UnPossess();
     }
 
     playerController->UnPossess();
     playerController->Possess(this);
-	UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOwnPlayer creating own player controller for actor %s"), *GetName())
+    UE_LOG(
+        LogTemp, Warning,
+        TEXT("AunrealCharacter::InitialiseAsOwnPlayer creating own player controller for actor %s"),
+        *GetName())
   }
 
-  if (!CursorToWorld->IsActive()) {
+  if (!CursorToWorld->IsActive())
+  {
     CursorToWorld->SetActive(true);
   }
   CursorToWorld->SetHiddenInGame(false);
 
-  if (!TopDownCameraComponent->IsActive()) {
+  if (!TopDownCameraComponent->IsActive())
+  {
     TopDownCameraComponent->Activate();
   }
 }
 
-void AunrealCharacter::InitialiseAsOtherPlayer() {
-
-	AController* currentController = GetController();
+void AunrealCharacter::InitialiseAsOtherPlayer()
+{
+  AController* currentController = GetController();
 
 #if !UE_SERVER
   APlayerController* playerController = GetWorld()->GetFirstPlayerController();
-  if (currentController == playerController) {
+  if (currentController == playerController)
+  {
     playerController->UnPossess();
     currentController = GetController();
   }
 #endif
 
-  if (currentController == nullptr) {
+  if (currentController == nullptr)
+  {
     AOtherPlayerController* otherPlayerController =
         Cast<AOtherPlayerController>(GetWorld()->SpawnActor(AOtherPlayerController::StaticClass()));
 
-	UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOtherPlayer creating other player controller for actor %s"), *GetName())
+    UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOtherPlayer creating other player "
+                                  "controller for actor %s"),
+           *GetName())
     otherPlayerController->Possess(this);
   }
 
-  if (CursorToWorld->IsActive()) {
+  if (CursorToWorld->IsActive())
+  {
     CursorToWorld->SetActive(false);
   }
   CursorToWorld->SetHiddenInGame(true);
 
-  if (TopDownCameraComponent->IsActive()) {
+  if (TopDownCameraComponent->IsActive())
+  {
     TopDownCameraComponent->Deactivate();
   }
 }
 
-void AunrealCharacter::UpdateCursorPosition() const {
-  if (CursorToWorld != nullptr) {
-    if (APlayerController* PC = Cast<APlayerController>(GetController())) {
+void AunrealCharacter::UpdateCursorPosition() const
+{
+  if (CursorToWorld != nullptr)
+  {
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
       FHitResult TraceHitResult;
       PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
       FVector CursorFV = TraceHitResult.ImpactNormal;

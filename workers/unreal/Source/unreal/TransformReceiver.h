@@ -9,7 +9,8 @@
 #include "TransformReceiver.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class UTransformReceiver : public UActorComponent {
+class UTransformReceiver : public UActorComponent
+{
   GENERATED_BODY()
 
 public:

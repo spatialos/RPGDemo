@@ -15,7 +15,8 @@ const std::string WorkerType = "UnrealClient";
 
 AunrealGameMode* AunrealGameMode::Instance;
 
-AunrealGameMode::AunrealGameMode() {
+AunrealGameMode::AunrealGameMode()
+{
   // Set the default player controller class
   PlayerControllerClass = AunrealPlayerController::StaticClass();
 
@@ -28,31 +29,36 @@ AunrealGameMode::AunrealGameMode() {
   Instance = this;
 }
 
-AunrealGameMode::~AunrealGameMode() {
+AunrealGameMode::~AunrealGameMode()
+{
   Instance = nullptr;
 }
 
-void AunrealGameMode::StartPlay() {
+void AunrealGameMode::StartPlay()
+{
   AGameMode::StartPlay();
   ConfigureWindowSize();
   CreateWorkerConnection();
   RegisterEntityBlueprints();
 }
 
-void AunrealGameMode::Tick(float DeltaTime) {
+void AunrealGameMode::Tick(float DeltaTime)
+{
   AGameMode::Tick(DeltaTime);
   Connection->ProcessEvents();
 }
 
-void AunrealGameMode::ConfigureWindowSize() {
+void AunrealGameMode::ConfigureWindowSize()
+{
 #if UE_SERVER
-    MakeWindowed(10, 10);
+  MakeWindowed(10, 10);
 #else
-    MakeWindowed(1280, 720);
+  MakeWindowed(1280, 720);
 #endif
 }
 
-void AunrealGameMode::CreateWorkerConnection() {
+void AunrealGameMode::CreateWorkerConnection()
+{
   using namespace improbable::unreal::core;
   FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
   Connection.Reset(new FWorkerConnection());
@@ -67,14 +73,16 @@ void AunrealGameMode::CreateWorkerConnection() {
   FString hostName;
   const FString receptionistIpProperty = "receptionistIp";
 
-  if (!FParse::Value(FCommandLine::Get(), *receptionistIpProperty, hostName)) {
+  if (!FParse::Value(FCommandLine::Get(), *receptionistIpProperty, hostName))
+  {
     hostName = "127.0.0.1";
   }
 
   FString portString;
   const FString receptionistPort = "receptionistPort";
 
-  if (!FParse::Value(FCommandLine::Get(), *receptionistPort, portString)) {
+  if (!FParse::Value(FCommandLine::Get(), *receptionistPort, portString))
+  {
     portString = "7777";
   }
 
@@ -83,34 +91,44 @@ void AunrealGameMode::CreateWorkerConnection() {
   Connection->Connect(hostName, port, Params, GetWorld());
 }
 
-void AunrealGameMode::RegisterEntityBlueprints() {
+void AunrealGameMode::RegisterEntityBlueprints()
+{
   using namespace improbable::unreal::entity_spawning;
   Spawner.Reset(new FEntitySpawner(Connection->GetConnection(), Connection->GetView(), GetWorld()));
   TArray<UObject*> assets;
   if (EngineUtils::FindOrLoadAssetsByPath(TEXT(ENTITY_BLUEPRINTS_FOLDER), assets,
-                                          EngineUtils::ATL_Class)) {
-    for (auto asset : assets) {
+                                          EngineUtils::ATL_Class))
+  {
+    for (auto asset : assets)
+    {
       UBlueprintGeneratedClass* blueprintGeneratedClass = Cast<UBlueprintGeneratedClass>(asset);
-      if (blueprintGeneratedClass != nullptr) {
+      if (blueprintGeneratedClass != nullptr)
+      {
         FString blueprintName = blueprintGeneratedClass->GetName().LeftChop(
             2);  // generated blueprint class names end with "_C"
         UE_LOG(LogTemp, Warning, TEXT("Registering blueprint in entity spawner with name: %s"),
                *blueprintName)
         Spawner->RegisterPrefabName(blueprintName, blueprintGeneratedClass);
-      } else {
+      }
+      else
+      {
         UE_LOG(LogTemp, Warning,
                TEXT("Found asset in the EntityBlueprints folder which is not a blueprint: %s"),
                *(asset->GetFullName()))
       }
     }
-  } else {
+  }
+  else
+  {
     UE_LOG(LogTemp, Warning, TEXT("No assets found in EntityBlueprints folder."))
   }
 }
 
-void AunrealGameMode::MakeWindowed(int32 Width, int32 Height) {
+void AunrealGameMode::MakeWindowed(int32 Width, int32 Height)
+{
   UGameUserSettings* Settings = GetGameUserSettings();
-  if (Settings != nullptr) {
+  if (Settings != nullptr)
+  {
     Settings->SetFullscreenMode(EWindowMode::Type::Windowed);
 
     Settings->SetScreenResolution(FIntPoint(Width, Height));
@@ -118,8 +136,10 @@ void AunrealGameMode::MakeWindowed(int32 Width, int32 Height) {
   }
 }
 
-UGameUserSettings* AunrealGameMode::GetGameUserSettings() {
-  if (GEngine != nullptr) {
+UGameUserSettings* AunrealGameMode::GetGameUserSettings()
+{
+  if (GEngine != nullptr)
+  {
     return GEngine->GameUserSettings;
   }
   return nullptr;

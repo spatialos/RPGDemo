@@ -4,7 +4,8 @@
 #include "unrealCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class AunrealCharacter : public ACharacter {
+class AunrealCharacter : public ACharacter
+{
   GENERATED_BODY()
 
 public:
@@ -14,15 +15,18 @@ public:
   virtual void Tick(float DeltaSeconds) override;
 
   /** Returns TopDownCameraComponent subobject **/
-  FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const {
+  FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const
+  {
     return TopDownCameraComponent;
   }
   /** Returns CameraBoom subobject **/
-  FORCEINLINE class USpringArmComponent* GetCameraBoom() const {
+  FORCEINLINE class USpringArmComponent* GetCameraBoom() const
+  {
     return CameraBoom;
   }
 
-  FORCEINLINE class UTransformReceiver* GetTransformReceiver() const {
+  FORCEINLINE class UTransformReceiver* GetTransformReceiver() const
+  {
     return TransformReceiver;
   }
 

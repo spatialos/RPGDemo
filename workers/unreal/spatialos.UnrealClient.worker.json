@@ -1,7 +1,7 @@
 {
   "build": {
     "tasks_filename": "spatialos.unreal.client.build.json",
-	"generated_build_scripts_type": "unreal"
+    "generated_build_scripts_type": "unreal"
   },
   "bridge": {
     "worker_claim": {
@@ -24,14 +24,13 @@
     }
   },
   "external": {
-	"default": {
-		"run_type": "EXECUTABLE_ZIP",
-		"windows": {
-			"artifactName": "UnrealClient@Windows.zip",
-			"command": "./unreal.exe",
-			"arguments": [
-			]
-		}
-	}
+    "default": {
+      "run_type": "EXECUTABLE_ZIP",
+      "windows": {
+        "artifactName": "UnrealClient@Windows.zip",
+        "command": "./unreal.exe",
+        "arguments": []
+      }
+    }
   }
 }

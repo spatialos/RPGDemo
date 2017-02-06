@@ -2,29 +2,30 @@
 
 #pragma once
 
-#include "improbable/worker.h"
 #include "Components/ActorComponent.h"
+#include "improbable/worker.h"
 #include "TransformSender.generated.h"
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UTransformSender : public UActorComponent
 {
-	GENERATED_BODY()
+  GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UTransformSender();
+public:
+  // Sets default values for this component's properties
+  UTransformSender();
 
-	// Called when the game starts
-	virtual void BeginPlay() override;
-	
-	// Called every frame
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+  // Called when the game starts
+  virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
-	bool HasAuthority() const;
+  // Called every frame
+  virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                             FActorComponentTickFunction* ThisTickFunction) override;
+
+  UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+  bool HasAuthority() const;
 
 private:
-	worker::Entity* GetEntity() const;
-	worker::EntityId EntityId;
+  worker::Entity* GetEntity() const;
+  worker::EntityId EntityId;
 };
