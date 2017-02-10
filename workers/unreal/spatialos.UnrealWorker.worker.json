@@ -1,7 +1,6 @@
 {
   "build": {
-    "tasks_filename": "spatialos.unreal.worker.build.json",
-    "generated_build_scripts_type": "unreal"
+    "tasks_filename": "spatialos.unreal.worker.build.json"
   },
   "bridge": {
     "worker_claim": {
@@ -25,6 +24,19 @@
     "windows": {
       "artifact_name": "UnrealWorker@Windows.zip",
       "command": "unrealServer.exe",
+      "arguments": [
+        "-server",
+        "-stdout",
+        "-nowrite",
+        "-unattended",
+        "-nologtimes",
+        "-nopause",
+        "-noini"
+      ]
+    },
+    "linux": {
+      "artifact_name": "UnrealWorker@Linux.zip",
+      "command": "unrealServer.sh",
       "arguments": [
         "-server",
         "-stdout",

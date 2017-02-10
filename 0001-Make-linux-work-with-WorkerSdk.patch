@@ -1,0 +1,62 @@
+From 76d461051c81450cf47e06afb8daf299f3dc6e59 Mon Sep 17 00:00:00 2001
+From: Jared Hefty <jared@improbable.io>
+Date: Fri, 10 Feb 2017 13:51:39 +0000
+Subject: [PATCH] Make things work with WorkerSdk
+
+---
+ Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs   | 6 +++++-
+ Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp | 3 +++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+index 2044ef0..749a28a 100644
+--- a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
++++ b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+@@ -307,6 +307,9 @@ namespace UnrealBuildTool
+ 
+ 		private static bool ShouldUseLibcxx(NativeBuildEnvironmentConfiguration.TargetInfo Target)
+ 		{
++            // Improbable: it's not possible to disable libc++ via the UE4_LINUX_USE_LIBCXX variable, so disable it fully.
++            return false;
++            /*
+ 			// set UE4_LINUX_USE_LIBCXX to either 0 or 1. If unset, defaults to 1.
+ 			string UseLibcxxEnvVarOverride = Environment.GetEnvironmentVariable("UE4_LINUX_USE_LIBCXX");
+ 			if (UseLibcxxEnvVarOverride != null && (UseLibcxxEnvVarOverride == "1"))
+@@ -316,6 +319,7 @@ namespace UnrealBuildTool
+ 
+ 			// at the moment only x86_64 is supported
+ 			return Target.Architecture.StartsWith("x86_64");
++            */
+         }
+ 
+ 		static string GetCLArguments_Global(CPPEnvironment CompileEnvironment)
+@@ -343,7 +347,7 @@ namespace UnrealBuildTool
+ 			Result += ArchitectureSpecificSwitches(CompileEnvironment.Config.Target.Architecture);
+ 
+ 			Result += " -fno-math-errno";               // do not assume that math ops have side effects
+-			Result += " -fno-rtti";                     // no run-time type info
++			//Result += " -fno-rtti";                     // no run-time type info
+ 
+ 			if (String.IsNullOrEmpty(ClangPath))
+ 			{
+diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+index c2f6045..0c90b9f 100644
+--- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
++++ b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+@@ -35,10 +35,13 @@ class FMalloc* FLinuxPlatformMemory::BaseAllocator()
+ 	// This makes it ideal, if unobvious, place for a root privilege check.
+ 	if (geteuid() == 0)
+ 	{
++		/* Improbable: We must currently run as root on our deployments.
+ 		fprintf(stderr, "Refusing to run with the root privileges.\n");
+ 		FPlatformMisc::RequestExit(true);
+ 		// unreachable
+ 		return nullptr;
++		*/
++		fprintf(stdout, "Running with root privileges.\n");
+ 	}
+ 
+ 	if (USE_MALLOC_BINNED2)
+-- 
+2.10.0.windows.1
+

@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{E896020E-49C0-3CA6-B829-85B1305F9370}",
+	"EngineAssociation": "{F9492074-4486-2C7A-C923-1490AE8B5735}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -10,25 +10,20 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"AIModule",
-				"Engine",
-				"SpatialOS"
+				"Engine"
 			]
 		}
 	],
-	"Plugins": [
-		{
-			"Name": "SpatialOS",
-			"Enabled": true
-		}
-	],
-	"AdditionalPluginDirectories": [
-		"/unreal/Plugins"
-	],
 	"PostBuildSteps":
 	{
-		"Win64": [
+    "Win64": [
+      "cd /D $(ProjectDir)",
+      "spatial invoke unreal package $(EngineDir) $(ProjectDir) $(ProjectFile) $(TargetPlatform) $(TargetType)",
+      "exit /B %ERRORLEVEL%"
+    ],
+    "Linux": [
 			"cd $(ProjectDir)",
-			"spatial invoke unreal package $(EngineDir) $(ProjectDir) $(ProjectFile) $(TargetPlatform) $(TargetType)"
+      "spatial invoke unreal package $(EngineDir) $(ProjectDir) $(ProjectFile) $(TargetPlatform) $(TargetType)"
 		]
 	}
 }

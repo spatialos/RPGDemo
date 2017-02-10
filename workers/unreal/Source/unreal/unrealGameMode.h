@@ -2,8 +2,8 @@
 #pragma once
 #include "GameFramework/GameMode.h"
 #include "GameFramework/GameUserSettings.h"
-#include "SpatialOS/Public/EntitySpawner.h"
-#include "SpatialOS/Public/WorkerConnection.h"
+#include "EntitySpawner.h"
+#include "WorkerConnection.h"
 #include "unrealGameMode.generated.h"
 
 UCLASS(minimalapi)
