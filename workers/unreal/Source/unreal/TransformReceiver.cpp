@@ -101,13 +101,14 @@ void UTransformReceiver::Initialise()
 
     if (!mCallbacks.IsValid())
     {
-        auto entity = GetEntity();
+        const auto* const entity = GetEntity();
 
         if (entity != nullptr)
         {
             worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
                 entity->Get<improbable::corelibrary::transforms::TransformState>();
-            if (!transform.empty())
+
+            if (!transform.empty() && !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
             {
                 mLocation = ToUnrealVector(transform->local_position());
                 mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
@@ -120,7 +121,7 @@ void UTransformReceiver::Initialise()
                 // yet
                 GetOwner()->SetActorLocation(mLocation);
                 UE_LOG(LogTemp, Warning,
-                       TEXT("Set initial position for actor (%s), position, (%s) rotation (%s)"),
+                       TEXT("UTransformReceiver: Set initial position for actor (%s), position, (%s) rotation (%s)"),
                        *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
             }
 
