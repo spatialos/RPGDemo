@@ -33,34 +33,5 @@
         "snapshots": {
             "snapshot_write_period_seconds": 0
         }
-    },
-    "workers": [
-	    {
-	      "worker_type": "UnrealWorker",
-	      "flags" : [],
-		  "load_balancing": {
-        "auto_hex_grid": {
-         "num_workers": 2
-       }
-			},
-		  "permissions": [
-	        {
-	          "all": {}
-	        }
-	      ]
-	    },
-		{
-		  "worker_type": "UnrealClient",
-		  "permissions": [
-			{
-			  "all": {}
-			}
-		  ]
-		},
-		{
-			"worker_type": "gsim",
-			"flags": [
-			]
-		}
-    ]
+    }
 }
