@@ -23,20 +23,7 @@
   "managed": {
     "windows": {
       "artifact_name": "UnrealWorker@Windows.zip",
-      "command": "unrealServer.exe",
-      "arguments": [
-        "-server",
-        "-stdout",
-        "-nowrite",
-        "-unattended",
-        "-nologtimes",
-        "-nopause",
-        "-noini"
-      ]
-    },
-    "linux": {
-      "artifact_name": "UnrealWorker@Linux.zip",
-      "command": "unrealServer.sh",
+      "command": "unreal/Binaries/Win64/unrealServer.exe",
       "arguments": [
         "-server",
         "-stdout",
@@ -53,7 +40,7 @@
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
         "artifact_name": "UnrealWorker@Windows.zip",
-        "command": "./unrealServer.exe",
+        "command": "./unreal/Binaries/Win64/unrealServer.exe",
         "arguments": [
           "-server",
           "-stdout",
