@@ -27,7 +27,7 @@ public:
 	void Init(worker::Connection& Connection, worker::View& View);
 
 private:
-	worker::Connection& Connection;
-	worker::View& View;
-	improbable::unreal::callbacks::FScopedViewCallbacks Callbacks;
+	//worker::Connection& Connection;
+	//worker::View& View;
+	//improbable::unreal::callbacks::FScopedViewCallbacks Callbacks;
 };
