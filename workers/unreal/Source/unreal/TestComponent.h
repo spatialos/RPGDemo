@@ -22,12 +22,51 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
+	void Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TestComponent")
 	const unsigned int ComponentId = 1003;
 
-	void Init(worker::Connection& Connection, worker::View& View);
+	UPROPERTY(BlueprintPure, Category = "TestComponent")
+		bool HasAuthority();
+
+	UPROPERTY(BlueprintPure, Category = "TestComponent")
+		bool IsComponentReady();
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority)
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FAuthorityChangeDelegate OnAuthorityChange;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate)
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FComponentReadyDelegate OnComponentReady;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, improbable::test::TestState::Update, update)
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FComponentUpdateDelegate OnComponentUpdate;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInt32ValDelegate, int32_t, newInt32Val)
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FInt32ValDelegate OnInt32ValUpdate;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextEventDelegate, improbable::test::StringWrapper, textEvent)
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FTextEventDelegate OnTextEvent;
 
 private:
-	//worker::Connection& Connection;
-	//worker::View& View;
-	//improbable::unreal::callbacks::FScopedViewCallbacks Callbacks;
+	TAutoPtr<worker::Connection> mConnection;
+	TAutoPtr<worker::View> mView;
+	worker::EntityId mEntityId;
+	TAutoPtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
+
+	bool mHasAuthority;
+	bool mIsComponentReady;
+
+	int32_t mInt32Val;
+
+	void OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op);
+	void OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState> op);
+	void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp op);
+	void OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState> op);
+	void ApplyComponentUpdate(const improbable::test::TestState::Update update);
 };

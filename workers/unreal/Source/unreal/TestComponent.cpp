@@ -10,7 +10,12 @@ UTestComponent::UTestComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	mConnection = nullptr;
+	mView = nullptr;
+	mCallbacks = nullptr;
+
+	mHasAuthority = false;
+	mIsComponentReady = false;
 }
 
 
@@ -31,6 +36,97 @@ void UTestComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
-void UTestComponent::Init(worker::Connection& Connection, worker::View& View)
+void UTestComponent::Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId)
 {
+	mConnection.Reset(&Connection);
+	mView.Reset(&View);
+	mEntityId = EntityId;
+	mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(View));
+
+	mCallbacks->Add(mView->OnAuthorityChange<improbable::test::TestState>(
+		std::bind(&UTestComponent::OnAuthorityChangeDispatcherCallback, this, std::placeholders::_1)
+	));
+	mCallbacks->Add(mView->OnAddComponent<improbable::test::TestState>(
+		std::bind(&UTestComponent::OnAddComponentDispatcherCallback, this, std::placeholders::_1)
+	));
+	mCallbacks->Add(mView->OnRemoveComponent<improbable::test::TestState>(
+		std::bind(&UTestComponent::OnRemoveComponentDispatcherCallback, this, std::placeholders::_1)
+	));
+	mCallbacks->Add(mView->OnComponentUpdate<improbable::test::TestState>(
+		std::bind(&UTestComponent::OnComponentUpdateDispatcherCallback, this, std::placeholders::_1)
+	));
+}
+
+bool UTestComponent::HasAuthority()
+{
+	return mHasAuthority;
+}
+
+bool UTestComponent::IsComponentReady()
+{
+	return mIsComponentReady;
+}
+
+void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
+{
+	if (op.EntityId != mEntityId)
+	{
+		return;
+	}
+	mHasAuthority = op.HasAuthority;
+	OnAuthorityChange.Broadcast(op.HasAuthority);
+}
+
+void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState> op)
+{
+	if (op.EntityId != mEntityId)
+	{
+		return;
+	}
+	auto update = improbable::test::TestState::Update::FromInitialData(op.Data);
+	ApplyComponentUpdate(update);
+}
+
+void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp op)
+{
+	if (op.EntityId != mEntityId)
+	{
+		return;
+	}
+	mIsComponentReady = false;
+}
+
+void UTestComponent::OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState> op)
+{
+	if (op.EntityId != mEntityId)
+	{
+		return;
+	}
+	auto update = op.Update;
+	ApplyComponentUpdate(update);
+}
+
+void UTestComponent::ApplyComponentUpdate(const improbable::test::TestState::Update update)
+{
+	if (!update.int32_val().empty())
+	{
+		mInt32Val = *update.int32_val().data();
+		OnInt32ValUpdate.Broadcast(mInt32Val);
+	}
+
+	if (!update.text_event().empty())
+	{
+		for (auto &val : update.text_event())
+		{
+			OnTextEvent.Broadcast(val);
+		}
+	}
+
+	OnComponentUpdate.Broadcast(update);
+
+	if (!mIsComponentReady)
+	{
+		mIsComponentReady = true;
+		OnComponentReady.Broadcast();
+	}
 }
