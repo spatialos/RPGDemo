@@ -1,0 +1,41 @@
+package improbable.test;
+
+type StringWrapper {
+	string string_val = 1;
+}
+
+type DamageRequest {
+	uint32 amount = 1;
+}
+
+type DamageResponse {
+	uint32 dealt_damage = 2;
+}
+
+component TestState {
+	id = 1003;
+
+	int32 int32_val = 1;
+	int64 int64_val = 2;
+	uint32 uint32_val = 3;
+	uint64 uint64_val = 4;
+	sint32 sint32_val = 5;
+	sint64 sint64_val = 6;
+	fixed32 fixed32_val = 7;
+	sfixed32 sfixed32_val = 8;
+	fixed64 fixed64_val = 9;
+	fixed64 sfixed64_val = 10;
+	float float_val = 11;
+	double double_val = 12;
+	string string_val = 13;
+	bytes bytes_val = 14;
+	Coordinates coordinates_val = 15;
+	Vector3d vector3d_val = 16;
+	Vector3f vector3f_val = 17;
+	EntityId entityid_val = 18;
+	EntityPosition entityposition_val = 19;
+
+	event StringWrapper text_event;
+
+	command DamageRequest damage returns DamageResponse;
+}
