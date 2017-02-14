@@ -24,8 +24,6 @@ void UTransformSender::BeginPlay()
 {
     Super::BeginPlay();
     EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
-    UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Initial entity id got set to (%s)"),
-           *ToString(EntityId))
 }
 
 // Called every frame
@@ -37,43 +35,34 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
     if (EntityId == -1)
     {
         EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
-        UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Entity id not set to a valid entity id, "
-                                      "getting new entity id %s"),
-               *ToString(EntityId));
 
-		if(EntityId != -1)
-		{
-			const auto* const entity = GetEntity();
+        if (EntityId != -1)
+        {
+            const auto* const entity = GetEntity();
 
-			if (entity != nullptr)
-			{
-				worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
-					entity->Get<improbable::corelibrary::transforms::TransformState>();
+            if (entity != nullptr)
+            {
+                worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
+                    entity->Get<improbable::corelibrary::transforms::TransformState>();
 
-				if (!transform.empty() && HasAuthority())
-				{
-					FVector location = ToUnrealVector(transform->local_position());
-					FQuat rotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
+                if (!transform.empty() && HasAuthority())
+                {
+                    FVector location = ToUnrealVector(transform->local_position());
+                    FQuat rotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
 
-					auto* const owner = GetOwner();
-					owner->SetActorLocation(location);
-					owner->SetActorRotation(rotation);
-
-					UE_LOG(LogTemp, Warning,
-						TEXT("UTransformSender: Set initial position for actor (%s), position, (%s) rotation (%s)"),
-						*GetOwner()->GetName(), *location.ToString(), *rotation.ToString())
-				}
-			}
-		}
+                    auto* const owner = GetOwner();
+                    owner->SetActorLocation(location);
+                    owner->SetActorRotation(rotation);
+                }
+            }
+        }
 
         return;
     }
 
     if (!HasAuthority())
-    {
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Entity id %s did not have authority on the transform sender, actor name %s"),
-			*ToString(EntityId), *GetOwner()->GetName());
-		return;
+	{
+        return;
     }
 
     FVector location = GetOwner()->GetActorLocation();
@@ -93,10 +82,7 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
             improbable::corelibrary::transforms::TransformState::Update update;
             update.set_local_position(locationUpdate);
             update.set_local_rotation(rotationUpdate);
-
-			UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Sending transform state update position %s, rotation %s"),
-				*location.ToString(), *rotation.ToString());
-
+			
             entity->Update<improbable::corelibrary::transforms::TransformState>(update);
             FWorkerConnection::GetConnection()
                 .SendComponentUpdate<improbable::corelibrary::transforms::TransformState>(EntityId,
@@ -117,8 +103,6 @@ bool UTransformSender::HasAuthority() const
 
 worker::Entity* UTransformSender::GetEntity() const
 {
-    UE_LOG(LogTemp, Warning, TEXT("UTransformSender: trying to get entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
     auto it = FWorkerConnection::GetView().Entities.find(EntityId);
     if (it == FWorkerConnection::GetView().Entities.end())
     {
@@ -127,7 +111,6 @@ worker::Entity* UTransformSender::GetEntity() const
                *ToString(EntityId), *GetOwner()->GetName())
         return nullptr;
     }
-    UE_LOG(LogTemp, Warning, TEXT("UTransformSender: successfully got entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
+
     return &(it->second);
 }
