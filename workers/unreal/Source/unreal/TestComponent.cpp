@@ -36,6 +36,11 @@ void UTestComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
+int UTestComponent::GetComponentId()
+{
+	return mComponentId;
+}
+
 void UTestComponent::Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId)
 {
 	mConnection.Reset(&Connection);
@@ -55,6 +60,10 @@ void UTestComponent::Init(worker::Connection& Connection, worker::View& View, wo
 	mCallbacks->Add(mView->OnComponentUpdate<improbable::test::TestState>(
 		std::bind(&UTestComponent::OnComponentUpdateDispatcherCallback, this, std::placeholders::_1)
 	));
+
+	mCallbacks->Add(mView->OnCommandRequest<improbable::test::TestState::Commands::Damage>(
+		std::bind(&UTestComponent::OnDamageCommandRequestDispatcherCallback, this, std::placeholders::_1)
+	));
 }
 
 bool UTestComponent::HasAuthority()
@@ -67,6 +76,11 @@ bool UTestComponent::IsComponentReady()
 	return mIsComponentReady;
 }
 
+int UTestComponent::GetInt32Val()
+{
+	return mInt32Val;
+}
+
 void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
 {
 	if (op.EntityId != mEntityId)
@@ -77,7 +91,7 @@ void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::Authority
 	OnAuthorityChange.Broadcast(op.HasAuthority);
 }
 
-void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState> op)
+void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op)
 {
 	if (op.EntityId != mEntityId)
 	{
@@ -87,7 +101,7 @@ void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponent
 	ApplyComponentUpdate(update);
 }
 
-void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp op)
+void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op)
 {
 	if (op.EntityId != mEntityId)
 	{
@@ -96,7 +110,7 @@ void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveCom
 	mIsComponentReady = false;
 }
 
-void UTestComponent::OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState> op)
+void UTestComponent::OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState>& op)
 {
 	if (op.EntityId != mEntityId)
 	{
@@ -106,7 +120,7 @@ void UTestComponent::OnComponentUpdateDispatcherCallback(const worker::Component
 	ApplyComponentUpdate(update);
 }
 
-void UTestComponent::ApplyComponentUpdate(const improbable::test::TestState::Update update)
+void UTestComponent::ApplyComponentUpdate(const improbable::test::TestState::Update& update)
 {
 	if (!update.int32_val().empty())
 	{
@@ -116,17 +130,28 @@ void UTestComponent::ApplyComponentUpdate(const improbable::test::TestState::Upd
 
 	if (!update.text_event().empty())
 	{
-		for (auto &val : update.text_event())
+		for (auto& val : update.text_event())
 		{
-			OnTextEvent.Broadcast(val);
+			OnTextEvent.Broadcast(new UStringWrapper(val));
 		}
 	}
 
-	OnComponentUpdate.Broadcast(update);
+	OnComponentUpdate.Broadcast(new UTestStateUpdate(update));
 
 	if (!mIsComponentReady)
 	{
 		mIsComponentReady = true;
 		OnComponentReady.Broadcast();
 	}
+}
+
+void UTestComponent::OnDamageCommandRequestDispatcherCallback(const worker::CommandRequestOp<improbable::test::TestState::Commands::Damage>& op)
+{
+	if (op.EntityId != mEntityId)
+	{
+		return;
+	}
+	auto request = new UDamageRequest(op.Request);
+	auto responder = new UDamageCommandResponder(op.RequestId.Id, request);
+	OnDamageCommandRequest.Broadcast(responder);
 }

@@ -5,6 +5,9 @@
 #include "Components/ActorComponent.h"
 #include "improbable/test/test.h"
 #include "ScopedViewCallbacks.h"
+#include "TestStateUpdate.h"
+#include "StringWrapper.h"
+#include "DamageCommandResponder.h"
 #include "TestComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,49 +27,59 @@ public:
 
 	void Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TestComponent")
-	const unsigned int ComponentId = 1003;
+	UFUNCTION(BlueprintPure, Category = "TestComponent")
+		int GetComponentId();
 
-	UPROPERTY(BlueprintPure, Category = "TestComponent")
+	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		bool HasAuthority();
 
-	UPROPERTY(BlueprintPure, Category = "TestComponent")
+	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		bool IsComponentReady();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority)
+	UFUNCTION(BlueprintPure, Category = "TestComponent")
+		int GetInt32Val();
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FAuthorityChangeDelegate OnAuthorityChange;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FComponentReadyDelegate OnComponentReady;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, improbable::test::TestState::Update, update)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, UTestStateUpdate*, update);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FComponentUpdateDelegate OnComponentUpdate;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInt32ValDelegate, int32_t, newInt32Val)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInt32ValDelegate, int, newInt32Val);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FInt32ValDelegate OnInt32ValUpdate;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextEventDelegate, improbable::test::StringWrapper, textEvent)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextEventDelegate, UStringWrapper*, textEvent);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FTextEventDelegate OnTextEvent;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDamageCommandRequestDelegate, UDamageCommandResponder*, responder);
+	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+		FDamageCommandRequestDelegate OnDamageCommandRequest;
+
 private:
-	TAutoPtr<worker::Connection> mConnection;
-	TAutoPtr<worker::View> mView;
+	const int mComponentId = 1003;
+	TUniquePtr<worker::Connection> mConnection;
+	TUniquePtr<worker::View> mView;
 	worker::EntityId mEntityId;
-	TAutoPtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
+	TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
 
 	bool mHasAuthority;
 	bool mIsComponentReady;
 
-	int32_t mInt32Val;
+	int mInt32Val;
 
 	void OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op);
-	void OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState> op);
-	void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp op);
-	void OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState> op);
-	void ApplyComponentUpdate(const improbable::test::TestState::Update update);
+	void OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op);
+	void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op);
+	void OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState>& op);
+	void ApplyComponentUpdate(const improbable::test::TestState::Update& update);
+
+	void OnDamageCommandRequestDispatcherCallback(const worker::CommandRequestOp<improbable::test::TestState::Commands::Damage>& op);
 };
