@@ -51,7 +51,7 @@
             "invoke",
             "unreal",
             "build",
-            "--target=",
+            "--target=Server",
             "--configuration=Development",
             "--platform=Win64"
           ]

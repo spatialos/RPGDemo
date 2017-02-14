@@ -31,49 +31,48 @@ public class unreal : ModuleRules
 		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Usr")); }
 	}
 
-  public unreal(TargetInfo Target)
+	public unreal(TargetInfo Target)
 	{
-
         var SpatialOS = new SpatialOSModule(this, Target);
-SpatialOS.SetupSpatialOS();
+		SpatialOS.SetupSpatialOS();
 		if (UEBuildConfiguration.bCleanProject)
-    {
-        SpatialOS.RunSpatial("process_schema clean --language=cpp_unreal " + SpatialOS.QuoteString(GeneratedCodeDir));
-    }
-    else
-    {
-        var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
-            " --output=" + SpatialOS.QuoteString(CoreLibraryDir) +
-            " --language=cpp_unreal" +
-            " --intermediate_proto_dir=.spatialos/schema_codegen_proto_cl" +
-            " --input=../../build/dependencies/schema/CoreLibrary";
+		{
+			SpatialOS.RunSpatial("process_schema clean --language=cpp_unreal " + SpatialOS.QuoteString(GeneratedCodeDir));
+		}
+		else
+		{
+			var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
+				" --output=" + SpatialOS.QuoteString(CoreLibraryDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_cl" +
+				" --input=../../build/dependencies/schema/CoreLibrary";
 
-        SpatialOS.RunSpatial(cl);
+			SpatialOS.RunSpatial(cl);
 
 			var std = "process_schema --cachePath=.spatialos/schema_codegen_cache_std" +
-                " --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
-                " --language=cpp_unreal" +
-                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
-                " --input=../../build/dependencies/schema/WorkerSdkSchema";
+				" --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
+				" --input=../../build/dependencies/schema/WorkerSdkSchema";
 
 			SpatialOS.RunSpatial(std);
 
 			var user = "process_schema --cachePath=.spatialos/schema_codegen_cache_usr" +
-                " --output=" + SpatialOS.QuoteString(UserSchemaDir) +
-                " --language=cpp_unreal" +
-                " --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
-                " --input=../../schema";
+				" --output=" + SpatialOS.QuoteString(UserSchemaDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
+				" --input=../../schema";
 
-            SpatialOS.RunSpatial(user);
-        }
+			SpatialOS.RunSpatial(user);
+		}
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-	    PublicIncludePaths.AddRange(new[]
-	    {
-	        Path.GetFullPath(CoreLibraryDir),
-	        Path.GetFullPath(StandardLibraryDir),
-			       Path.GetFullPath(UserSchemaDir)
-	    });
+		PublicIncludePaths.AddRange(new[]
+		{
+			Path.GetFullPath(CoreLibraryDir),
+			Path.GetFullPath(StandardLibraryDir),
+				   Path.GetFullPath(UserSchemaDir)
+		});
 	}
 }

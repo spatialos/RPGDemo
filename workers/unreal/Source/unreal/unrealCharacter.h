@@ -6,61 +6,60 @@
 UCLASS(Blueprintable)
 class AunrealCharacter : public ACharacter
 {
-  GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
-  AunrealCharacter();
+  public:
+    AunrealCharacter();
 
-  // Called every frame.
-  virtual void Tick(float DeltaSeconds) override;
+    // Called every frame.
+    virtual void Tick(float DeltaSeconds) override;
 
-  virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
+    /** Returns TopDownCameraComponent subobject **/
+    FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const
+    {
+        return TopDownCameraComponent;
+    }
+    /** Returns CameraBoom subobject **/
+    FORCEINLINE class USpringArmComponent* GetCameraBoom() const
+    {
+        return CameraBoom;
+    }
 
-  /** Returns TopDownCameraComponent subobject **/
-  FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const
-  {
-    return TopDownCameraComponent;
-  }
-  /** Returns CameraBoom subobject **/
-  FORCEINLINE class USpringArmComponent* GetCameraBoom() const
-  {
-    return CameraBoom;
-  }
+    FORCEINLINE class UTransformReceiver* GetTransformReceiver() const
+    {
+        return TransformReceiver;
+    }
 
-  FORCEINLINE class UTransformReceiver* GetTransformReceiver() const
-  {
-    return TransformReceiver;
-  }
+  private:
+    void UpdateCursorPosition() const;
+    void Initialise();
+    void InitialiseAsOwnPlayer();
+    void InitialiseAsOtherPlayer();
 
-private:
-  void UpdateCursorPosition() const;
-  void Initialise();
-  void InitialiseAsOwnPlayer();
-  void InitialiseAsOtherPlayer();
+    /** Top down camera */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
+              meta = (AllowPrivateAccess = "true"))
+    class UCameraComponent* TopDownCameraComponent;
 
-  /** Top down camera */
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
-            meta = (AllowPrivateAccess = "true"))
-  class UCameraComponent* TopDownCameraComponent;
+    /** Camera boom positioning the camera above the character */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
+              meta = (AllowPrivateAccess = "true"))
+    class USpringArmComponent* CameraBoom;
 
-  /** Camera boom positioning the camera above the character */
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
-            meta = (AllowPrivateAccess = "true"))
-  class USpringArmComponent* CameraBoom;
+    /** A decal that projects to the cursor location. */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
+              meta = (AllowPrivateAccess = "true"))
+    class UDecalComponent* CursorToWorld;
 
-  /** A decal that projects to the cursor location. */
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
-            meta = (AllowPrivateAccess = "true"))
-  class UDecalComponent* CursorToWorld;
+    /** The transform receiver */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
+              meta = (AllowPrivateAccess = "true"))
+    class UTransformReceiver* TransformReceiver;
 
-  /** The transform receiver */
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
-            meta = (AllowPrivateAccess = "true"))
-  class UTransformReceiver* TransformReceiver;
-
-  /** The transform sender */
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
-            meta = (AllowPrivateAccess = "true"))
-  class UTransformSender* TransformSender;
+    /** The transform sender */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
+              meta = (AllowPrivateAccess = "true"))
+    class UTransformSender* TransformSender;
 };

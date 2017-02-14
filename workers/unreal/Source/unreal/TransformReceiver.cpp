@@ -108,7 +108,8 @@ void UTransformReceiver::Initialise()
             worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
                 entity->Get<improbable::corelibrary::transforms::TransformState>();
 
-            if (!transform.empty() && !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
+            if (!transform.empty() &&
+                !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
             {
                 mLocation = ToUnrealVector(transform->local_position());
                 mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
@@ -120,8 +121,8 @@ void UTransformReceiver::Initialise()
                 // accurate
                 // yet
                 GetOwner()->SetActorLocation(mLocation);
-                UE_LOG(LogTemp, Warning,
-                       TEXT("UTransformReceiver: Set initial position for actor (%s), position, (%s) rotation (%s)"),
+                UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Set initial position for actor "
+                                              "(%s), position, (%s) rotation (%s)"),
                        *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
             }
 
@@ -138,8 +139,6 @@ void UTransformReceiver::Initialise()
 
 worker::Entity* UTransformReceiver::GetEntity() const
 {
-    UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: trying to get entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
     auto it = FWorkerConnection::GetView().Entities.find(EntityId);
     if (it == FWorkerConnection::GetView().Entities.end())
     {
@@ -148,7 +147,6 @@ worker::Entity* UTransformReceiver::GetEntity() const
                *ToString(EntityId), *GetOwner()->GetName())
         return nullptr;
     }
-    UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: successfully got entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
+	
     return &(it->second);
 }
