@@ -106,11 +106,7 @@ worker::Entity* UTransformSender::GetEntity() const
     auto it = FWorkerConnection::GetView().Entities.find(EntityId);
     if (it == FWorkerConnection::GetView().Entities.end())
     {
-        UE_LOG(LogTemp, Warning,
-               TEXT("UTransformSender: returned nullptr trying to get entity %s on Actor %s"),
-               *ToString(EntityId), *GetOwner()->GetName())
         return nullptr;
     }
-
     return &(it->second);
 }
