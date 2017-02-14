@@ -27,7 +27,7 @@
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
         "artifactName": "UnrealClient@Windows.zip",
-        "command": "./unreal.exe",
+        "command": "./unreal/Binaries/Win64/unreal.exe",
         "arguments": []
       }
     }
