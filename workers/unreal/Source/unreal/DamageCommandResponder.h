@@ -3,7 +3,9 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
+#include "improbable/test/test.h"
 #include "DamageRequest.h"
+#include "DamageResponse.h"
 #include "DamageCommandResponder.generated.h"
 
 /**
@@ -16,7 +18,9 @@ class UNREAL_API UDamageCommandResponder : public UObject
 	
 public:
 	UDamageCommandResponder();
-	UDamageCommandResponder(uint32_t requestId, UDamageRequest* request);
+	UDamageCommandResponder(worker::Connection* connection, 
+		worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>> requestId,
+		UDamageRequest* request);
 	
 	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		UDamageRequest* GetRequest();
@@ -25,6 +29,7 @@ public:
 		void SendResponse(UDamageResponse* response);
 
 private:
-	uint32_t mRequestId;
+	TUniquePtr<worker::Connection> mConnection;
+	worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>> mRequestId;
 	TUniquePtr<UDamageRequest> mRequest;
 };

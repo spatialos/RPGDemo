@@ -152,6 +152,6 @@ void UTestComponent::OnDamageCommandRequestDispatcherCallback(const worker::Comm
 		return;
 	}
 	auto request = new UDamageRequest(op.Request);
-	auto responder = new UDamageCommandResponder(op.RequestId.Id, request);
+	auto responder = new UDamageCommandResponder(mConnection.Get(), op.RequestId, request);
 	OnDamageCommandRequest.Broadcast(responder);
 }

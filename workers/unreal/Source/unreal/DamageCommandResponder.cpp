@@ -7,8 +7,11 @@ UDamageCommandResponder::UDamageCommandResponder()
 {
 }
 
-UDamageCommandResponder::UDamageCommandResponder(worker::Connection* Connection, uint32_t requestId, UDamageRequest* request)
+UDamageCommandResponder::UDamageCommandResponder(worker::Connection* connection, 
+	worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>> requestId, 
+	UDamageRequest* request)
 {
+	mConnection.Reset(connection);
 	mRequestId = requestId;
 	mRequest.Reset(request);
 }
@@ -20,5 +23,6 @@ UDamageRequest* UDamageCommandResponder::GetRequest()
 
 void UDamageCommandResponder::SendResponse(UDamageResponse* response)
 {
-
+	auto rawResponse = response->GetRawDamageResponse();
+	mConnection->SendCommandResponse(mRequestId, improbable::test::TestState::Commands::Damage::Response(*rawResponse));
 }
