@@ -101,14 +101,14 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
 
     auto workerAttributeList =
         worker::List<improbable::WorkerAttribute>({worker::Option<std::string>("UnrealWorker")});
-    auto clientClaimAtomList =
+    auto clientAttributeList =
         worker::List<improbable::WorkerAttribute>({worker::Option<std::string>("UnrealClient")});
     auto workerAttributeSets =
-        worker::List<improbable::WorkerAttributeSet>({{workerAttributeList}, {clientClaimAtomList}});
+        worker::List<improbable::WorkerAttributeSet>({{workerAttributeList}, {clientAttributeList}});
 
-    improbable::WorkerRequirementSet workerClientPredicate(workerAttributeSets);
+    improbable::WorkerRequirementSet workerRequirmentSet(workerAttributeSets);
 
-    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(workerClientPredicate, componentAcl));
+    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(workerRequirmentSet, componentAcl));
 
     return snapshotEntity;
 }
