@@ -20,6 +20,6 @@ public class unrealTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.Add("unreal");
-	}
+        OutExtraModuleNames.AddRange(new[] { "unreal" });
+    }
 }

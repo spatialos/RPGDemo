@@ -13,4 +13,4 @@ class DemonstrationLaunchConfig(useDynamicEngineSpooling: Boolean) extends {} wi
 
 object ManualEngineStartupLaunchConfig extends DemonstrationLaunchConfig(useDynamicEngineSpooling = false)
 
-object AutomaticEngineStartupLaunchConfig extends DemonstrationLaunchConfig(useDynamicEngineSpooling = true)
+object AutomaticEngineStartupLaunchConfig extends DemonstrationLaunchConfig(useDynamicEngineSpooling = false)

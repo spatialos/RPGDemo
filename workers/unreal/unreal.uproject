@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.12",
+	"EngineAssociation": "4.14",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -13,5 +13,17 @@
 				"Engine"
 			]
 		}
-	]
+	],
+	"PostBuildSteps":
+	{
+		"Win64": [
+			"cd /D \"$(ProjectDir)\"",
+			"spatial invoke unreal package \"$(EngineDir)\" \"$(ProjectDir)\" \"$(ProjectFile)\" \"$(TargetPlatform)\" \"$(TargetType)\"",
+			"exit /B %ERRORLEVEL%"
+		],
+		"Linux": [
+			"cd \"$(ProjectDir)\"",
+			"spatial invoke unreal package \"$(EngineDir)\" \"$(ProjectDir)\" \"$(ProjectFile)\" \"$(TargetPlatform)\" \"$(TargetType)\""
+		]
+	}
 }

@@ -2,32 +2,37 @@
 #pragma once
 #include "GameFramework/GameMode.h"
 #include "GameFramework/GameUserSettings.h"
-#include "SpatialOS/Public/WorkerConnection.h"
-#include "SpatialOS/Public/EntitySpawner.h"
+#include "EntitySpawner.h"
+#include "WorkerConnection.h"
 #include "unrealGameMode.generated.h"
 
 UCLASS(minimalapi)
 class AunrealGameMode : public AGameMode
 {
-	GENERATED_BODY()
+  GENERATED_BODY()
 
 public:
-	AunrealGameMode();
+  AunrealGameMode();
+  virtual ~AunrealGameMode();
+
+  static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
+  {
+    return Instance->Spawner.GetOwnedPointer();
+  }
 
 private:
-	void StartPlay() override;
-	void Tick(float DeltaTime) override;
+  void StartPlay() override;
+  void Tick(float DeltaTime) override;
 
-	TAutoPtr<improbable::unreal::core::FWorkerConnection> Connection;
-	TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
+  TAutoPtr<improbable::unreal::core::FWorkerConnection> Connection;
+  TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
 
-	static void AunrealGameMode::ConfigureWindowSize();
-	void AunrealGameMode::CreateWorkerConnection();
-	void AunrealGameMode::RegisterEntityBlueprints();
+  static void ConfigureWindowSize();
+  void CreateWorkerConnection();
+  void RegisterEntityBlueprints();
 
-	static void AunrealGameMode::MakeWindowed(int32 Width, int32 Height);
-	static UGameUserSettings* AunrealGameMode::GetGameUserSettings();
+  static void MakeWindowed(int32 Width, int32 Height);
+  static UGameUserSettings* GetGameUserSettings();
+
+  static AunrealGameMode* Instance;
 };
-
-
-

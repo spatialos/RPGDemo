@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class unrealEditorTarget : TargetRules
+public class unrealServerTarget : TargetRules
 {
-	public unrealEditorTarget(TargetInfo Target)
+	public unrealServerTarget(TargetInfo Target)
 	{
-		Type = TargetType.Editor;
+		Type = TargetType.Server;
 	}
 
 	//
@@ -20,6 +20,6 @@ public class unrealEditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-        OutExtraModuleNames.AddRange(new[] { "unreal" });
-    }
+		OutExtraModuleNames.AddRange(new [] { "unreal" });
+	}
 }

@@ -51,68 +51,55 @@
       "modules": [
         {
           "name": "ReceptionistModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "DevWorldRestApiModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "BridgeOracleModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "BridgeModuleOracleModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "AssetDatabaseModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "EngineStartupModuleOracleModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "InspectionRestModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "PersistenceModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "RouterModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "EngineStartupModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "WorldAppSupervisorModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "WorldAppOracleModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "ProfilingModule",
-          "params": [
-          ]
+          "params": []
         },
         {
           "name": "GSimBridgeModule",

@@ -1,34 +1,78 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
+using System;
+using System.Collections.Generic;
 using UnrealBuildTool;
 using System.IO;
 
-public class unreal : SpatialOSModuleRules
+public class unreal : ModuleRules
 {
-    private string CoreLibraryDir
+	/// <summary>
+    /// Schema files are processed and output to this folder. It should be within
+    /// the current module so the types are accessible to the game.
+    /// </summary>
+    protected string GeneratedCodeDir
     {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "CoreLibrary")); }
+        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
     }
 
-    public unreal(TargetInfo Target) : base(Target)
+	private string CoreLibraryDir
+    {
+        get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "CoreLibrary")); }
+    }
+
+	private string StandardLibraryDir
 	{
-        // Add a dependency on CoreLibrary.
-        WorkerPackage("unreal", "improbable_corelibrary", CoreLibraryDir);
-        PrivateIncludePaths.Add(Path.Combine(CoreLibraryDir, "Generated"));
+		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Std")); }
+	}
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+	private string UserSchemaDir
+	{
+		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Usr")); }
+	}
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
+	public unreal(TargetInfo Target)
+	{
+        var SpatialOS = new SpatialOSModule(this, Target);
+		SpatialOS.SetupSpatialOS();
+		if (UEBuildConfiguration.bCleanProject)
+		{
+			SpatialOS.RunSpatial("process_schema clean --language=cpp_unreal " + SpatialOS.QuoteString(GeneratedCodeDir));
+		}
+		else
+		{
+			var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
+				" --output=" + SpatialOS.QuoteString(CoreLibraryDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_cl" +
+				" --input=../../build/dependencies/schema/CoreLibrary";
 
-        switch (Target.Configuration)
-        {
-            case UnrealTargetConfiguration.Shipping:
-                Definitions.Add("UNREAL_FSIM=1");
-                break;
+			SpatialOS.RunSpatial(cl);
 
-            default:
-                Definitions.Add("UNREAL_CLIENT=1");
-                break;
-        }
-    }
+			var std = "process_schema --cachePath=.spatialos/schema_codegen_cache_std" +
+				" --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
+				" --input=../../build/dependencies/schema/WorkerSdkSchema";
+
+			SpatialOS.RunSpatial(std);
+
+			var user = "process_schema --cachePath=.spatialos/schema_codegen_cache_usr" +
+				" --output=" + SpatialOS.QuoteString(UserSchemaDir) +
+				" --language=cpp_unreal" +
+				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
+				" --input=../../schema";
+
+			SpatialOS.RunSpatial(user);
+		}
+
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+
+		PublicIncludePaths.AddRange(new[]
+		{
+			Path.GetFullPath(CoreLibraryDir),
+			Path.GetFullPath(StandardLibraryDir),
+				   Path.GetFullPath(UserSchemaDir)
+		});
+	}
 }

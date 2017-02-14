@@ -2,8 +2,6 @@
 
 #include "unreal.h"
 
-
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, unreal, "unreal" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, unreal, "unreal");
 
 DEFINE_LOG_CATEGORY(Logunreal)
- 

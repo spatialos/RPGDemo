@@ -11,8 +11,8 @@ import improbable.bridgesettings.UnrealFsimBridgeSettings
 class UnrealFsimDescriptor extends DownloadableEngineDescriptor {
   def enginePlatform = UnrealFsimBridgeSettings.UNREAL_FSIM_TYPE
 
-  override def startCommand(config: EngineStartConfig, enginePath: Path): Seq[String] = {
-    val result = Seq(makeExecutablePath(enginePath).toString)
+  override def startCommand(config: EngineStartConfig): Seq[String] = {
+    val result = Seq("")
 //      config.receptionistIp,
 //      "7777",
 //      config.engineId)
