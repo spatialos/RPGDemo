@@ -89,24 +89,24 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
         Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
     snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
 
-    improbable::WorkerPredicate workerPredicate({{{{{"UnrealWorker"}}}}});
-    improbable::WorkerPredicate clientPredicate({{{{{"UnrealClient"}}}}});
+    improbable::WorkerRequirementSet workerRequirementSet({{{{{"UnrealWorker"}}}}});
+    improbable::WorkerRequirementSet clientPredicate({{{{{"UnrealClient"}}}}});
 
-    worker::Map<std::uint32_t, improbable::WorkerPredicate> componentAuthority;
+    worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
 
-    componentAuthority.emplace(Prefab::ComponentId, workerPredicate);
-    componentAuthority.emplace(TransformState::ComponentId, workerPredicate);
+    componentAuthority.emplace(Prefab::ComponentId, workerRequirementSet);
+    componentAuthority.emplace(TransformState::ComponentId, workerRequirementSet);
 
     improbable::ComponentAcl componentAcl(componentAuthority);
 
-    auto workerClaimAtomList =
-        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealWorker")});
+    auto workerAttributeList =
+        worker::List<improbable::WorkerAttribute>({worker::Option<std::string>("UnrealWorker")});
     auto clientClaimAtomList =
-        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealClient")});
-    auto workerClaims =
-        worker::List<improbable::WorkerClaim>({{workerClaimAtomList}, {clientClaimAtomList}});
+        worker::List<improbable::WorkerAttribute>({worker::Option<std::string>("UnrealClient")});
+    auto workerAttributeSets =
+        worker::List<improbable::WorkerAttributeSet>({{workerAttributeList}, {clientClaimAtomList}});
 
-    improbable::WorkerPredicate workerClientPredicate(workerClaims);
+    improbable::WorkerRequirementSet workerClientPredicate(workerAttributeSets);
 
     snapshotEntity.Add<EntityAcl>(EntityAcl::Data(workerClientPredicate, componentAcl));
 

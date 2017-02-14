@@ -6,7 +6,7 @@ import improbable.papi.entity.{Entity, EntityBehaviour}
 import improbable.unity.papi.SpecificEngineConstraint
 
 class DelegateTransformStateToClient (entity: Entity) extends EntityBehaviour{
-  override def onReady(): Unit = {
+  override def onReady(migrating: Boolean): Unit = {
     entity.delegateState[TransformState](SpecificEngineConstraint(EntityOwnerUtils.ownerIdOf(entity)))
   }
 }

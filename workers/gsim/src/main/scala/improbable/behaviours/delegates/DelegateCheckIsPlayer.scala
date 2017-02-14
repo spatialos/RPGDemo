@@ -8,7 +8,7 @@ import improbable.unity.papi.SpecificEngineConstraint
 
 class DelegateCheckIsPlayer(entity: Entity) extends EntityBehaviour {
 
-  override def onReady(): Unit = {
+  override def onReady(migrating: Boolean): Unit = {
     entity.delegateState[CheckIsPlayer](SpecificEngineConstraint(EntityOwnerUtils.ownerIdOf(entity)))
   }
 
