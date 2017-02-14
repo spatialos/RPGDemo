@@ -75,7 +75,7 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     snapshotEntity.Add<Prefab>(Prefab::Data("Npc"));
     snapshotEntity.Add<TagsData>(TagsData::Data(worker::List<std::string>()));
     snapshotEntity.Add<TransformState>(TransformState::Data(
-        FixedPointVector3(ToFixedPoint(0, 4, 0)), Quaternion32(ToQuaternion32(0, 0, 0, 1)),
+        ToFixedPoint(0, 4, 0), ToQuaternion32(0, 0, 0, 1),
         Parent(-1, ""), Vector3d(0, 0, 0), Vector3f(0, 0, 0), Vector3f(0, 0, 0), false, 0.0f));
     snapshotEntity.Add<GlobalTransformState>(GlobalTransformState::Data(
         Coordinates(0, 4, 0), Quaternion(0, 0, 0, 1), Vector3d(0, 0, 0), 0.0f));

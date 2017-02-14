@@ -56,16 +56,10 @@ void UTransformReceiver::ParseTransformStateUpdate(
     if (!loc.empty())
     {
         mLocation = ToUnrealVector(*loc);
-        UE_LOG(LogTemp, Warning,
-               TEXT("UTransformReceiver: Received actor (%s) position update (%s)"),
-               *GetOwner()->GetName(), *mLocation.ToString())
     }
     if (!rot.empty())
     {
         mRotation = ToUnrealQuaternion((*rot).quaternion());
-        UE_LOG(LogTemp, Warning,
-               TEXT("UTransformReceiver: Received actor (%s) rotation update (%s)"),
-               *GetOwner()->GetName(), *mRotation.ToString())
     }
 }
 
@@ -93,9 +87,6 @@ void UTransformReceiver::Initialise()
     if (EntityId == -1)
     {
         EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
-        UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Entity id not set to a valid entity id, "
-                                      "getting new entity id %s"),
-               *ToString(EntityId))
         return;
     }
 
@@ -121,9 +112,6 @@ void UTransformReceiver::Initialise()
                 // accurate
                 // yet
                 GetOwner()->SetActorLocation(mLocation);
-                UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Set initial position for actor "
-                                              "(%s), position, (%s) rotation (%s)"),
-                       *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
             }
 
             mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(
