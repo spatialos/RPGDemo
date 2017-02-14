@@ -59,36 +59,63 @@ void AunrealGameMode::ConfigureWindowSize()
 
 void AunrealGameMode::CreateWorkerConnection()
 {
+	//Commandline arguments
+	const FString receptionistIpArgument = "receptionistIp";
+	const FString receptionistPortArgument = "receptionistPort";
+	const FString engineTypeArgument = "engineType";
+	const FString engineIdArgument = "engineId";
+	const FString linkProtocolArgument = "linkProtocol";
+
+	//Parse commandline properties
+	FString receptionistIp = "127.0.0.1";
+	FParse::Value(FCommandLine::Get(), *receptionistIpArgument, receptionistIp);
+
+	int port = 7777;
+	FParse::Value(FCommandLine::Get(), *receptionistPortArgument, port);
+
+	//engine type is used to deduce the engine platform
+	//however this is not needed in unreal.
+	FString engineType = WorkerType.c_str();
+	FParse::Value(FCommandLine::Get(), *engineTypeArgument, engineType);
+
+	std::string workerId;
+	FString parsedWorkerId;
+	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
+	{
+		workerId = WorkerType + TCHAR_TO_UTF8(*FGuid::NewGuid().ToString());
+	}
+	else
+	{
+		workerId = TCHAR_TO_UTF8(*parsedWorkerId);
+	}
+
+	FString parsedLinkProtocol = "RakNet";
+	FParse::Value(FCommandLine::Get(), *linkProtocolArgument, parsedLinkProtocol);
+	const auto linkProtocol = parsedLinkProtocol == "Tcp" ? worker::NetworkConnectionType::kTcp :  worker::NetworkConnectionType::kRaknet;
+
+	//Log parsed input
+	UE_LOG(LogTemp, Warning,
+		   TEXT("PARSED: receptionistIp %s, port %d, engineType %s, workerId %s"),
+		   *receptionistIp,
+		   port,
+		   *engineType,
+		   workerId.c_str())
+
+	//Setup connection
     using namespace improbable::unreal::core;
-    FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
+	FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
     Connection.Reset(new FWorkerConnection());
     Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect) {
         // GIsRequestingExit = true;
     });
     worker::ConnectionParameters Params;
+	Params.Network.ConnectionType = linkProtocol;
+	Params.Network.UseExternalIp = false;
+
     Params.WorkerType = WorkerType;
-    Params.WorkerId = Params.WorkerType + TCHAR_TO_ANSI(*FGuid::NewGuid().ToString());
-    Params.Network.UseExternalIp = false;
-
-    FString hostName;
-    const FString receptionistIpProperty = "receptionistIp";
-
-    if (!FParse::Value(FCommandLine::Get(), *receptionistIpProperty, hostName))
-    {
-        hostName = "127.0.0.1";
-    }
-
-    FString portString;
-    const FString receptionistPort = "receptionistPort";
-
-    if (!FParse::Value(FCommandLine::Get(), *receptionistPort, portString))
-    {
-        portString = "7777";
-    }
-
-    const int port = FCString::Atoi(*portString);
-
-    Connection->Connect(hostName, port, Params, GetWorld());
+    Params.WorkerId = workerId;
+    
+    Connection->Connect(receptionistIp, port, Params, GetWorld());
 }
 
 void AunrealGameMode::RegisterEntityBlueprints()
