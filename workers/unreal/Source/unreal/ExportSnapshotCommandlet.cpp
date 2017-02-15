@@ -89,26 +89,20 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
         Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
     snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
 
-    improbable::WorkerPredicate workerPredicate({{{{{"UnrealWorker"}}}}});
-    improbable::WorkerPredicate clientPredicate({{{{{"UnrealClient"}}}}});
+    WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>("UnrealWorker")} };
+    WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>("UnrealClient")} };
 
-    worker::Map<std::uint32_t, improbable::WorkerPredicate> componentAuthority;
+    WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
+    WorkerRequirementSet globalRequirmentSet{{unrealClientAttributeSet, unrealWorkerAttributeSet}};
 
-    componentAuthority.emplace(Prefab::ComponentId, workerPredicate);
-    componentAuthority.emplace(TransformState::ComponentId, workerPredicate);
+    worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
 
-    improbable::ComponentAcl componentAcl(componentAuthority);
+    componentAuthority.emplace(Prefab::ComponentId, workerRequirementSet);
+    componentAuthority.emplace(TransformState::ComponentId, workerRequirementSet);
 
-    auto workerClaimAtomList =
-        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealWorker")});
-    auto clientClaimAtomList =
-        worker::List<improbable::WorkerClaimAtom>({worker::Option<std::string>("UnrealClient")});
-    auto workerClaims =
-        worker::List<improbable::WorkerClaim>({{workerClaimAtomList}, {clientClaimAtomList}});
+    ComponentAcl componentAcl(componentAuthority);
 
-    improbable::WorkerPredicate workerClientPredicate(workerClaims);
-
-    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(workerClientPredicate, componentAcl));
+    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(globalRequirmentSet, componentAcl));
 
     return snapshotEntity;
 }

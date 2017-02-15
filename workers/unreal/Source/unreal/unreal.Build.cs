@@ -41,26 +41,23 @@ public class unreal : ModuleRules
 		}
 		else
 		{
-			var cl = "process_schema --cachePath=.spatialos/schema_codegen_cache_cl" +
+			var cl = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_cl" +
 				" --output=" + SpatialOS.QuoteString(CoreLibraryDir) +
 				" --language=cpp_unreal" +
-				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_cl" +
 				" --input=../../build/dependencies/schema/CoreLibrary";
 
 			SpatialOS.RunSpatial(cl);
 
-			var std = "process_schema --cachePath=.spatialos/schema_codegen_cache_std" +
+			var std = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_std" +
 				" --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
 				" --language=cpp_unreal" +
-				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_std" +
 				" --input=../../build/dependencies/schema/WorkerSdkSchema";
 
 			SpatialOS.RunSpatial(std);
 
-			var user = "process_schema --cachePath=.spatialos/schema_codegen_cache_usr" +
+			var user = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_usr" +
 				" --output=" + SpatialOS.QuoteString(UserSchemaDir) +
 				" --language=cpp_unreal" +
-				" --intermediate_proto_dir=.spatialos/schema_codegen_proto_usr" +
 				" --input=../../schema";
 
 			SpatialOS.RunSpatial(user);

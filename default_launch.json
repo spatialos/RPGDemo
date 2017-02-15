@@ -1,8 +1,7 @@
 {
   "template": "small",
   "world": {
-      "legacy_flags": 
-      [
+      "legacy_flags": [
         {
           "name": "entity_activator",
           "value": "improbable.corelib.entity.CoreLibraryEntityActivator"
@@ -32,8 +31,7 @@
         "snapshot_write_period_seconds": 0
       }
   },
-  "workers": 
-  [
+  "workers": [
     {
       "worker_type": "UnrealWorker",
       "flags" : [],
@@ -44,8 +42,7 @@
           "num_workers": 2
         }
       },
-      "permissions": 
-      [
+      "permissions": [
         {
           "all": {}
         }
@@ -53,8 +50,7 @@
     },
     {
       "worker_type": "UnrealClient",
-      "permissions": 
-      [
+      "permissions": [
         {
           "all": {}
         }
