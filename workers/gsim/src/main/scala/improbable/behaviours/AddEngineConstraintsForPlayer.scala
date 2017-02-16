@@ -7,7 +7,7 @@ import improbable.util.UnrealFsimConstraint
 
 class AddEngineConstraintsForPlayer(entity: Entity) extends EntityBehaviour {
 
-  override def onReady(): Unit = {
+  override def onReady(migrating: Boolean): Unit = {
     entity.addEngineConstraint(UnrealFsimConstraint)
     entity.addEngineConstraint(SpecificEngineConstraint(EntityOwnerUtils.ownerIdOf(entity)))
   }

@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "unreal.h"
 #include "TransformReceiver.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
-#include "unreal.h"
 #include "unrealGameMode.h"
 
 using namespace improbable::unreal::core;
@@ -56,16 +56,10 @@ void UTransformReceiver::ParseTransformStateUpdate(
     if (!loc.empty())
     {
         mLocation = ToUnrealVector(*loc);
-        UE_LOG(LogTemp, Warning,
-               TEXT("UTransformReceiver: Received actor (%s) position update (%s)"),
-               *GetOwner()->GetName(), *mLocation.ToString())
     }
     if (!rot.empty())
     {
         mRotation = ToUnrealQuaternion((*rot).quaternion());
-        UE_LOG(LogTemp, Warning,
-               TEXT("UTransformReceiver: Received actor (%s) rotation update (%s)"),
-               *GetOwner()->GetName(), *mRotation.ToString())
     }
 }
 
@@ -93,9 +87,6 @@ void UTransformReceiver::Initialise()
     if (EntityId == -1)
     {
         EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
-        UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Entity id not set to a valid entity id, "
-                                      "getting new entity id %s"),
-               *ToString(EntityId))
         return;
     }
 
@@ -121,9 +112,6 @@ void UTransformReceiver::Initialise()
                 // accurate
                 // yet
                 GetOwner()->SetActorLocation(mLocation);
-                UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Set initial position for actor "
-                                              "(%s), position, (%s) rotation (%s)"),
-                       *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
             }
 
             mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(
@@ -139,8 +127,6 @@ void UTransformReceiver::Initialise()
 
 worker::Entity* UTransformReceiver::GetEntity() const
 {
-    UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: trying to get entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
     auto it = FWorkerConnection::GetView().Entities.find(EntityId);
     if (it == FWorkerConnection::GetView().Entities.end())
     {
@@ -149,7 +135,6 @@ worker::Entity* UTransformReceiver::GetEntity() const
                *ToString(EntityId), *GetOwner()->GetName())
         return nullptr;
     }
-    UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: successfully got entity %s on Actor %s"),
-           *ToString(EntityId), *GetOwner()->GetName())
+	
     return &(it->second);
 }

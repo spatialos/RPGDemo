@@ -67,12 +67,6 @@ AunrealCharacter::AunrealCharacter()
     TransformSender = CreateDefaultSubobject<UTransformSender>(TEXT("TransformSender"));
 
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    UE_LOG(LogTemp, Warning,
-           TEXT("AunrealCharacter::Constructor"
-                "character for actor %s, Can tick dedicated server: %d, current role %d"),
-           *GetName(), PrimaryActorTick.bAllowTickOnDedicatedServer,
-           static_cast<int32>(Role.GetValue()))
 }
 
 void AunrealCharacter::Tick(float DeltaSeconds)
@@ -81,12 +75,10 @@ void AunrealCharacter::Tick(float DeltaSeconds)
 
     Initialise();
 
-#if !UE_SERVER
     if (TransformSender->HasAuthority())
     {
         UpdateCursorPosition();
     }
-#endif
 }
 
 void AunrealCharacter::BeginPlay()
@@ -99,13 +91,11 @@ void AunrealCharacter::BeginPlay()
  *	otherwise, add an OtherPlayerController */
 void AunrealCharacter::Initialise()
 {
-#if !UE_SERVER
     if (TransformSender->HasAuthority())
     {
         InitialiseAsOwnPlayer();
     }
     else
-#endif
     {
         InitialiseAsOtherPlayer();
         UE_LOG(LogTemp, Warning,
@@ -149,14 +139,12 @@ void AunrealCharacter::InitialiseAsOtherPlayer()
 {
     AController* currentController = GetController();
 
-#if !UE_SERVER
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
-    if (currentController == playerController)
+    if (currentController == playerController && playerController != nullptr)
     {
         playerController->UnPossess();
         currentController = GetController();
     }
-#endif
 
     if (currentController == nullptr)
     {
