@@ -4,7 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "ScopedViewCallbacks.h"
-#include "improbable/corelibrary/transforms/transform_state.h"
+#include "improbable/common/transform.h"
 #include <improbable/worker.h>
 #include "TransformReceiver.generated.h"
 
@@ -33,9 +33,9 @@ public:
 private:
   TAutoPtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
   void OnTransformComponentUpdate(
-      const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op);
+      const worker::ComponentUpdateOp<improbable::common::Transform>& op);
   void ParseTransformStateUpdate(
-      const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op);
+      const worker::ComponentUpdateOp<improbable::common::Transform>& op);
   void Initialise();
   worker::Entity* GetEntity() const;
 

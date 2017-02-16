@@ -4,10 +4,6 @@
   "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
   "dependencies": [
     {
-      "name": "CoreLibrary",
-      "version": "999.9.9-LOCAL-SNAPSHOT"
-    },
-    {
       "name": "WorkerSdkSchema",
       "version": "999.9.9-LOCAL-SNAPSHOT"
     }
