@@ -4,13 +4,10 @@
       "name": "Codegen",
       "steps": [
         {
-          "name": "Install dependencies",
+          "name": "Dependencies",
           "arguments": [
             "worker_package",
-            "unpack-to",
-            "unreal",
-            "improbable_sdk_plugin",
-            "Source/unreal/SpatialOS"
+            "unpack"
           ]
         },
         {

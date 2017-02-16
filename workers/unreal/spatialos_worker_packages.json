@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "path": "Plugins/SpatialOS",
+      "path": "Source/unreal/SpatialOS",
       "type": "unreal",
       "packages": [
         {
@@ -11,10 +11,10 @@
     },
     {
       "path": ".spatialos/bin",
-      "type": "code_generator",
+      "type": "code_generation",
       "packages": [
         {
-          "name":  "Improbable.CodeGeneration"
+          "name": "Improbable.CodeGeneration"
         }
       ]
     }
