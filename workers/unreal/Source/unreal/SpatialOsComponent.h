@@ -28,8 +28,8 @@ class UNREAL_API USpatialOsComponent : public UActorComponent
     UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
     virtual int GetComponentId() PURE_VIRTUAL(USpatialOsComponent::GetComponentId, return 0;);
 
-    UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-    long GetEntityId();
+    //UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
+    worker::EntityId GetEntityId();
 
     UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
     bool HasAuthority();

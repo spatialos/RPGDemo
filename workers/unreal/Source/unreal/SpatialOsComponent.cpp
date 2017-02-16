@@ -40,9 +40,9 @@ void USpatialOsComponent::Init(worker::Connection& Connection, worker::View& Vie
     mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(View));
 }
 
-long USpatialOsComponent::GetEntityId()
+worker::EntityId USpatialOsComponent::GetEntityId()
 {
-    return (long) mEntityId;
+    return mEntityId;
 }
 
 bool USpatialOsComponent::HasAuthority()
