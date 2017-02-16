@@ -24,6 +24,7 @@
 #include <improbable/worker.h>
 
 #include "improbable/standard_library.h"
+#include "improbable/test/test.h"
 
 using namespace improbable;
 using namespace improbable::corelib::physical;
@@ -37,6 +38,7 @@ using namespace improbable::corelibrary::transforms::global;
 using namespace improbable::corelibrary::transforms::teleport;
 using namespace improbable::corelib::math;
 using namespace improbable::corelibrary::subscriptions;
+using namespace improbable::test;
 
 UExportSnapshotCommandlet::UExportSnapshotCommandlet()
 {
@@ -88,17 +90,20 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     snapshotEntity.Add<TeleportRequestState>(TeleportRequestState::Data(
         Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
     snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
+	snapshotEntity.Add<TestState>(TestState::Data(13, "Hello", improbable::math::Coordinates(5, 5, 5)));
 
     WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>("UnrealWorker")} };
     WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>("UnrealClient")} };
 
     WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
+	WorkerRequirementSet clientRequirementSet{ { unrealClientAttributeSet } };
     WorkerRequirementSet globalRequirmentSet{{unrealClientAttributeSet, unrealWorkerAttributeSet}};
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
 
     componentAuthority.emplace(Prefab::ComponentId, workerRequirementSet);
     componentAuthority.emplace(TransformState::ComponentId, workerRequirementSet);
+	componentAuthority.emplace(TestState::ComponentId, clientRequirementSet);
 
     ComponentAcl componentAcl(componentAuthority);
 
