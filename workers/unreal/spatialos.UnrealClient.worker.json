@@ -3,8 +3,8 @@
     "tasks_filename": "spatialos.unreal.client.build.json"
   },
   "bridge": {
-    "worker_claim": {
-      "claims": [
+    "worker_attribute_set": {
+      "attributes": [
         "UnrealClient"
       ]
     },

@@ -37,5 +37,5 @@ component TestState {
 
 	event StringWrapper text_event;
 
-	command DamageRequest damage returns DamageResponse;
+	command DamageResponse damage(DamageRequest);
 }
