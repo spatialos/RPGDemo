@@ -43,10 +43,7 @@ int UTestComponent::GetComponentId()
 
 void UTestComponent::Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId)
 {
-	mConnection = &Connection;
-	mView = &View;
-	mEntityId = EntityId;
-	mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(View));
+	USpatialOsComponent::Init(Connection, View, EntityId);
 
 	mCallbacks->Add(mView->OnAuthorityChange<improbable::test::TestState>(
 		std::bind(&UTestComponent::OnAuthorityChangeDispatcherCallback, this, std::placeholders::_1)
@@ -66,16 +63,6 @@ void UTestComponent::Init(worker::Connection& Connection, worker::View& View, wo
 	));
 }
 
-bool UTestComponent::HasAuthority()
-{
-	return mHasAuthority;
-}
-
-bool UTestComponent::IsComponentReady()
-{
-	return mIsComponentReady;
-}
-
 int UTestComponent::GetInt32Val()
 {
 	return mInt32Val;
@@ -86,16 +73,6 @@ void UTestComponent::SendComponentUpdate(UTestStateUpdate* update)
 	mConnection->SendComponentUpdate(mEntityId, update->GetRawUpdate());
 }
 
-void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
-{
-	if (op.EntityId != mEntityId)
-	{
-		return;
-	}
-	mHasAuthority = op.HasAuthority;
-	OnAuthorityChange.Broadcast(op.HasAuthority);
-}
-
 void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op)
 {
 	if (op.EntityId != mEntityId)
@@ -104,15 +81,6 @@ void UTestComponent::OnAddComponentDispatcherCallback(const worker::AddComponent
 	}
 	auto update = improbable::test::TestState::Update::FromInitialData(op.Data);
 	ApplyComponentUpdate(update);
-}
-
-void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op)
-{
-	if (op.EntityId != mEntityId)
-	{
-		return;
-	}
-	mIsComponentReady = false;
 }
 
 void UTestComponent::OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState>& op)

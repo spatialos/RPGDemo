@@ -2,16 +2,15 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "SpatialOsComponent.h"
 #include "improbable/test/test.h"
-#include "ScopedViewCallbacks.h"
 #include "TestStateUpdate.h"
 #include "StringWrapper.h"
 #include "DamageCommandResponder.h"
 #include "TestComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class UNREAL_API UTestComponent : public UActorComponent
+class UNREAL_API UTestComponent : public USpatialOsComponent
 {
 	GENERATED_BODY()
 
@@ -24,31 +23,15 @@ public:
 	
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
-
-	void Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId);
-
+	
 	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		int GetComponentId();
-
-	UFUNCTION(BlueprintPure, Category = "TestComponent")
-		bool HasAuthority();
-
-	UFUNCTION(BlueprintPure, Category = "TestComponent")
-		bool IsComponentReady();
 
 	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		int GetInt32Val();
 
 	UFUNCTION(BlueprintCallable, Category = "TestComponent")
 		void SendComponentUpdate(UTestStateUpdate* update);
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority);
-	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
-		FAuthorityChangeDelegate OnAuthorityChange;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate);
-	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
-		FComponentReadyDelegate OnComponentReady;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, UTestStateUpdate*, update);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
@@ -68,19 +51,11 @@ public:
 
 private:
 	const int mComponentId = 1003;
-	worker::Connection* mConnection;
-	worker::View* mView;
-	worker::EntityId mEntityId;
-	TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
-
-	bool mHasAuthority;
-	bool mIsComponentReady;
-
+	
 	int mInt32Val;
 
-	void OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op);
 	void OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op);
-	void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op);
+	
 	void OnComponentUpdateDispatcherCallback(const worker::ComponentUpdateOp<improbable::test::TestState>& op);
 	void ApplyComponentUpdate(const improbable::test::TestState::Update& update);
 
