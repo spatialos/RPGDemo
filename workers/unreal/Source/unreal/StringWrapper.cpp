@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "StringWrapper.h"
 #include "unreal.h"
+#include "StringWrapper.h"
 
 UStringWrapper::UStringWrapper()
 {

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "DamageCommandResponder.h"
 #include "unreal.h"
+#include "DamageCommandResponder.h"
 
 UDamageCommandResponder::UDamageCommandResponder()
 {

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SpatialOsComponent.h"
 #include "unreal.h"
+#include "SpatialOsComponent.h"
 
 // Sets default values for this component's properties
 USpatialOsComponent::USpatialOsComponent()

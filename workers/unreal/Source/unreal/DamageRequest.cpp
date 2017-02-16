@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "DamageRequest.h"
 #include "unreal.h"
+#include "DamageRequest.h"
 
 UDamageRequest::UDamageRequest()
 {

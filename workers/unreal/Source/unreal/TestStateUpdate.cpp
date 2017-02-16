@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TestStateUpdate.h"
 #include "unreal.h"
+#include "TestStateUpdate.h"
 
 UTestStateUpdate::UTestStateUpdate()
 {
