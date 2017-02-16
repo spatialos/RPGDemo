@@ -90,7 +90,8 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     snapshotEntity.Add<TeleportRequestState>(TeleportRequestState::Data(
         Vector3d(0, 0, 0), worker::Option<Quaternion>(), worker::Option<Parent>(), 0));
     snapshotEntity.Add<TeleportAckState>(TeleportAckState::Data(0));
-	snapshotEntity.Add<TestState>(TestState::Data(13, "Hello", improbable::math::Coordinates(5, 5, 5)));
+	snapshotEntity.Add<TestState>(TestState::Data(13, "Hello"));
+	UE_LOG(LogTemp, Display, TEXT("test state data 1"));
 
     WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>("UnrealWorker")} };
     WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>("UnrealClient")} };

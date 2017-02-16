@@ -18,7 +18,7 @@ class UNREAL_API UDamageCommandResponder : public UObject
 
   public:
     UDamageCommandResponder();
-    UDamageCommandResponder(
+    void Init(
         worker::Connection* connection,
         worker::RequestId<
             worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>>

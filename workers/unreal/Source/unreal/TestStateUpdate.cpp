@@ -8,7 +8,7 @@ UTestStateUpdate::UTestStateUpdate()
     mRawUpdate.Reset(new improbable::test::TestState::Update());
 }
 
-UTestStateUpdate::UTestStateUpdate(const improbable::test::TestState::Update& rawUpdate)
+void UTestStateUpdate::Init(const improbable::test::TestState::Update& rawUpdate)
 {
     mRawUpdate.Reset(new improbable::test::TestState::Update(rawUpdate));
 }

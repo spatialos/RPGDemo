@@ -8,7 +8,7 @@ UDamageRequest::UDamageRequest()
     mRawDamageRequest.Reset(new improbable::test::DamageRequest(0));
 }
 
-UDamageRequest::UDamageRequest(const improbable::test::DamageRequest& rawDamageRequest)
+void UDamageRequest::Init(const improbable::test::DamageRequest& rawDamageRequest)
 {
     mRawDamageRequest.Reset(new improbable::test::DamageRequest(rawDamageRequest));
 }

@@ -7,7 +7,7 @@ UDamageCommandResponder::UDamageCommandResponder()
 {
 }
 
-UDamageCommandResponder::UDamageCommandResponder(
+void UDamageCommandResponder::Init(
     worker::Connection* connection,
     worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>>
         requestId,

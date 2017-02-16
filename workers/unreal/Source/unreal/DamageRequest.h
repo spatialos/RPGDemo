@@ -16,7 +16,7 @@ class UNREAL_API UDamageRequest : public UObject
 
   public:
     UDamageRequest();
-    UDamageRequest(const improbable::test::DamageRequest& rawDamageRequest);
+    void Init(const improbable::test::DamageRequest& rawDamageRequest);
 
     UFUNCTION(BlueprintPure, Category = "DamageRequest")
     int GetAmount();

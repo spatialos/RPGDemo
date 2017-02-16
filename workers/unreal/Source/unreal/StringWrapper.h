@@ -16,7 +16,7 @@ class UNREAL_API UStringWrapper : public UObject
 
   public:
     UStringWrapper();
-    UStringWrapper(const improbable::test::StringWrapper& rawStringWrapper);
+    void Init(const improbable::test::StringWrapper& rawStringWrapper);
 
     UFUNCTION(BlueprintPure, Category = "StringWrapper")
     FString GetStringVal();

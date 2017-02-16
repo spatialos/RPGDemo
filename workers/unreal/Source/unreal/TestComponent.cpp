@@ -104,11 +104,15 @@ void UTestComponent::ApplyComponentUpdate(const improbable::test::TestState::Upd
     {
         for (auto& val : update.text_event())
         {
-            OnTextEvent.Broadcast(new UStringWrapper(val));
+			auto stringWrapper = NewObject<UStringWrapper>(this, UStringWrapper::StaticClass());
+			stringWrapper->Init(val);
+            OnTextEvent.Broadcast(stringWrapper);
         }
     }
 
-    OnComponentUpdate.Broadcast(new UTestStateUpdate(update));
+	auto testStateUpdate = NewObject<UTestStateUpdate>(this, UTestStateUpdate::StaticClass());
+	testStateUpdate->Init(update);
+    OnComponentUpdate.Broadcast(testStateUpdate);
 
     if (!mIsComponentReady)
     {
@@ -124,7 +128,9 @@ void UTestComponent::OnDamageCommandRequestDispatcherCallback(
     {
         return;
     }
-    auto request = new UDamageRequest(op.Request);
-    auto responder = new UDamageCommandResponder(mConnection, op.RequestId, request);
+	auto request = NewObject<UDamageRequest>(this, UDamageRequest::StaticClass());
+	request->Init(op.Request);
+	auto responder = NewObject<UDamageCommandResponder>(this, UDamageCommandResponder::StaticClass());
+	responder->Init(mConnection, op.RequestId, request);
     OnDamageCommandRequest.Broadcast(responder);
 }

@@ -8,7 +8,7 @@ UStringWrapper::UStringWrapper()
     mRawStringWrapper.Reset(new improbable::test::StringWrapper(""));
 }
 
-UStringWrapper::UStringWrapper(const improbable::test::StringWrapper& rawStringWrapper)
+void UStringWrapper::Init(const improbable::test::StringWrapper& rawStringWrapper)
 {
     mRawStringWrapper.Reset(new improbable::test::StringWrapper(rawStringWrapper));
 }
