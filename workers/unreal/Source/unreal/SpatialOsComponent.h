@@ -26,10 +26,10 @@ class UNREAL_API USpatialOsComponent : public UActorComponent
                       worker::EntityId EntityId);
 
     UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-    virtual int GetComponentId() = 0;
+    virtual int GetComponentId() PURE_VIRTUAL(USpatialOsComponent::GetComponentId, return 0;);
 
     UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-    worker::EntityId GetEntityId();
+    long GetEntityId();
 
     UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
     bool HasAuthority();
@@ -45,7 +45,7 @@ class UNREAL_API USpatialOsComponent : public UActorComponent
     UPROPERTY(BlueprintAssignable, Category = "TestComponent")
     FComponentReadyDelegate OnComponentReady;
 
-  private:
+  protected:
     worker::Connection* mConnection;
     worker::View* mView;
     worker::EntityId mEntityId;

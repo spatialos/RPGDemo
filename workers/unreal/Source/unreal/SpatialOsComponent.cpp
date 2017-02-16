@@ -40,9 +40,9 @@ void USpatialOsComponent::Init(worker::Connection& Connection, worker::View& Vie
     mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(View));
 }
 
-worker::EntityId USpatialOsComponent::GetEntityId()
+long USpatialOsComponent::GetEntityId()
 {
-    return mEntityId;
+    return (long) mEntityId;
 }
 
 bool USpatialOsComponent::HasAuthority()
@@ -55,7 +55,7 @@ bool USpatialOsComponent::IsComponentReady()
     return mIsComponentReady;
 }
 
-void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
+void USpatialOsComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
 {
     if (op.EntityId != mEntityId)
     {
@@ -65,7 +65,7 @@ void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::Authority
     OnAuthorityChange.Broadcast(op.HasAuthority);
 }
 
-void UTestComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op)
+void USpatialOsComponent::OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op)
 {
     if (op.EntityId != mEntityId)
     {

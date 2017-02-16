@@ -67,7 +67,7 @@ int UTestComponent::GetInt32Val()
 
 void UTestComponent::SendComponentUpdate(UTestStateUpdate* update)
 {
-    mConnection->SendComponentUpdate(mEntityId, update->GetRawUpdate());
+    mConnection->SendComponentUpdate<improbable::test::TestState>(mEntityId, update->GetRawUpdate());
 }
 
 void UTestComponent::OnAddComponentDispatcherCallback(

@@ -22,11 +22,12 @@ class UNREAL_API UTestComponent : public USpatialOsComponent
     virtual void BeginPlay() override;
 
     // Called every frame
-    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-                               FActorComponentTickFunction* ThisTickFunction) override;
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     UFUNCTION(BlueprintPure, Category = "TestComponent")
     int GetComponentId();
+
+    void Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId);
 
     UFUNCTION(BlueprintPure, Category = "TestComponent")
     int GetInt32Val();
@@ -34,8 +35,7 @@ class UNREAL_API UTestComponent : public USpatialOsComponent
     UFUNCTION(BlueprintCallable, Category = "TestComponent")
     void SendComponentUpdate(UTestStateUpdate* update);
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, UTestStateUpdate*,
-                                                update);
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentUpdateDelegate, UTestStateUpdate*, update);
     UPROPERTY(BlueprintAssignable, Category = "TestComponent")
     FComponentUpdateDelegate OnComponentUpdate;
 
@@ -47,8 +47,7 @@ class UNREAL_API UTestComponent : public USpatialOsComponent
     UPROPERTY(BlueprintAssignable, Category = "TestComponent")
     FTextEventDelegate OnTextEvent;
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDamageCommandRequestDelegate,
-                                                UDamageCommandResponder*, responder);
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDamageCommandRequestDelegate, UDamageCommandResponder*, responder);
     UPROPERTY(BlueprintAssignable, Category = "TestComponent")
     FDamageCommandRequestDelegate OnDamageCommandRequest;
 
@@ -57,8 +56,7 @@ class UNREAL_API UTestComponent : public USpatialOsComponent
 
     int mInt32Val;
 
-    void
-    OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op);
+    void OnAddComponentDispatcherCallback(const worker::AddComponentOp<improbable::test::TestState>& op);
 
     void OnComponentUpdateDispatcherCallback(
         const worker::ComponentUpdateOp<improbable::test::TestState>& op);
