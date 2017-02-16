@@ -24,6 +24,8 @@ private:
   void StartPlay() override;
   void Tick(float DeltaTime) override;
 
+  void SpawnPlayer();
+
   TAutoPtr<improbable::unreal::core::FWorkerConnection> Connection;
   TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
 

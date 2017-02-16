@@ -1,0 +1,10 @@
+package improbable.player;
+
+type HeartbeatEvent {
+}
+
+component Heartbeat {
+  id = 21001;
+  event HeartbeatEvent beat;
+}
+

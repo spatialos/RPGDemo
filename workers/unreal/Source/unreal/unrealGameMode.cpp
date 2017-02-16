@@ -4,6 +4,9 @@
 #include "Engine.h"
 #include "unrealGameMode.h"
 #include "unrealPlayerController.h"
+#include <improbable/player/heartbeat.h>
+#include <improbable/player/heartbeat_receiver.h>
+#include <improbable/common/transform.h>
 
 #if UE_SERVER
 const std::string WorkerType = "UnrealWorker";
@@ -12,6 +15,20 @@ const std::string WorkerType = "UnrealClient";
 #endif
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
+
+namespace {
+worker::Entity GetPlayerEntityTemplate()
+{
+  improbable::math::Coordinates initialPosition{ 0.0, 0.0, 0.0 };
+  worker::List<float> initialRoation{ 0.0f, 0.0f, 0.0f, 1.0f };
+
+  worker::Entity playerTempalte;
+  playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{initialPosition, initialRoation});
+  playerTempalte.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
+  playerTempalte.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
+  return playerTempalte;
+}
+}  // ::
 
 AunrealGameMode* AunrealGameMode::Instance;
 
@@ -39,6 +56,7 @@ void AunrealGameMode::StartPlay()
     AGameMode::StartPlay();
     ConfigureWindowSize();
     CreateWorkerConnection();
+    SpawnPlayer();
     RegisterEntityBlueprints();
 }
 
@@ -46,6 +64,26 @@ void AunrealGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
     Connection->ProcessEvents();
+}
+
+void AunrealGameMode::SpawnPlayer()
+{
+  worker::Connection& connection = Connection->GetConnection();
+  worker::View& view = Connection->GetView();
+
+  const std::uint32_t timeoutMillis = 500;
+  const std::string entityType = "Palyer";
+
+  worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
+
+  worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
+  view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, &entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
+  {
+    if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
+    {
+      entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
+    }
+  });
 }
 
 void AunrealGameMode::ConfigureWindowSize()

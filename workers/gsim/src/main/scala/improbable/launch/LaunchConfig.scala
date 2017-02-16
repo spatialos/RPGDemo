@@ -5,7 +5,8 @@ import improbable.dapi.LaunchConfig
 import improbable.util.UnrealFsimConstraintResolver
 
 class DemonstrationLaunchConfig(useDynamicEngineSpooling: Boolean) extends {} with LaunchConfig(
-  AppList.ALL,
+  //AppList.ALL,
+  List.empty,
   useDynamicEngineSpooling,
   BridgeSettingsResolver,
   UnrealFsimConstraintResolver
