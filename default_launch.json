@@ -1,37 +1,64 @@
 {
-    "template": "small",
-    "world": {
-        "legacy_flags": [
-			{
-			  "name": "entity_activator",
-			  "value": "improbable.corelib.entity.CoreLibraryEntityActivator"
-			},
-			{
-			  "name": "engine_automatic_scaling_enabled",
-			  "value": "true"
-			},
-			{
-				"name": "enable_workflow_v2",
-				"value": "true"
-			},
-			{
-                "name": "game_apps_to_start",
-                "value": "improbable.apps.PlayerLifeCycleManager"
-            }
-        ],
-		"legacy_javaparams": [
-		{
-			"name": "-DFABRIC_LOG_LEVEL",
-			"value": "INFO"
-		}],
-        "dimensions": {
-            "x_meters": 5000,
-            "z_meters": 5000
+  "template": "small",
+  "world": {
+      "legacy_flags": [
+        {
+          "name": "entity_activator",
+          "value": "improbable.corelib.entity.CoreLibraryEntityActivator"
         },
-        "chunk_edge_length_meters": 100,
-        "streaming_query_interval": 4,
-        "snapshots": {
-            "snapshot_write_period_seconds": 0
+        {
+          "name": "engine_automatic_scaling_enabled",
+          "value": "true"
+        },
+        {
+          "name": "enable_workflow_v2",
+          "value": "true"
+        },
+        {
+          "name": "game_apps_to_start",
+          "value": "improbable.apps.PlayerLifeCycleManager"
         }
+      ],
+      "dimensions": 
+      {
+        "x_meters": 5000,
+        "z_meters": 5000
+      },
+      "chunk_edge_length_meters": 100,
+      "streaming_query_interval": 4,
+      "snapshots": 
+      {
+        "snapshot_write_period_seconds": 0
+      }
+  },
+  "workers": [
+    {
+      "worker_type": "UnrealWorker",
+      "flags" : [],
+      "load_balancing":
+      {
+        "auto_hex_grid": 
+        {
+          "num_workers": 2
+        }
+      },
+      "permissions": [
+        {
+          "all": {}
+        }
+      ]
+    },
+    {
+      "worker_type": "UnrealClient",
+      "permissions": [
+        {
+          "all": {}
+        }
+      ]
+    },
+    {
+      "worker_type": "gsim",
+      "flags": []
     }
+  ]
 }
