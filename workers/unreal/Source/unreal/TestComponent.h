@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "TestComponent")
 		int GetInt32Val();
 
+	UFUNCTION(BlueprintCallable, Category = "TestComponent")
+		void SendComponentUpdate(UTestStateUpdate* update);
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority);
 	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
 		FAuthorityChangeDelegate OnAuthorityChange;
@@ -65,8 +68,8 @@ public:
 
 private:
 	const int mComponentId = 1003;
-	TUniquePtr<worker::Connection> mConnection;
-	TUniquePtr<worker::View> mView;
+	worker::Connection* mConnection;
+	worker::View* mView;
 	worker::EntityId mEntityId;
 	TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
 

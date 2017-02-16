@@ -18,9 +18,10 @@ int UDamageResponse::GetDealtDamage()
 	return (int)mRawDamageResponse->dealt_damage();
 }
 
-void UDamageResponse::SetDealtDamage(int dealtDamage)
+UDamageResponse* UDamageResponse::SetDealtDamage(int dealtDamage)
 {
 	mRawDamageResponse->set_dealt_damage((std::uint32_t) dealtDamage);
+	return this;
 }
 
 improbable::test::DamageResponse* UDamageResponse::GetRawDamageResponse()

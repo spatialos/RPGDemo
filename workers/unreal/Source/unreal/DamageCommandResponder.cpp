@@ -11,7 +11,7 @@ UDamageCommandResponder::UDamageCommandResponder(worker::Connection* connection,
 	worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>> requestId, 
 	UDamageRequest* request)
 {
-	mConnection.Reset(connection);
+	mConnection = connection;
 	mRequestId = requestId;
 	mRequest.Reset(request);
 }

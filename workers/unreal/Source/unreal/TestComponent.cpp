@@ -43,8 +43,8 @@ int UTestComponent::GetComponentId()
 
 void UTestComponent::Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId)
 {
-	mConnection.Reset(&Connection);
-	mView.Reset(&View);
+	mConnection = &Connection;
+	mView = &View;
 	mEntityId = EntityId;
 	mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(View));
 
@@ -79,6 +79,11 @@ bool UTestComponent::IsComponentReady()
 int UTestComponent::GetInt32Val()
 {
 	return mInt32Val;
+}
+
+void UTestComponent::SendComponentUpdate(UTestStateUpdate* update)
+{
+	mConnection->SendComponentUpdate(mEntityId, update->GetRawUpdate());
 }
 
 void UTestComponent::OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op)
@@ -152,6 +157,6 @@ void UTestComponent::OnDamageCommandRequestDispatcherCallback(const worker::Comm
 		return;
 	}
 	auto request = new UDamageRequest(op.Request);
-	auto responder = new UDamageCommandResponder(mConnection.Get(), op.RequestId, request);
+	auto responder = new UDamageCommandResponder(mConnection, op.RequestId, request);
 	OnDamageCommandRequest.Broadcast(responder);
 }

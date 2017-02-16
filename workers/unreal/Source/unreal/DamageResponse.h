@@ -22,7 +22,7 @@ public:
 		int GetDealtDamage();
 
 	UFUNCTION(BlueprintCallable, Category = "DamageResponse")
-		void SetDealtDamage(int amount);
+		UDamageResponse* SetDealtDamage(int amount);
 
 	improbable::test::DamageResponse* GetRawDamageResponse();
 

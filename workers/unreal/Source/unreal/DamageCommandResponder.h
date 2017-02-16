@@ -29,7 +29,7 @@ public:
 		void SendResponse(UDamageResponse* response);
 
 private:
-	TUniquePtr<worker::Connection> mConnection;
+	worker::Connection* mConnection;
 	worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>> mRequestId;
 	TUniquePtr<UDamageRequest> mRequest;
 };

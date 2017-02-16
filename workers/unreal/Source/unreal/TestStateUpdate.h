@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "TestComponent")
 		void SetInt32Val(int int32Val);
 
-	improbable::test::TestState::Update* GetRawUpdate;
+	const improbable::test::TestState::Update GetRawUpdate();
 
 private:
 	TUniquePtr<improbable::test::TestState::Update> mRawUpdate;

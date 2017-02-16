@@ -27,3 +27,8 @@ void UTestStateUpdate::SetInt32Val(int int32Val)
 {
 	mRawUpdate->set_int32_val(int32Val);
 }
+
+const improbable::test::TestState::Update UTestStateUpdate::GetRawUpdate()
+{
+	return *mRawUpdate.Get();
+}
