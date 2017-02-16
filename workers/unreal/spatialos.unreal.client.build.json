@@ -20,6 +20,51 @@
             "/c",
             "copy /y .\\Source\\unreal\\SpatialOS\\SpatialOSModule.Build.cs Source\\unreal"
           ]
+        },
+        {
+          "name": "C# core library",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_cl",
+            "--output=Source/unreal/Improbable/Generated/cpp/CoreLibrary",
+            "--language=cpp_unreal",
+            "--input=../../build/dependencies/schema/CoreLibrary"
+          ]
+        },
+        {
+          "name": "C# standard library",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_std",
+            "--output=Source/unreal/Improbable/Generated/cpp/Std",
+            "--language=cpp_unreal",
+            "--input=../../build/dependencies/schema/WorkerSdkSchema"
+          ]
+        },
+        {
+          "name": "C#",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_usr",
+            "--output=Source/unreal/Improbable/Generated/cpp/Usr",
+            "--language=cpp_unreal",
+            "--input=../../schema"
+          ]
+        },
+        {
+          "name": "Json AST",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_json_usr",
+            "--output=Source/unreal/Improbable/Generated/json/Usr",
+            "--language=ast_json",
+            "--input=../../schema",
+            "--repository=../../build/dependencies/schema"
+          ]
         }
       ]
     },
@@ -62,7 +107,13 @@
       "name": "Clean",
       "steps": [
         {
-          "name": "Clean"
+          "name": "Generated files",
+          "arguments": [
+            "process_schema",
+            "clean",
+            ".spatialos",
+            "Source/unreal/Improbable/Generated"
+          ]
         }
       ]
     }

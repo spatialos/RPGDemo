@@ -8,6 +8,15 @@
           "name":  "improbable_sdk_plugin"
         }
       ]
+    },
+    {
+      "path": ".spatialos/bin",
+      "type": "code_generator",
+      "packages": [
+        {
+          "name":  "Improbable.CodeGeneration"
+        }
+      ]
     }
   ]
 }
