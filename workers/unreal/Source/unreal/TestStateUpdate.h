@@ -7,28 +7,28 @@
 #include "TestStateUpdate.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREAL_API UTestStateUpdate : public UObject
 {
-	GENERATED_BODY()
-	
-public:
-	UTestStateUpdate();
-	UTestStateUpdate(const improbable::test::TestState::Update& rawUpdate);
-	
-	UFUNCTION(BlueprintPure, Category = "TestComponent")
-		bool HasInt32Val();
+    GENERATED_BODY()
 
-	UFUNCTION(BlueprintPure, Category = "TestComponent")
-		int GetInt32Val();
+  public:
+    UTestStateUpdate();
+    UTestStateUpdate(const improbable::test::TestState::Update& rawUpdate);
 
-	UFUNCTION(BlueprintCallable, Category = "TestComponent")
-		void SetInt32Val(int int32Val);
+    UFUNCTION(BlueprintPure, Category = "TestComponent")
+    bool HasInt32Val();
 
-	const improbable::test::TestState::Update GetRawUpdate();
+    UFUNCTION(BlueprintPure, Category = "TestComponent")
+    int GetInt32Val();
 
-private:
-	TUniquePtr<improbable::test::TestState::Update> mRawUpdate;
+    UFUNCTION(BlueprintCallable, Category = "TestComponent")
+    void SetInt32Val(int int32Val);
+
+    const improbable::test::TestState::Update GetRawUpdate();
+
+  private:
+    TUniquePtr<improbable::test::TestState::Update> mRawUpdate;
 };

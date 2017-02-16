@@ -7,23 +7,23 @@
 #include "DamageRequest.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREAL_API UDamageRequest : public UObject
 {
-	GENERATED_BODY()
-	
-public:
-	UDamageRequest();
-	UDamageRequest(const improbable::test::DamageRequest& rawDamageRequest);
+    GENERATED_BODY()
 
-	UFUNCTION(BlueprintPure, Category = "DamageRequest")
-		int GetAmount();
+  public:
+    UDamageRequest();
+    UDamageRequest(const improbable::test::DamageRequest& rawDamageRequest);
 
-	UFUNCTION(BlueprintCallable, Category = "DamageRequest")
-		void SetAmount(int amount);
-	
-private:
-	TUniquePtr<improbable::test::DamageRequest> mRawDamageRequest;
+    UFUNCTION(BlueprintPure, Category = "DamageRequest")
+    int GetAmount();
+
+    UFUNCTION(BlueprintCallable, Category = "DamageRequest")
+    void SetAmount(int amount);
+
+  private:
+    TUniquePtr<improbable::test::DamageRequest> mRawDamageRequest;
 };

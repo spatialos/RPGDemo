@@ -68,9 +68,11 @@ AunrealCharacter::AunrealCharacter()
 
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::Constructor"
-		"character for actor %s, Can tick dedicated server: %d, current role %d"),
-		*GetName(), PrimaryActorTick.bAllowTickOnDedicatedServer, static_cast<int32>(Role.GetValue()))
+    UE_LOG(LogTemp, Warning,
+           TEXT("AunrealCharacter::Constructor"
+                "character for actor %s, Can tick dedicated server: %d, current role %d"),
+           *GetName(), PrimaryActorTick.bAllowTickOnDedicatedServer,
+           static_cast<int32>(Role.GetValue()))
 }
 
 void AunrealCharacter::Tick(float DeltaSeconds)
@@ -89,7 +91,7 @@ void AunrealCharacter::Tick(float DeltaSeconds)
 
 void AunrealCharacter::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
@@ -106,9 +108,10 @@ void AunrealCharacter::Initialise()
 #endif
     {
         InitialiseAsOtherPlayer();
-		UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::Initialise did just call InitialiseAsOtherPlayer"
-			"controller for actor %s"),
-			*GetName())
+        UE_LOG(LogTemp, Warning,
+               TEXT("AunrealCharacter::Initialise did just call InitialiseAsOtherPlayer"
+                    "controller for actor %s"),
+               *GetName())
     }
 }
 
@@ -166,13 +169,13 @@ void AunrealCharacter::InitialiseAsOtherPlayer()
                *GetName())
         otherPlayerController->Possess(this);
     }
-	else
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("AunrealCharacter::InitialiseAsOtherPlayer controller was not null"
-				"controller for actor %s"),
-			*GetName())
-	}
+    else
+    {
+        UE_LOG(LogTemp, Warning,
+               TEXT("AunrealCharacter::InitialiseAsOtherPlayer controller was not null"
+                    "controller for actor %s"),
+               *GetName())
+    }
 
     if (CursorToWorld->IsActive())
     {

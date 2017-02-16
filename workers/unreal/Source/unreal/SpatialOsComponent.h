@@ -6,53 +6,54 @@
 #include "ScopedViewCallbacks.h"
 #include "SpatialOsComponent.generated.h"
 
-
 UCLASS(abstract)
 class UNREAL_API USpatialOsComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	USpatialOsComponent();
+  public:
+    // Sets default values for this component's properties
+    USpatialOsComponent();
 
-	// Called when the game starts
-	virtual void BeginPlay() override;
-	
-	// Called every frame
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+    // Called when the game starts
+    virtual void BeginPlay() override;
 
-	virtual void Init(worker::Connection& Connection, worker::View& View, worker::EntityId EntityId);
-	
-	UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-		virtual int GetComponentId() = 0;
+    // Called every frame
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-		worker::EntityId GetEntityId();
+    virtual void Init(worker::Connection& Connection, worker::View& View,
+                      worker::EntityId EntityId);
 
-	UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-		bool HasAuthority();
+    UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
+    virtual int GetComponentId() = 0;
 
-	UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
-		bool IsComponentReady();
+    UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
+    worker::EntityId GetEntityId();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority);
-	UPROPERTY(BlueprintAssignable, Category = "SpatialOsComponent")
-		FAuthorityChangeDelegate OnAuthorityChange;
+    UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
+    bool HasAuthority();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate);
-	UPROPERTY(BlueprintAssignable, Category = "TestComponent")
-		FComponentReadyDelegate OnComponentReady;
+    UFUNCTION(BlueprintPure, Category = "SpatialOsComponent")
+    bool IsComponentReady();
 
-private:
-	worker::Connection* mConnection;
-	worker::View* mView;
-	worker::EntityId mEntityId;
-	TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAuthorityChangeDelegate, bool, newAuthority);
+    UPROPERTY(BlueprintAssignable, Category = "SpatialOsComponent")
+    FAuthorityChangeDelegate OnAuthorityChange;
 
-	bool mHasAuthority;
-	bool mIsComponentReady;
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE(FComponentReadyDelegate);
+    UPROPERTY(BlueprintAssignable, Category = "TestComponent")
+    FComponentReadyDelegate OnComponentReady;
 
-	void OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op);
-	void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op);
+  private:
+    worker::Connection* mConnection;
+    worker::View* mView;
+    worker::EntityId mEntityId;
+    TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
+
+    bool mHasAuthority;
+    bool mIsComponentReady;
+
+    void OnAuthorityChangeDispatcherCallback(const worker::AuthorityChangeOp& op);
+    void OnRemoveComponentDispatcherCallback(const worker::RemoveComponentOp& op);
 };

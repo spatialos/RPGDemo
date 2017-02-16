@@ -9,23 +9,23 @@
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UTransformSender : public UActorComponent
 {
-  GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
-  // Sets default values for this component's properties
-  UTransformSender();
+  public:
+    // Sets default values for this component's properties
+    UTransformSender();
 
-  // Called when the game starts
-  virtual void BeginPlay() override;
+    // Called when the game starts
+    virtual void BeginPlay() override;
 
-  // Called every frame
-  virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-                             FActorComponentTickFunction* ThisTickFunction) override;
+    // Called every frame
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
 
-  UFUNCTION(BlueprintCallable, Category = "SpatialOS")
-  bool HasAuthority() const;
+    UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+    bool HasAuthority() const;
 
-private:
-  worker::Entity* GetEntity() const;
-  worker::EntityId EntityId;
+  private:
+    worker::Entity* GetEntity() const;
+    worker::EntityId EntityId;
 };

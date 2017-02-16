@@ -7,25 +7,25 @@
 #include "DamageResponse.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREAL_API UDamageResponse : public UObject
 {
-	GENERATED_BODY()
-	
-public:
-	UDamageResponse();
-	UDamageResponse(const improbable::test::DamageResponse& rawDamageResponse);
+    GENERATED_BODY()
 
-	UFUNCTION(BlueprintPure, Category = "DamageResponse")
-		int GetDealtDamage();
+  public:
+    UDamageResponse();
+    UDamageResponse(const improbable::test::DamageResponse& rawDamageResponse);
 
-	UFUNCTION(BlueprintCallable, Category = "DamageResponse")
-		UDamageResponse* SetDealtDamage(int amount);
+    UFUNCTION(BlueprintPure, Category = "DamageResponse")
+    int GetDealtDamage();
 
-	improbable::test::DamageResponse* GetRawDamageResponse();
+    UFUNCTION(BlueprintCallable, Category = "DamageResponse")
+    UDamageResponse* SetDealtDamage(int amount);
 
-private:
-	TUniquePtr<improbable::test::DamageResponse> mRawDamageResponse;
+    improbable::test::DamageResponse* GetRawDamageResponse();
+
+  private:
+    TUniquePtr<improbable::test::DamageResponse> mRawDamageResponse;
 };

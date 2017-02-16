@@ -7,25 +7,25 @@
 #include "StringWrapper.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREAL_API UStringWrapper : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
-	UStringWrapper();
-	UStringWrapper(const improbable::test::StringWrapper& rawStringWrapper);
-	
-	UFUNCTION(BlueprintPure, Category = "StringWrapper")
-		FString GetStringVal();
+  public:
+    UStringWrapper();
+    UStringWrapper(const improbable::test::StringWrapper& rawStringWrapper);
 
-	UFUNCTION(BlueprintCallable, Category = "StringWrapper")
-		void SetStringVal(FString stringVal);
+    UFUNCTION(BlueprintPure, Category = "StringWrapper")
+    FString GetStringVal();
 
-	improbable::test::StringWrapper* GetRawStringWrapper();
+    UFUNCTION(BlueprintCallable, Category = "StringWrapper")
+    void SetStringVal(FString stringVal);
 
-private:
-	TUniquePtr<improbable::test::StringWrapper> mRawStringWrapper;
+    improbable::test::StringWrapper* GetRawStringWrapper();
+
+  private:
+    TUniquePtr<improbable::test::StringWrapper> mRawStringWrapper;
 };

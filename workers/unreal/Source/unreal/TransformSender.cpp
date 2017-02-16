@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
 #include "TransformSender.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
 #include "improbable/corelibrary/transforms/transform_state.h"
+#include "unreal.h"
 #include "unrealGameMode.h"
 
 using namespace improbable::unreal::core;
@@ -41,39 +41,40 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
                                       "getting new entity id %s"),
                *ToString(EntityId));
 
-		if(EntityId != -1)
-		{
-			const auto* const entity = GetEntity();
+        if (EntityId != -1)
+        {
+            const auto* const entity = GetEntity();
 
-			if (entity != nullptr)
-			{
-				worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
-					entity->Get<improbable::corelibrary::transforms::TransformState>();
+            if (entity != nullptr)
+            {
+                worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
+                    entity->Get<improbable::corelibrary::transforms::TransformState>();
 
-				if (!transform.empty() && HasAuthority())
-				{
-					FVector location = ToUnrealVector(transform->local_position());
-					FQuat rotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
+                if (!transform.empty() && HasAuthority())
+                {
+                    FVector location = ToUnrealVector(transform->local_position());
+                    FQuat rotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
 
-					auto* const owner = GetOwner();
-					owner->SetActorLocation(location);
-					owner->SetActorRotation(rotation);
+                    auto* const owner = GetOwner();
+                    owner->SetActorLocation(location);
+                    owner->SetActorRotation(rotation);
 
-					UE_LOG(LogTemp, Warning,
-						TEXT("UTransformSender: Set initial position for actor (%s), position, (%s) rotation (%s)"),
-						*GetOwner()->GetName(), *location.ToString(), *rotation.ToString())
-				}
-			}
-		}
+                    UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Set initial position for "
+                                                  "actor (%s), position, (%s) rotation (%s)"),
+                           *GetOwner()->GetName(), *location.ToString(), *rotation.ToString())
+                }
+            }
+        }
 
         return;
     }
 
     if (!HasAuthority())
     {
-		UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Entity id %s did not have authority on the transform sender, actor name %s"),
-			*ToString(EntityId), *GetOwner()->GetName());
-		return;
+        UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Entity id %s did not have authority on "
+                                      "the transform sender, actor name %s"),
+               *ToString(EntityId), *GetOwner()->GetName());
+        return;
     }
 
     FVector location = GetOwner()->GetActorLocation();
@@ -94,8 +95,10 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
             update.set_local_position(locationUpdate);
             update.set_local_rotation(rotationUpdate);
 
-			UE_LOG(LogTemp, Warning, TEXT("UTransformSender: Sending transform state update position %s, rotation %s"),
-				*location.ToString(), *rotation.ToString());
+            UE_LOG(
+                LogTemp, Warning,
+                TEXT("UTransformSender: Sending transform state update position %s, rotation %s"),
+                *location.ToString(), *rotation.ToString());
 
             entity->Update<improbable::corelibrary::transforms::TransformState>(update);
             FWorkerConnection::GetConnection()

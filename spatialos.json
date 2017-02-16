@@ -2,14 +2,17 @@
   "name": "demo",
   "project_version": "0.0.1",
   "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
+  "sdk_version": "10.0.0-b8972-4a44e-SNAPSHOT",
   "dependencies": [
     {
       "name": "CoreLibrary",
-      "version": "999.9.9-LOCAL-SNAPSHOT"
+      "version": "999.9.9-LOCAL-SNAPSHOT",
+      "version": "10.0.0-b8972-4a44e-SNAPSHOT"
     },
     {
       "name": "WorkerSdkSchema",
-      "version": "999.9.9-LOCAL-SNAPSHOT"
+      "version": "999.9.9-LOCAL-SNAPSHOT",
+      "version": "10.0.0-b8972-4a44e-SNAPSHOT"
     }
   ]
 }

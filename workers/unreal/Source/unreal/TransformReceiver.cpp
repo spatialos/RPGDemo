@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
 #include "TransformReceiver.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
+#include "unreal.h"
 #include "unrealGameMode.h"
 
 using namespace improbable::unreal::core;
@@ -108,7 +108,8 @@ void UTransformReceiver::Initialise()
             worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
                 entity->Get<improbable::corelibrary::transforms::TransformState>();
 
-            if (!transform.empty() && !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
+            if (!transform.empty() &&
+                !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
             {
                 mLocation = ToUnrealVector(transform->local_position());
                 mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
@@ -120,8 +121,8 @@ void UTransformReceiver::Initialise()
                 // accurate
                 // yet
                 GetOwner()->SetActorLocation(mLocation);
-                UE_LOG(LogTemp, Warning,
-                       TEXT("UTransformReceiver: Set initial position for actor (%s), position, (%s) rotation (%s)"),
+                UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Set initial position for actor "
+                                              "(%s), position, (%s) rotation (%s)"),
                        *GetOwner()->GetName(), *mLocation.ToString(), *mRotation.ToString())
             }
 

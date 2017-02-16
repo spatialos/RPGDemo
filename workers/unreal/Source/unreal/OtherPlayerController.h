@@ -11,16 +11,16 @@
 UCLASS()
 class UNREAL_API AOtherPlayerController : public AAIController
 {
-  GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
-  AOtherPlayerController();
+  public:
+    AOtherPlayerController();
 
-protected:
-  void Initialise();
-  bool IsInitialised() const;
-  virtual void Tick(float DeltaTime) override;
+  protected:
+    void Initialise();
+    bool IsInitialised() const;
+    virtual void Tick(float DeltaTime) override;
 
-  class AunrealCharacter* mControlledCharacter;
-  void SetNewMoveDestination(const FVector DestLocation);
+    class AunrealCharacter* mControlledCharacter;
+    void SetNewMoveDestination(const FVector DestLocation);
 };

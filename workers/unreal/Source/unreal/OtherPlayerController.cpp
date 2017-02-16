@@ -1,50 +1,50 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
 #include "OtherPlayerController.h"
 #include "TransformReceiver.h"
+#include "unreal.h"
 #include "unrealCharacter.h"
 
 AOtherPlayerController::AOtherPlayerController()
 {
-  mControlledCharacter = nullptr;
+    mControlledCharacter = nullptr;
 }
 
 void AOtherPlayerController::Initialise()
 {
-  if (GetPawn() == nullptr)
-    return;
-  mControlledCharacter = Cast<AunrealCharacter>(GetPawn());
+    if (GetPawn() == nullptr)
+        return;
+    mControlledCharacter = Cast<AunrealCharacter>(GetPawn());
 }
 
 bool AOtherPlayerController::IsInitialised() const
 {
-  return mControlledCharacter != nullptr;
+    return mControlledCharacter != nullptr;
 }
 
 void AOtherPlayerController::Tick(float DeltaTime)
 {
-  Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
-  Initialise();
-  if (!IsInitialised())
-    return;
+    Initialise();
+    if (!IsInitialised())
+        return;
 
-  SetNewMoveDestination(mControlledCharacter->GetTransformReceiver()->GetLocation());
+    SetNewMoveDestination(mControlledCharacter->GetTransformReceiver()->GetLocation());
 }
 
 void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
-  const APawn* OtherPawn = GetPawn();
-  if (OtherPawn)
-  {
-    UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-    float const Distance = FVector::Dist(DestLocation, OtherPawn->GetActorLocation());
-
-    // Issue move command only if far enough in order for walk animation to play correctly
-    if (NavSys && (Distance > 120.0f))
+    const APawn* OtherPawn = GetPawn();
+    if (OtherPawn)
     {
-      NavSys->SimpleMoveToLocation(this, DestLocation);
+        UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
+        float const Distance = FVector::Dist(DestLocation, OtherPawn->GetActorLocation());
+
+        // Issue move command only if far enough in order for walk animation to play correctly
+        if (NavSys && (Distance > 120.0f))
+        {
+            NavSys->SimpleMoveToLocation(this, DestLocation);
+        }
     }
-  }
 }
