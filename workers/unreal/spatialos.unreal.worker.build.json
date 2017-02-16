@@ -55,18 +55,6 @@
             "--configuration=Development",
             "--platform=Win64"
           ]
-        },
-        {
-          "name": "Compile Linux Server",
-          "target": "production",
-          "arguments": [
-            "invoke",
-            "unreal",
-            "build",
-            "--target=Server",
-            "--configuration=Development",
-            "--platform=Linux"
-          ]
         }
       ]
     },
