@@ -62,6 +62,18 @@
             "--input=../../schema",
             "--repository=../../build/dependencies/schema"
           ]
+        },
+        {
+          "name": "Unreal Code Generation",
+          "description": "Generates Unreal classes.",
+          "arguments": [
+            "invoke",
+            "unity-mono",
+            ".spatialos/bin/CodeGenerator.exe",
+            "--",
+            "--json-dir=Source/unreal/Improbable/Generated/json/Usr",
+            "--unreal-output-dir=Source/unreal/Improbable/Generated/cpp/unreal"
+          ]
         }
       ]
     },
