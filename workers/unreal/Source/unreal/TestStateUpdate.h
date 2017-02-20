@@ -16,7 +16,7 @@ class UNREAL_API UTestStateUpdate : public UObject
 
   public:
     UTestStateUpdate();
-    void Init(const improbable::test::TestState::Update& rawUpdate);
+	UTestStateUpdate* Init(const improbable::test::TestState::Update& rawUpdate);
 
     UFUNCTION(BlueprintPure, Category = "TestComponent")
     bool HasInt32Val();

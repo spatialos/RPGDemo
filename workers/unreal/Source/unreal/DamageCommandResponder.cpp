@@ -7,7 +7,7 @@ UDamageCommandResponder::UDamageCommandResponder()
 {
 }
 
-void UDamageCommandResponder::Init(
+UDamageCommandResponder* UDamageCommandResponder::Init(
     worker::Connection* connection,
     worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>>
         requestId,
@@ -15,17 +15,18 @@ void UDamageCommandResponder::Init(
 {
     mConnection = connection;
     mRequestId = requestId;
-    mRequest.Reset(request);
+    mRequest = request;
+	return this;
 }
 
 UDamageRequest* UDamageCommandResponder::GetRequest()
 {
-    return mRequest.Get();
+	return mRequest;
 }
 
 void UDamageCommandResponder::SendResponse(UDamageResponse* response)
 {
-    auto rawResponse = response->GetRawDamageResponse();
+	improbable::test::DamageResponse rawResponse = response->GetUnderlying();
     mConnection->SendCommandResponse(
-        mRequestId, improbable::test::TestState::Commands::Damage::Response(*rawResponse));
+        mRequestId, improbable::test::TestState::Commands::Damage::Response(rawResponse));
 }

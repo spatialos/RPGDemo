@@ -8,9 +8,10 @@ UTestStateUpdate::UTestStateUpdate()
     mRawUpdate.Reset(new improbable::test::TestState::Update());
 }
 
-void UTestStateUpdate::Init(const improbable::test::TestState::Update& rawUpdate)
+UTestStateUpdate* UTestStateUpdate::Init(const improbable::test::TestState::Update& rawUpdate)
 {
     mRawUpdate.Reset(new improbable::test::TestState::Update(rawUpdate));
+	return this;
 }
 
 bool UTestStateUpdate::HasInt32Val()

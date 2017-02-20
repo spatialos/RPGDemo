@@ -18,7 +18,7 @@ class UNREAL_API UDamageCommandResponder : public UObject
 
   public:
     UDamageCommandResponder();
-    void Init(
+	UDamageCommandResponder* Init(
         worker::Connection* connection,
         worker::RequestId<
             worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>>
@@ -35,5 +35,5 @@ class UNREAL_API UDamageCommandResponder : public UObject
     worker::Connection* mConnection;
     worker::RequestId<worker::IncomingCommandRequest<improbable::test::TestState::Commands::Damage>>
         mRequestId;
-    TUniquePtr<UDamageRequest> mRequest;
+    UDamageRequest* mRequest;
 };
