@@ -1,20 +1,6 @@
 {
   "template": "small",
   "world": {
-      "legacy_flags": [
-        {
-          "name": "entity_activator",
-          "value": "improbable.corelib.entity.CoreLibraryEntityActivator"
-        },
-        {
-          "name": "engine_automatic_scaling_enabled",
-          "value": "true"
-        },
-        {
-          "name": "enable_workflow_v2",
-          "value": "true"
-        }
-      ],
       "dimensions": 
       {
         "x_meters": 5000,
@@ -33,10 +19,7 @@
       "flags" : [],
       "load_balancing":
       {
-        "auto_hex_grid": 
-        {
-          "num_workers": 2
-        }
+        "singleton_worker": {}
       },
       "permissions": [
         {
