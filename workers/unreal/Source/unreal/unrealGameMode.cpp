@@ -97,7 +97,7 @@ void AunrealGameMode::SpawnPlayer()
     worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
     worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
-    view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, &entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
+    view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
     {
         if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
         {
@@ -105,7 +105,14 @@ void AunrealGameMode::SpawnPlayer()
             UE_LOG(LogTemp, Warning,
                    TEXT("Creating Player")
             )
+        } 
+        else if (op.StatusCode == worker::StatusCode::kFailure)
+        {
+            UE_LOG(LogTemp, Warning,
+                   TEXT("Player failed: %s"), op.Message.c_str())
+            
         }
+
     });
 }
 
