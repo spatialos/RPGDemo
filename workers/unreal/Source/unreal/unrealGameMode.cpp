@@ -7,6 +7,7 @@
 #include <improbable/player/heartbeat.h>
 #include <improbable/player/heartbeat_receiver.h>
 #include <improbable/common/transform.h>
+#include "improbable/standard_library.h"
 
 #if UE_SERVER
 const std::string WorkerType = "UnrealWorker";
@@ -19,14 +20,30 @@ const std::string WorkerType = "UnrealClient";
 namespace {
 worker::Entity GetPlayerEntityTemplate()
 {
-  improbable::math::Coordinates initialPosition{ 0.0, 0.0, 0.0 };
-  worker::List<float> initialRoation{ 0.0f, 0.0f, 0.0f, 1.0f };
+    improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+    worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
-  worker::Entity playerTempalte;
-  playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{initialPosition, initialRoation});
-  playerTempalte.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
-  playerTempalte.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
-  return playerTempalte;
+    improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
+    improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+
+    improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
+    improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
+    improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+
+    worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
+
+    componentAuthority.emplace(improbable::common::Transform::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::Heartbeat::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, workerRequirementSet);
+
+    improbable::ComponentAcl componentAcl(componentAuthority);
+
+    worker::Entity playerTempalte;
+    playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
+    playerTempalte.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
+    playerTempalte.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
+    playerTempalte.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{globalRequirmentSet, componentAcl});
+    return playerTempalte;
 }
 }  // ::
 
@@ -68,22 +85,28 @@ void AunrealGameMode::Tick(float DeltaTime)
 
 void AunrealGameMode::SpawnPlayer()
 {
-  worker::Connection& connection = Connection->GetConnection();
-  worker::View& view = Connection->GetView();
+    auto& connection = Connection->GetConnection();
+    auto& view = Connection->GetView();
 
-  const std::uint32_t timeoutMillis = 500;
-  const std::string entityType = "Palyer";
+    const std::uint32_t timeoutMillis = 500;
+    const std::string entityType = "Player";
 
-  worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
+            UE_LOG(LogTemp, Warning,
+                   TEXT("Starting Player Creation")
+            )
+    worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
-  worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
-  view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, &entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
-  {
-    if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
+    worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
+    view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, &entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
     {
-      entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
-    }
-  });
+        if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
+        {
+            entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
+            UE_LOG(LogTemp, Warning,
+                   TEXT("Creating Player")
+            )
+        }
+    });
 }
 
 void AunrealGameMode::ConfigureWindowSize()
@@ -116,15 +139,19 @@ void AunrealGameMode::CreateWorkerConnection()
 	FString engineType = WorkerType.c_str();
 	FParse::Value(FCommandLine::Get(), *engineTypeArgument, engineType);
 
-	std::string workerId;
+    std::string workerId;
 	FString parsedWorkerId;
 	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
 	{
-		workerId = WorkerType + TCHAR_TO_UTF8(*FGuid::NewGuid().ToString());
+        workerId = WorkerType + std::string{ TCHAR_TO_UTF8(*FGuid::NewGuid().ToString()) };
+	UE_LOG(LogTemp, Warning,
+		   TEXT("WorkerId: %s"), workerId.c_str())
 	}
 	else
 	{
 		workerId = TCHAR_TO_UTF8(*parsedWorkerId);
+	UE_LOG(LogTemp, Warning,
+		   TEXT("WorkerId parsed: %s"), workerId.c_str())
 	}
 
 	FString parsedLinkProtocol = "RakNet";

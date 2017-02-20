@@ -13,10 +13,6 @@
         {
           "name": "enable_workflow_v2",
           "value": "true"
-        },
-        {
-          "name": "game_apps_to_start",
-          "value": "improbable.apps.PlayerLifeCycleManager"
         }
       ],
       "dimensions": 
