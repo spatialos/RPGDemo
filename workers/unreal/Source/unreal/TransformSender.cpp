@@ -11,7 +11,7 @@
 using namespace improbable::unreal::core;
 
 // Sets default values for this component's properties
-UTransformSender::UTransformSender(): 
+UTransformSender::UTransformSender()
 {
     // Set this component to be initialized when the game starts, and to be ticked every frame.  You
     // can turn these features
@@ -51,7 +51,7 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
 
                     auto* const owner = GetOwner();
                     owner->SetActorLocation(location);
-                    owner->SetActorRotation(rotation);
+                    //owner->SetActorRotation(rotation);
                 }
             }
         }

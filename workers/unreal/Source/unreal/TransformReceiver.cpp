@@ -53,7 +53,7 @@ void UTransformReceiver::ParseTransformStateUpdate( const worker::ComponentUpdat
     }
     if (op.Update.rotation())
     {
-        mRotation = ToUnrealRotation(*op.Update.rotation());
+        //mRotation = ToUnrealRotation(*op.Update.rotation());
     }
 }
 
@@ -95,8 +95,9 @@ void UTransformReceiver::Initialise()
             if (transform && !entity->HasAuthority<improbable::common::Transform>())
             {
                 mLocation = ToUnrealPosition(transform->position());
-                mRotation = ToUnrealRotation(transform->rotation());
-                GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
+                //mRotation = ToUnrealRotation(transform->rotation());
+                //GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
+                GetOwner()->SetActorLocation(mLocation);
             }
 
             mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks( FWorkerConnection::GetView()));

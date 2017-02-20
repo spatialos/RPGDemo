@@ -12,16 +12,16 @@ constexpr double SpatialToUnrealScale = 100.0;
 inline improbable::math::Coordinates ToNativeCoordinates(const FVector& position)
 {
     auto spatialPosition = SpatialToUnrealCoordinateSpace.GetInverse().RotateVector(position) / SpatialToUnrealScale;
-    return improbable::math::Coordinates{ static_cast<float>(spatialPosition.X),
-                                                static_cast<float>(spatialPosition.Y),
-                                                static_cast<float>(spatialPosition.Z) };
+    return improbable::math::Coordinates{ static_cast<double>(spatialPosition.X),
+                                                static_cast<double>(spatialPosition.Y),
+                                                static_cast<double>(spatialPosition.Z) };
 }
 
-inline FVector ToUnrealPosition(const improbable::math::Coordinates& postion)
+inline FVector ToUnrealPosition(const improbable::math::Coordinates& position)
 {
-  auto result = FVector(static_cast<float>(postion.x),
-                        static_cast<float>(postion.y),
-                        static_cast<float>(postion.z));
+  auto result = FVector{static_cast<float>(position.x()),
+                        static_cast<float>(position.y()),
+                        static_cast<float>(position.z())};
   result = SpatialToUnrealCoordinateSpace.RotateVector(result);
   result *= SpatialToUnrealScale;
 
