@@ -24,7 +24,7 @@ public:
 	UCommander();
 	UCommander* Init(USpatialOsComponent* component, worker::Connection& connection, worker::View& view);
 
-	DECLARE_DYNAMIC_DELEGATE_OneParam(FReserveEntityIdResponse, const UReserveEntityIdResponse&, commandResponse);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FReserveEntityIdResponse, UReserveEntityIdResponse*, commandResponse);
 	UFUNCTION(BlueprintCallable, Category = "Commands")
 	void ReserveEntityId(const FReserveEntityIdResponse& callback, int timeoutMs);
 
@@ -35,6 +35,7 @@ private:
 
 	TUniquePtr<improbable::unreal::callbacks::FScopedViewCallbacks> mCallbacks;
 	std::set<std::string> mCommandResponseDispatcherCallbacksRegistered;
-	std::map<std::uint32_t, const FReserveEntityIdResponse&> mRequestIdToReserveEntityIdCallback;
+	std::map<std::uint32_t, FReserveEntityIdResponse> mRequestIdToReserveEntityIdCallback;
 
+	void OnReserveEntityIdResponseDispatcherCallback(const worker::ReserveEntityIdResponseOp& op);
 };

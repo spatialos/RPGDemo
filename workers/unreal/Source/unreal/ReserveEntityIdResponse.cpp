@@ -11,9 +11,10 @@ UReserveEntityIdResponse::UReserveEntityIdResponse()
 	mUnderlying.Reset(new worker::ReserveEntityIdResponseOp());
 }
 
-void UReserveEntityIdResponse::Init(const worker::ReserveEntityIdResponseOp& underlying)
+UReserveEntityIdResponse* UReserveEntityIdResponse::Init(const worker::ReserveEntityIdResponseOp& underlying)
 {
 	mUnderlying.Reset(new worker::ReserveEntityIdResponseOp(underlying));
+	return this;
 }
 
 worker::ReserveEntityIdResponseOp* UReserveEntityIdResponse::GetUnderlying()
@@ -32,5 +33,5 @@ int UReserveEntityIdResponse::GetEntityId()
 	{
 		return -1;
 	}
-	return mUnderyling->EntityId.data().Id;
+	return (int) *(mUnderlying->EntityId.data());
 }
