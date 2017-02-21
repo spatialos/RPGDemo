@@ -47,8 +47,8 @@ int32 UExportSnapshotCommandlet::Main(const FString& Params)
 
 worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const
 {
-    Coordinates initialPosition{ 0.0, 4.0, 0.0 };
-    worker::List<float> initialRotation{ 1.0f, 0.0f, 0.0f, 0.0f };
+    const Coordinates initialPosition{ 0.0, 4.0, 0.0 };
+    const worker::List<float> initialRotation{ 1.0f, 0.0f, 0.0f, 0.0f };
     auto snapshotEntity = worker::SnapshotEntity();
     snapshotEntity.Prefab = "Npc";
     snapshotEntity.Add<common::Transform>(common::Transform::Data{ initialPosition, initialRotation });

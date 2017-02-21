@@ -20,15 +20,15 @@ const std::string WorkerType = "UnrealClient";
 namespace {
 worker::Entity GetPlayerEntityTemplate()
 {
-    improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
-    worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
+    const improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+    const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
-    improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
-    improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+    const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
+    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
-    improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
-    improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
-    improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
 
     worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
 
@@ -36,7 +36,7 @@ worker::Entity GetPlayerEntityTemplate()
     componentAuthority.emplace(improbable::player::Heartbeat::ComponentId, clientRequirementSet);
     componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, workerRequirementSet);
 
-    improbable::ComponentAcl componentAcl(componentAuthority);
+    const improbable::ComponentAcl componentAcl(componentAuthority);
 
     worker::Entity playerTempalte;
     playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
@@ -91,14 +91,13 @@ void AunrealGameMode::SpawnPlayer()
     const std::uint32_t timeoutMillis = 500;
     const std::string entityType = "Player";
 
-    worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
+    const auto entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
-    worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
-    view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
+    view.OnReserveEntityIdResponse([&connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
     {
         if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
         {
-            entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
+            connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
         } 
     });
 }

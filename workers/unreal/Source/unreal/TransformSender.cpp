@@ -64,16 +64,16 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
         return;
     }
 
-    FVector location = GetOwner()->GetActorLocation();
-    improbable::math::Coordinates locationUpdate = ToNativeCoordinates(location);
+    const FVector location = GetOwner()->GetActorLocation();
+    const improbable::math::Coordinates locationUpdate = ToNativeCoordinates(location);
 
-    FQuat rotation = GetOwner()->GetActorRotation().Quaternion();
-    worker::List<float> rotationUpdate = ToNativeRotation(rotation);
+    const FQuat rotation = GetOwner()->GetActorRotation().Quaternion();
+    const worker::List<float> rotationUpdate = ToNativeRotation(rotation);
 
     auto entity = GetEntity();
     if (entity != nullptr)
     {
-        auto previous = entity->Get<improbable::common::Transform>();
+        const auto previous = entity->Get<improbable::common::Transform>();
         if (previous.empty()
             || previous->position() != locationUpdate
             || previous->rotation() != rotationUpdate)
