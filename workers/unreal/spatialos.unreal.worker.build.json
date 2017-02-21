@@ -19,18 +19,7 @@
           ]
         },
         {
-          "name": "C# core library",
-          "arguments": [
-            "process_schema",
-            "generate",
-            "--cachePath=.spatialos/schema_codegen_cache_cl",
-            "--output=Source/unreal/Improbable/Generated/cpp/CoreLibrary",
-            "--language=cpp_unreal",
-            "--input=../../build/dependencies/schema/CoreLibrary"
-          ]
-        },
-        {
-          "name": "C# standard library",
+          "name": "C++ standard library",
           "arguments": [
             "process_schema",
             "generate",
@@ -41,7 +30,7 @@
           ]
         },
         {
-          "name": "C#",
+          "name": "C++",
           "arguments": [
             "process_schema",
             "generate",
@@ -49,6 +38,17 @@
             "--output=Source/unreal/Improbable/Generated/cpp/Usr",
             "--language=cpp_unreal",
             "--input=../../schema"
+          ]
+        },
+        {
+          "name": "Json AST standard library",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_json_std",
+            "--output=Source/unreal/Improbable/Generated/json/Std",
+            "--language=ast_json",
+            "--input=../../build/dependencies/schema/WorkerSdkSchema"
           ]
         },
         {
@@ -71,7 +71,7 @@
             "unity-mono",
             ".spatialos/bin/CodeGenerator.exe",
             "--",
-            "--json-dir=Source/unreal/Improbable/Generated/json/Usr",
+            "--json-dir=Source/unreal/Improbable/Generated/json",
             "--unreal-output-dir=Source/unreal/Improbable/Generated/cpp/unreal"
           ]
         }
