@@ -19,7 +19,10 @@
       "flags" : [],
       "load_balancing":
       {
-        "singleton_worker": {}
+        "auto_hex_grid":  
+        {                 
+          "num_workers": 2
+        }                 
       },
       "permissions": [
         {
