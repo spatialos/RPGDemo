@@ -91,9 +91,6 @@ void AunrealGameMode::SpawnPlayer()
     const std::uint32_t timeoutMillis = 500;
     const std::string entityType = "Player";
 
-            UE_LOG(LogTemp, Warning,
-                   TEXT("Starting Player Creation")
-            )
     worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
     worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
@@ -102,17 +99,7 @@ void AunrealGameMode::SpawnPlayer()
         if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
         {
             entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
-            UE_LOG(LogTemp, Warning,
-                   TEXT("Creating Player")
-            )
-        } 
-        else if (op.StatusCode == worker::StatusCode::kFailure)
-        {
-            UE_LOG(LogTemp, Warning,
-                   TEXT("Player failed: %s"), op.Message.c_str())
-            
         }
-
     });
 }
 
@@ -151,8 +138,11 @@ void AunrealGameMode::CreateWorkerConnection()
 	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
 	{
         workerId = WorkerType + std::string{ TCHAR_TO_UTF8(*FGuid::NewGuid().ToString()) };
+<<<<<<< HEAD
 	UE_LOG(LogTemp, Warning,
 		   TEXT("WorkerId: %s"), workerId.c_str())
+=======
+>>>>>>> origin/feature/GET-373-remove-gsim
 	}
 	else
 	{
