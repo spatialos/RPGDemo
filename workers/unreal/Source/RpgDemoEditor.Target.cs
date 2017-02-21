@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class unrealTarget : TargetRules
+public class RpgDemoEditorTarget : TargetRules
 {
-	public unrealTarget(TargetInfo Target)
+	public RpgDemoEditorTarget(TargetInfo Target)
 	{
-		Type = TargetType.Game;
+		Type = TargetType.Editor;
 	}
 
 	//
@@ -20,6 +20,6 @@ public class unrealTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-        OutExtraModuleNames.AddRange(new[] { "unreal" });
+        OutExtraModuleNames.AddRange(new[] { "RpgDemo" });
     }
 }

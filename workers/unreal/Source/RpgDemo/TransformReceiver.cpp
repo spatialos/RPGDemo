@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "TransformReceiver.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
-#include "unrealGameMode.h"
+#include "RpgDemoGameMode.h"
 
 using namespace improbable::unreal::core;
 
@@ -62,7 +62,7 @@ void UTransformReceiver::BeginPlay()
 {
     Super::BeginPlay();
 
-    EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+    EntityId = ARpgDemoGameMode::GetSpawner()->GetEntityId(GetOwner());
     UE_LOG(LogTemp, Warning, TEXT("UTransformReceiver: Initial entity id got set to (%s)"),
            *ToString(EntityId))
 }
@@ -80,7 +80,7 @@ void UTransformReceiver::Initialise()
 {
     if (EntityId == -1)
     {
-        EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+        EntityId = ARpgDemoGameMode::GetSpawner()->GetEntityId(GetOwner());
         return;
     }
 

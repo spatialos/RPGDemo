@@ -1,16 +1,16 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "AI/Navigation/NavigationSystem.h"
-#include "unrealPlayerController.h"
+#include "RpgDemoPlayerController.h"
 
-AunrealPlayerController::AunrealPlayerController()
+ARpgDemoPlayerController::ARpgDemoPlayerController()
 {
   bShowMouseCursor = true;
   DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
-void AunrealPlayerController::PlayerTick(float DeltaTime)
+void ARpgDemoPlayerController::PlayerTick(float DeltaTime)
 {
   Super::PlayerTick(DeltaTime);
 
@@ -21,24 +21,24 @@ void AunrealPlayerController::PlayerTick(float DeltaTime)
   }
 }
 
-void AunrealPlayerController::SetupInputComponent()
+void ARpgDemoPlayerController::SetupInputComponent()
 {
   // set up gameplay key bindings
   Super::SetupInputComponent();
 
   InputComponent->BindAction("SetDestination", IE_Pressed, this,
-                             &AunrealPlayerController::OnSetDestinationPressed);
+                             &ARpgDemoPlayerController::OnSetDestinationPressed);
   InputComponent->BindAction("SetDestination", IE_Released, this,
-                             &AunrealPlayerController::OnSetDestinationReleased);
+                             &ARpgDemoPlayerController::OnSetDestinationReleased);
 
   // support touch devices
   InputComponent->BindTouch(EInputEvent::IE_Pressed, this,
-                            &AunrealPlayerController::MoveToTouchLocation);
+                            &ARpgDemoPlayerController::MoveToTouchLocation);
   InputComponent->BindTouch(EInputEvent::IE_Repeat, this,
-                            &AunrealPlayerController::MoveToTouchLocation);
+                            &ARpgDemoPlayerController::MoveToTouchLocation);
 }
 
-void AunrealPlayerController::MoveToMouseCursor()
+void ARpgDemoPlayerController::MoveToMouseCursor()
 {
   // Trace to see what is under the mouse cursor
   FHitResult Hit;
@@ -51,7 +51,7 @@ void AunrealPlayerController::MoveToMouseCursor()
   }
 }
 
-void AunrealPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex,
+void ARpgDemoPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex,
                                                   const FVector Location)
 {
   FVector2D ScreenSpaceLocation(Location);
@@ -66,7 +66,7 @@ void AunrealPlayerController::MoveToTouchLocation(const ETouchIndex::Type Finger
   }
 }
 
-void AunrealPlayerController::SetNewMoveDestination(const FVector DestLocation)
+void ARpgDemoPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
   APawn* const Pawn = GetPawn();
   if (Pawn)
@@ -83,13 +83,13 @@ void AunrealPlayerController::SetNewMoveDestination(const FVector DestLocation)
   }
 }
 
-void AunrealPlayerController::OnSetDestinationPressed()
+void ARpgDemoPlayerController::OnSetDestinationPressed()
 {
   // set flag to keep updating destination until released
   bMoveToMouseCursor = true;
 }
 
-void AunrealPlayerController::OnSetDestinationReleased()
+void ARpgDemoPlayerController::OnSetDestinationReleased()
 {
   // clear flag to indicate we should stop updating the destination
   bMoveToMouseCursor = false;

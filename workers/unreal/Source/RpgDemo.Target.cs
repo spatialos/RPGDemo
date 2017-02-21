@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class unrealServerTarget : TargetRules
+public class RpgDemoTarget : TargetRules
 {
-	public unrealServerTarget(TargetInfo Target)
+	public RpgDemoTarget(TargetInfo Target)
 	{
-		Type = TargetType.Server;
+		Type = TargetType.Game;
 	}
 
 	//
@@ -20,6 +20,6 @@ public class unrealServerTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.AddRange(new [] { "unreal" });
-	}
+        OutExtraModuleNames.AddRange(new[] { "RpgDemo" });
+    }
 }

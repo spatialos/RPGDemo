@@ -1,14 +1,14 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "OtherPlayerController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "TransformReceiver.h"
 #include "TransformSender.h"
-#include "unrealCharacter.h"
+#include "RpgDemoCharacter.h"
 
-AunrealCharacter::AunrealCharacter()
+ARpgDemoCharacter::ARpgDemoCharacter()
 {
     // Set size for player capsule
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -69,7 +69,7 @@ AunrealCharacter::AunrealCharacter()
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
 
-void AunrealCharacter::Tick(float DeltaSeconds)
+void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
@@ -81,7 +81,7 @@ void AunrealCharacter::Tick(float DeltaSeconds)
     }
 }
 
-void AunrealCharacter::BeginPlay()
+void ARpgDemoCharacter::BeginPlay()
 {
     Super::BeginPlay();
 }
@@ -89,7 +89,7 @@ void AunrealCharacter::BeginPlay()
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
-void AunrealCharacter::Initialise()
+void ARpgDemoCharacter::Initialise()
 {
     if (TransformSender->HasAuthority())
     {
@@ -99,13 +99,13 @@ void AunrealCharacter::Initialise()
     {
         InitialiseAsOtherPlayer();
         UE_LOG(LogTemp, Warning,
-               TEXT("AunrealCharacter::Initialise did just call InitialiseAsOtherPlayer"
+               TEXT("ARpgDemoCharacter::Initialise did just call InitialiseAsOtherPlayer"
                     "controller for actor %s"),
                *GetName())
     }
 }
 
-void AunrealCharacter::InitialiseAsOwnPlayer()
+void ARpgDemoCharacter::InitialiseAsOwnPlayer()
 {
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     AController* currentController = GetController();
@@ -118,7 +118,7 @@ void AunrealCharacter::InitialiseAsOwnPlayer()
 
         playerController->UnPossess();
         playerController->Possess(this);
-        UE_LOG(LogTemp, Warning, TEXT("AunrealCharacter::InitialiseAsOwnPlayer creating own player "
+        UE_LOG(LogTemp, Warning, TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer creating own player "
                                       "controller for actor %s"),
                *GetName())
     }
@@ -135,7 +135,7 @@ void AunrealCharacter::InitialiseAsOwnPlayer()
     }
 }
 
-void AunrealCharacter::InitialiseAsOtherPlayer()
+void ARpgDemoCharacter::InitialiseAsOtherPlayer()
 {
     AController* currentController = GetController();
 
@@ -152,7 +152,7 @@ void AunrealCharacter::InitialiseAsOtherPlayer()
             GetWorld()->SpawnActor(AOtherPlayerController::StaticClass()));
 
         UE_LOG(LogTemp, Warning,
-               TEXT("AunrealCharacter::InitialiseAsOtherPlayer creating other player "
+               TEXT("ARpgDemoCharacter::InitialiseAsOtherPlayer creating other player "
                     "controller for actor %s"),
                *GetName())
         otherPlayerController->Possess(this);
@@ -160,7 +160,7 @@ void AunrealCharacter::InitialiseAsOtherPlayer()
     else
     {
         UE_LOG(LogTemp, Warning,
-               TEXT("AunrealCharacter::InitialiseAsOtherPlayer controller was not null"
+               TEXT("ARpgDemoCharacter::InitialiseAsOtherPlayer controller was not null"
                     "controller for actor %s"),
                *GetName())
     }
@@ -177,7 +177,7 @@ void AunrealCharacter::InitialiseAsOtherPlayer()
     }
 }
 
-void AunrealCharacter::UpdateCursorPosition() const
+void ARpgDemoCharacter::UpdateCursorPosition() const
 {
     if (CursorToWorld != nullptr)
     {

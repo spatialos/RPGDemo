@@ -4,16 +4,16 @@
 #include "GameFramework/GameUserSettings.h"
 #include "EntitySpawner.h"
 #include "WorkerConnection.h"
-#include "unrealGameMode.generated.h"
+#include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
-class AunrealGameMode : public AGameMode
+class ARpgDemoGameMode : public AGameMode
 {
   GENERATED_BODY()
 
 public:
-  AunrealGameMode();
-  virtual ~AunrealGameMode();
+  ARpgDemoGameMode();
+  virtual ~ARpgDemoGameMode();
 
   static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
   {
@@ -36,5 +36,5 @@ private:
   static void MakeWindowed(int32 Width, int32 Height);
   static UGameUserSettings* GetGameUserSettings();
 
-  static AunrealGameMode* Instance;
+  static ARpgDemoGameMode* Instance;
 };

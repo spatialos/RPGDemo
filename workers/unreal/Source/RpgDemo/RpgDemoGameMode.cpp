@@ -1,9 +1,9 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "Engine.h"
-#include "unrealGameMode.h"
-#include "unrealPlayerController.h"
+#include "RpgDemoGameMode.h"
+#include "RpgDemoPlayerController.h"
 #include <improbable/player/heartbeat.h>
 #include <improbable/player/heartbeat_receiver.h>
 #include <improbable/common/transform.h>
@@ -47,12 +47,12 @@ worker::Entity GetPlayerEntityTemplate()
 }
 }  // ::
 
-AunrealGameMode* AunrealGameMode::Instance;
+ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
-AunrealGameMode::AunrealGameMode()
+ARpgDemoGameMode::ARpgDemoGameMode()
 {
     // Set the default player controller class
-    PlayerControllerClass = AunrealPlayerController::StaticClass();
+    PlayerControllerClass = ARpgDemoPlayerController::StaticClass();
 
     // Don't spawn players automatically
     bStartPlayersAsSpectators = true;
@@ -63,12 +63,12 @@ AunrealGameMode::AunrealGameMode()
     Instance = this;
 }
 
-AunrealGameMode::~AunrealGameMode()
+ARpgDemoGameMode::~ARpgDemoGameMode()
 {
     Instance = nullptr;
 }
 
-void AunrealGameMode::StartPlay()
+void ARpgDemoGameMode::StartPlay()
 {
     AGameMode::StartPlay();
     ConfigureWindowSize();
@@ -77,13 +77,13 @@ void AunrealGameMode::StartPlay()
     RegisterEntityBlueprints();
 }
 
-void AunrealGameMode::Tick(float DeltaTime)
+void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
     Connection->ProcessEvents();
 }
 
-void AunrealGameMode::SpawnPlayer()
+void ARpgDemoGameMode::SpawnPlayer()
 {
     auto& connection = Connection->GetConnection();
     auto& view = Connection->GetView();
@@ -102,7 +102,7 @@ void AunrealGameMode::SpawnPlayer()
     });
 }
 
-void AunrealGameMode::ConfigureWindowSize()
+void ARpgDemoGameMode::ConfigureWindowSize()
 {
 #if UE_SERVER
     MakeWindowed(10, 10);
@@ -111,7 +111,7 @@ void AunrealGameMode::ConfigureWindowSize()
 #endif
 }
 
-void AunrealGameMode::CreateWorkerConnection()
+void ARpgDemoGameMode::CreateWorkerConnection()
 {
 	//Commandline arguments
 	const FString receptionistIpArgument = "receptionistIp";
@@ -172,7 +172,7 @@ void AunrealGameMode::CreateWorkerConnection()
     Connection->Connect(receptionistIp, port, Params, GetWorld());
 }
 
-void AunrealGameMode::RegisterEntityBlueprints()
+void ARpgDemoGameMode::RegisterEntityBlueprints()
 {
     using namespace improbable::unreal::entity_spawning;
     Spawner.Reset(
@@ -209,7 +209,7 @@ void AunrealGameMode::RegisterEntityBlueprints()
     }
 }
 
-void AunrealGameMode::MakeWindowed(int32 Width, int32 Height)
+void ARpgDemoGameMode::MakeWindowed(int32 Width, int32 Height)
 {
     UGameUserSettings* Settings = GetGameUserSettings();
     if (Settings != nullptr)
@@ -221,7 +221,7 @@ void AunrealGameMode::MakeWindowed(int32 Width, int32 Height)
     }
 }
 
-UGameUserSettings* AunrealGameMode::GetGameUserSettings()
+UGameUserSettings* ARpgDemoGameMode::GetGameUserSettings()
 {
     if (GEngine != nullptr)
     {
