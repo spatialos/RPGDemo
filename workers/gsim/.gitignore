@@ -4,4 +4,4 @@ spatialos_pack.sbt
 generated
 project
 target
-build.json
+spatialos.gsim.build.json
