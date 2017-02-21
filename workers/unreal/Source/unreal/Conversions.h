@@ -28,7 +28,7 @@ inline FVector ToUnrealPosition(const improbable::math::Coordinates& position)
   return result;
 }
 
-inline worker::List<float> ToNativeRotation(const FQuat quaternion)                  
+inline worker::List<float> ToNativeRotation(const FQuat& quaternion)                  
 {                                                                                                  
     const FQuat rotatedQuaternion = SpatialToUnrealCoordinateSpace.GetInverse().Quaternion() * quaternion;
     return worker::List<float>{rotatedQuaternion.W, rotatedQuaternion.X, rotatedQuaternion.Y, rotatedQuaternion.Z};
