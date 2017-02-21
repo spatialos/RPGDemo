@@ -36,10 +36,5 @@ class AunrealGameMode : public AGameMode
     static void MakeWindowed(int32 Width, int32 Height);
     static UGameUserSettings* GetGameUserSettings();
 
-<<<<<<< HEAD
-    static AunrealGameMode* Instance;
+	static AunrealGameMode* Instance;
 };
-=======
-  static AunrealGameMode* Instance;
-};
->>>>>>> origin/feature/GET-373-remove-gsim
