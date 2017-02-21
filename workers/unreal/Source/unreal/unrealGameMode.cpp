@@ -138,11 +138,6 @@ void AunrealGameMode::CreateWorkerConnection()
 	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
 	{
         workerId = WorkerType + std::string{ TCHAR_TO_UTF8(*FGuid::NewGuid().ToString()) };
-<<<<<<< HEAD
-	UE_LOG(LogTemp, Warning,
-		   TEXT("WorkerId: %s"), workerId.c_str())
-=======
->>>>>>> origin/feature/GET-373-remove-gsim
 	}
 	else
 	{
