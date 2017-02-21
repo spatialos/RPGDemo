@@ -10,7 +10,7 @@
 using namespace improbable::unreal::core;
 
 // Sets default values for this component's properties
-UTransformReceiver::UTransformReceiver()
+UTransformReceiver::UTransformReceiver() 
 {
     // Set this component to be initialized when the game starts, and to be ticked every frame.  You
     // can turn these features
@@ -34,7 +34,7 @@ FQuat UTransformReceiver::GetRotation() const
 }
 
 void UTransformReceiver::OnTransformComponentUpdate(
-    const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op)
+    const worker::ComponentUpdateOp<improbable::common::Transform>& op)
 {
     if (EntityId != -1)
     {
@@ -45,21 +45,15 @@ void UTransformReceiver::OnTransformComponentUpdate(
     }
 }
 
-void UTransformReceiver::ParseTransformStateUpdate(
-    const worker::ComponentUpdateOp<improbable::corelibrary::transforms::TransformState>& op)
+void UTransformReceiver::ParseTransformStateUpdate( const worker::ComponentUpdateOp<improbable::common::Transform>& op)
 {
-    const worker::Option<improbable::corelibrary::math::FixedPointVector3> loc =
-        op.Update.local_position();
-    const worker::Option<improbable::corelibrary::math::Quaternion32> rot =
-        op.Update.local_rotation();
-
-    if (!loc.empty())
+    if (op.Update.position())
     {
-        mLocation = ToUnrealVector(*loc);
+        mLocation = ToUnrealPosition(*op.Update.position());
     }
-    if (!rot.empty())
+    if (op.Update.rotation())
     {
-        mRotation = ToUnrealQuaternion((*rot).quaternion());
+        //mRotation = ToUnrealRotation(*op.Update.rotation());
     }
 }
 
@@ -96,31 +90,21 @@ void UTransformReceiver::Initialise()
 
         if (entity != nullptr)
         {
-            worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
-                entity->Get<improbable::corelibrary::transforms::TransformState>();
+           auto transform = entity->Get<improbable::common::Transform>();
 
-            if (!transform.empty() &&
-                !entity->HasAuthority<improbable::corelibrary::transforms::TransformState>())
+            if (transform && !entity->HasAuthority<improbable::common::Transform>())
             {
-                mLocation = ToUnrealVector(transform->local_position());
-                mRotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
-                // GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
-                // have commented above out as setting the initial rotation from the initial
-                // transform state
-                // seems to skew the rotation of the actor, probably due to the conversions not
-                // being
-                // accurate
-                // yet
+                mLocation = ToUnrealPosition(transform->position());
+                //mRotation = ToUnrealRotation(transform->rotation());
+                //GetOwner()->SetActorLocationAndRotation(mLocation, mRotation);
                 GetOwner()->SetActorLocation(mLocation);
             }
 
-            mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks(
-                FWorkerConnection::GetView()));
+            mCallbacks.Reset(new improbable::unreal::callbacks::FScopedViewCallbacks( FWorkerConnection::GetView()));
             mCallbacks->Add(
                 FWorkerConnection::GetView()
-                    .OnComponentUpdate<improbable::corelibrary::transforms::TransformState>(
-                        std::bind(&UTransformReceiver::OnTransformComponentUpdate, this,
-                                  std::placeholders::_1)));
+                    .OnComponentUpdate<improbable::common::Transform>(
+                        std::bind(&UTransformReceiver::OnTransformComponentUpdate, this, std::placeholders::_1)));
         }
     }
 }

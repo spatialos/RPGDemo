@@ -4,6 +4,10 @@
 #include "Engine.h"
 #include "unrealGameMode.h"
 #include "unrealPlayerController.h"
+#include <improbable/player/heartbeat.h>
+#include <improbable/player/heartbeat_receiver.h>
+#include <improbable/common/transform.h>
+#include "improbable/standard_library.h"
 
 #if UE_SERVER
 const std::string WorkerType = "UnrealWorker";
@@ -12,6 +16,36 @@ const std::string WorkerType = "UnrealClient";
 #endif
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
+
+namespace {
+worker::Entity GetPlayerEntityTemplate()
+{
+    const improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+    const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
+
+    const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
+    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+
+    const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+
+    worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
+
+    componentAuthority.emplace(improbable::common::Transform::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::Heartbeat::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, workerRequirementSet);
+
+    const improbable::ComponentAcl componentAcl(componentAuthority);
+
+    worker::Entity playerTempalte;
+    playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
+    playerTempalte.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
+    playerTempalte.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
+    playerTempalte.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{globalRequirmentSet, componentAcl});
+    return playerTempalte;
+}
+}  // ::
 
 AunrealGameMode* AunrealGameMode::Instance;
 
@@ -39,6 +73,7 @@ void AunrealGameMode::StartPlay()
     AGameMode::StartPlay();
     ConfigureWindowSize();
     CreateWorkerConnection();
+    SpawnPlayer();
     RegisterEntityBlueprints();
 }
 
@@ -46,6 +81,25 @@ void AunrealGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
     Connection->ProcessEvents();
+}
+
+void AunrealGameMode::SpawnPlayer()
+{
+    auto& connection = Connection->GetConnection();
+    auto& view = Connection->GetView();
+
+    const std::uint32_t timeoutMillis = 500;
+    const std::string entityType = "Player";
+
+    const auto entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
+
+    view.OnReserveEntityIdResponse([&connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
+    {
+        if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
+        {
+            connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
+        } 
+    });
 }
 
 void AunrealGameMode::ConfigureWindowSize()
@@ -78,11 +132,11 @@ void AunrealGameMode::CreateWorkerConnection()
 	FString engineType = WorkerType.c_str();
 	FParse::Value(FCommandLine::Get(), *engineTypeArgument, engineType);
 
-	std::string workerId;
+    std::string workerId;
 	FString parsedWorkerId;
 	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
 	{
-		workerId = WorkerType + TCHAR_TO_UTF8(*FGuid::NewGuid().ToString());
+        workerId = WorkerType + std::string{ TCHAR_TO_UTF8(*FGuid::NewGuid().ToString()) };
 	}
 	else
 	{

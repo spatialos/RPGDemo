@@ -4,6 +4,9 @@ build/
 
 /.spatialos
 
+## Ignore the generated gsim build file
+spatialos.gsim.build.json
+
 ## Ignore schema.iml files
 /schema/schema.iml
 

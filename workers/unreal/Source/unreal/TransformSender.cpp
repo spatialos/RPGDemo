@@ -5,7 +5,7 @@
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
-#include "improbable/corelibrary/transforms/transform_state.h"
+#include "improbable/common//transform.h"
 #include "unrealGameMode.h"
 
 using namespace improbable::unreal::core;
@@ -42,17 +42,16 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
 
             if (entity != nullptr)
             {
-                worker::Option<improbable::corelibrary::transforms::TransformStateData> transform =
-                    entity->Get<improbable::corelibrary::transforms::TransformState>();
+                auto transform = entity->Get<improbable::common::Transform>();
 
                 if (!transform.empty() && HasAuthority())
                 {
-                    FVector location = ToUnrealVector(transform->local_position());
-                    FQuat rotation = ToUnrealQuaternion(transform->local_rotation().quaternion());
+                    FVector location = ToUnrealPosition(transform->position());
+                    FQuat rotation = ToUnrealRotation(transform->rotation());
 
                     auto* const owner = GetOwner();
                     owner->SetActorLocation(location);
-                    owner->SetActorRotation(rotation);
+                    //owner->SetActorRotation(rotation);
                 }
             }
         }
@@ -65,28 +64,26 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
         return;
     }
 
-    FVector location = GetOwner()->GetActorLocation();
-    improbable::corelibrary::math::FixedPointVector3 locationUpdate =
-        ToFixedPoint(UnrealToSpatialPosition(location));
+    const FVector location = GetOwner()->GetActorLocation();
+    const improbable::math::Coordinates locationUpdate = ToNativeCoordinates(location);
 
-    FQuat rotation = GetOwner()->GetActorRotation().Quaternion();
-    uint32_t rotationUpdate = ToQuaternion32(UnrealToSpatialQuaternion(rotation));
+    const FQuat rotation = GetOwner()->GetActorRotation().Quaternion();
+    const worker::List<float> rotationUpdate = ToNativeRotation(rotation);
 
     auto entity = GetEntity();
     if (entity != nullptr)
     {
-        auto previous = entity->Get<improbable::corelibrary::transforms::TransformState>();
-        if (previous.empty() || previous->local_position() != locationUpdate ||
-            previous->local_rotation() != rotationUpdate)
+        const auto previous = entity->Get<improbable::common::Transform>();
+        if (previous.empty()
+            || previous->position() != locationUpdate
+            || previous->rotation() != rotationUpdate)
         {
-            improbable::corelibrary::transforms::TransformState::Update update;
-            update.set_local_position(locationUpdate);
-            update.set_local_rotation(rotationUpdate);
-			
-            entity->Update<improbable::corelibrary::transforms::TransformState>(update);
-            FWorkerConnection::GetConnection()
-                .SendComponentUpdate<improbable::corelibrary::transforms::TransformState>(EntityId,
-                                                                                          update);
+            improbable::common::Transform::Update update;
+            update.set_position(locationUpdate)
+                .set_rotation(rotationUpdate);
+
+            entity->Update<improbable::common::Transform>(update);
+            FWorkerConnection::GetConnection().SendComponentUpdate<improbable::common::Transform>(EntityId, update);
         }
     }
 }
@@ -98,7 +95,7 @@ bool UTransformSender::HasAuthority() const
         return false;
     }
 
-    return GetEntity()->HasAuthority<improbable::corelibrary::transforms::TransformState>();
+    return GetEntity()->HasAuthority<improbable::common::Transform>();
 }
 
 worker::Entity* UTransformSender::GetEntity() const

@@ -16,11 +16,6 @@ public class unreal : ModuleRules
         get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
     }
 
-	private string CoreLibraryDir
-    {
-        get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "CoreLibrary")); }
-    }
-
 	private string StandardLibraryDir
 	{
 		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Std")); }
@@ -41,13 +36,6 @@ public class unreal : ModuleRules
 		}
 		else
 		{
-			var cl = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_cl" +
-				" --output=" + SpatialOS.QuoteString(CoreLibraryDir) +
-				" --language=cpp_unreal" +
-				" --input=../../build/dependencies/schema/CoreLibrary";
-
-			SpatialOS.RunSpatial(cl);
-
 			var std = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_std" +
 				" --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
 				" --language=cpp_unreal" +
@@ -67,7 +55,6 @@ public class unreal : ModuleRules
 
 		PublicIncludePaths.AddRange(new[]
 		{
-			Path.GetFullPath(CoreLibraryDir),
 			Path.GetFullPath(StandardLibraryDir),
 				   Path.GetFullPath(UserSchemaDir)
 		});

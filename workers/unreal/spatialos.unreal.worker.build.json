@@ -67,7 +67,7 @@
             "--configuration=Development",
             "--platform=Linux"
           ]
-        }
+        }      
       ]
     },
     {
