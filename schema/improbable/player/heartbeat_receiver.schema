@@ -1,0 +1,5 @@
+package improbable.player;
+
+component HeartbeatReceiver {
+  id = 21002;
+}

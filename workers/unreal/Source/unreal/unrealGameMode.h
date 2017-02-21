@@ -24,9 +24,11 @@ class AunrealGameMode : public AGameMode
     void StartPlay() override;
     void Tick(float DeltaTime) override;
 
+    void SpawnPlayer();
+
     TAutoPtr<improbable::unreal::core::FWorkerConnection> Connection;
     TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
-
+  
     static void ConfigureWindowSize();
     void CreateWorkerConnection();
     void RegisterEntityBlueprints();
@@ -34,5 +36,10 @@ class AunrealGameMode : public AGameMode
     static void MakeWindowed(int32 Width, int32 Height);
     static UGameUserSettings* GetGameUserSettings();
 
+<<<<<<< HEAD
     static AunrealGameMode* Instance;
 };
+=======
+  static AunrealGameMode* Instance;
+};
+>>>>>>> origin/feature/GET-373-remove-gsim
