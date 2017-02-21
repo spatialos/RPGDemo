@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "TransformSender.h"
 #include "Conversions.h"
 #include "EntityId.h"
 #include "WorkerConnection.h"
 #include "improbable/common//transform.h"
-#include "unrealGameMode.h"
+#include "RpgDemoGameMode.h"
 
 using namespace improbable::unreal::core;
 
@@ -23,7 +23,7 @@ UTransformSender::UTransformSender()
 void UTransformSender::BeginPlay()
 {
     Super::BeginPlay();
-    EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+    EntityId = ARpgDemoGameMode::GetSpawner()->GetEntityId(GetOwner());
 }
 
 // Called every frame
@@ -34,7 +34,7 @@ void UTransformSender::TickComponent(float DeltaTime, ELevelTick TickType,
 
     if (EntityId == -1)
     {
-        EntityId = AunrealGameMode::GetSpawner()->GetEntityId(GetOwner());
+        EntityId = ARpgDemoGameMode::GetSpawner()->GetEntityId(GetOwner());
 
         if (EntityId != -1)
         {

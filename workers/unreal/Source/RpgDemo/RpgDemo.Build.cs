@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnrealBuildTool;
 using System.IO;
 
-public class unreal : ModuleRules
+public class RpgDemo : ModuleRules
 {
 	/// <summary>
     /// Schema files are processed and output to this folder. It should be within
@@ -26,7 +26,7 @@ public class unreal : ModuleRules
 		get { return Path.GetFullPath(Path.Combine(GeneratedCodeDir, "Usr")); }
 	}
 
-	public unreal(TargetInfo Target)
+	public RpgDemo(TargetInfo Target)
 	{
         var SpatialOS = new SpatialOSModule(this, Target);
 		SpatialOS.SetupSpatialOS();

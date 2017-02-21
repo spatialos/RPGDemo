@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "OtherPlayerController.h"
 #include "TransformReceiver.h"
-#include "unrealCharacter.h"
+#include "RpgDemoCharacter.h"
 
 AOtherPlayerController::AOtherPlayerController()
 {
@@ -14,7 +14,7 @@ void AOtherPlayerController::Initialise()
 {
   if (GetPawn() == nullptr)
     return;
-  mControlledCharacter = Cast<AunrealCharacter>(GetPawn());
+  mControlledCharacter = Cast<ARpgDemoCharacter>(GetPawn());
 }
 
 bool AOtherPlayerController::IsInitialised() const

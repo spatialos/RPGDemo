@@ -27,7 +27,7 @@
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
         "artifactName": "UnrealClient@Windows.zip",
-        "command": "./unreal/Binaries/Win64/unreal.exe",
+        "command": "./RpgDemo/Binaries/Win64/RpgDemo.exe",
         "arguments": []
       }
     }

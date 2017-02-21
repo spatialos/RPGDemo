@@ -23,7 +23,7 @@
   "managed": {
     "windows": {
       "artifact_name": "UnrealWorker@Windows.zip",
-      "command": "unreal/Binaries/Win64/unrealServer.exe",
+      "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
       "arguments": [
         "-server",
         "-stdout",
@@ -50,7 +50,7 @@
     },
     "linux": {
       "artifact_name": "UnrealWorker@Linux.zip",
-      "command": "unrealServer.sh",
+      "command": "RpgDemoServer.sh",
       "arguments": [
         "-server",
         "-stdout",
@@ -81,7 +81,7 @@
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
         "artifact_name": "UnrealWorker@Windows.zip",
-        "command": "unreal/Binaries/Win64/unrealServer.exe",
+        "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
         "arguments": [
           "-server",
           "-stdout",

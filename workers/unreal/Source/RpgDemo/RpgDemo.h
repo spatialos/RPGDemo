@@ -5,6 +5,6 @@
 
 #include "EngineMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(Logunreal, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogRpgDemo, Log, All);
 
 #endif
