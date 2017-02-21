@@ -9,11 +9,6 @@
 #include <improbable/common/transform.h>
 #include "improbable/standard_library.h"
 
-#if UE_SERVER
-const std::string WorkerType = "UnrealWorker";
-#else
-const std::string WorkerType = "UnrealClient";
-#endif
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
@@ -68,20 +63,60 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
     Instance = nullptr;
 }
 
+FString ParseCmdLineArgument(const FString& argument)
+{
+	FString argumentValue;
+	FParse::Value(FCommandLine::Get(), *argument, argumentValue);
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("ParseCmdLineArgument: argument %s, testWorkerType %s"),
+		*argument,
+		*argumentValue)
+
+	return argumentValue;
+}
+
+void AunrealGameMode::ConfigureWorker()
+{
+	EWorkerType setupWorkerType = FSpatialOSWorkerConfiguration::WorkerTypeFromName(ParseCmdLineArgument("engineType"));
+	FString setupWorkerId = ParseCmdLineArgument("engineId");
+
+	if (GetWorld()->WorldType != EWorldType::Game)
+	{
+		//in editor: allow worker type and id to be overriden by the user
+		setupWorkerType = !(workerType == EWorkerType::Unspecified)
+			? workerType
+			: EWorkerType::UnrealClient;
+
+		if(!workerId.IsEmpty())
+		{
+			setupWorkerId = workerId;
+		}
+	}
+
+	if(setupWorkerId.IsEmpty())
+	{
+		setupWorkerId = FSpatialOSWorkerConfiguration::WorkerTypeNameFromType(setupWorkerType) + FGuid::NewGuid().ToString();
+	}
+
+	Worker = FSpatialOSWorkerConfiguration(setupWorkerType, setupWorkerId);
+}
+
 void ARpgDemoGameMode::StartPlay()
 {
     AGameMode::StartPlay();
+	ConfigureWorker();
+
     ConfigureWindowSize();
     CreateWorkerConnection();
+    SpawnPlayer();
+    RegisterEntityBlueprints();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
-    if(Connection->IsConnected())
-    {
-        Connection->ProcessEvents();
-    }
+    Connection->ProcessEvents();
 }
 
 void ARpgDemoGameMode::SpawnPlayer()
@@ -128,33 +163,17 @@ void ARpgDemoGameMode::CreateWorkerConnection()
 	int port = 7777;
 	FParse::Value(FCommandLine::Get(), *receptionistPortArgument, port);
 
-	//engine type is used to deduce the engine platform
-	//however this is not needed in unreal.
-	FString engineType = WorkerType.c_str();
-	FParse::Value(FCommandLine::Get(), *engineTypeArgument, engineType);
-
-    std::string workerId;
-	FString parsedWorkerId;
-	if (!FParse::Value(FCommandLine::Get(), *engineIdArgument, parsedWorkerId))
-	{
-        workerId = WorkerType + std::string{ TCHAR_TO_UTF8(*FGuid::NewGuid().ToString()) };
-	}
-	else
-	{
-		workerId = TCHAR_TO_UTF8(*parsedWorkerId);
-	}
-
 	FString parsedLinkProtocol = "RakNet";
 	FParse::Value(FCommandLine::Get(), *linkProtocolArgument, parsedLinkProtocol);
 	const auto linkProtocol = parsedLinkProtocol == "Tcp" ? worker::NetworkConnectionType::kTcp :  worker::NetworkConnectionType::kRaknet;
-
+	
 	//Log parsed input
 	UE_LOG(LogTemp, Warning,
 		   TEXT("PARSED: receptionistIp %s, port %d, engineType %s, workerId %s"),
 		   *receptionistIp,
 		   port,
-		   *engineType,
-		   workerId.c_str())
+		   *Worker.WorkerTypeName(),
+		   *Worker.WorkerId)
 
 	//Setup connection
     using namespace improbable::unreal::core;
@@ -167,19 +186,10 @@ void ARpgDemoGameMode::CreateWorkerConnection()
 	Params.Network.ConnectionType = linkProtocol;
 	Params.Network.UseExternalIp = false;
 
-    Params.WorkerType = WorkerType;
-    Params.WorkerId = workerId;
-
-    FOnConnectedDelegate OnConnected;
-    OnConnected.BindLambda([this](bool connected) {
-        if (connected)
-        {
-            SpawnPlayer();
-            RegisterEntityBlueprints();
-        }
-    });
+    Params.WorkerType = TCHAR_TO_UTF8(*Worker.WorkerTypeName());
+    Params.WorkerId = TCHAR_TO_UTF8(*Worker.WorkerId);
     
-    Connection->ConnectToReceptionistAsync(receptionistIp, port, Params, GetWorld(), OnConnected);
+    Connection->Connect(receptionistIp, port, Params, GetWorld());
 }
 
 void ARpgDemoGameMode::RegisterEntityBlueprints()
