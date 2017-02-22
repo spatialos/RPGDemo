@@ -36,19 +36,54 @@ public class RpgDemo : ModuleRules
 		}
 		else
 		{
-			var std = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_std" +
+			var addProjectIncludes = "invoke" +
+				" unreal" +
+				" add_project_includes" +
+				" RpgDemo" +
+				" Source/RpgDemo/SpatialOS/uclasses/**/*.h" +
+				" Source/RpgDemo/SpatialOS/uclasses/**/*.cpp";
+
+			SpatialOS.RunSpatial(addProjectIncludes);
+
+			var stdCpp = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_std" +
 				" --output=" + SpatialOS.QuoteString(StandardLibraryDir) +
 				" --language=cpp_unreal" +
 				" --input=../../build/dependencies/schema/WorkerSdkSchema";
 
-			SpatialOS.RunSpatial(std);
+			SpatialOS.RunSpatial(stdCpp);
 
-			var user = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_usr" +
+			var userCpp = "process_schema generate --cachePath=.spatialos/schema_codegen_cache_usr" +
 				" --output=" + SpatialOS.QuoteString(UserSchemaDir) +
 				" --language=cpp_unreal" +
 				" --input=../../schema";
 
-			SpatialOS.RunSpatial(user);
+			SpatialOS.RunSpatial(userCpp);
+
+			var stdJson = "process_schema" +
+	            " generate" +
+	            " --cachePath=.spatialos/schema_codegen_cache_json_std" +
+	            " --output=Source/RpgDemo/Improbable/Generated/json/Std" +
+	            " --language=ast_json" +
+	            " --input=../../build/dependencies/schema/WorkerSdkSchema";
+
+	        SpatialOS.RunSpatial(stdJson);
+
+	        var userJson = "process_schema" +
+				" generate" +
+				" --cachePath=.spatialos/schema_codegen_cache_json_usr" +
+				" --output=Source/RpgDemo/Improbable/Generated/json/Usr" +
+				" --language=ast_json" +
+				" --input=../../schema" +
+				" --repository=../../build/dependencies/schema";
+
+			SpatialOS.RunSpatial(userJson);
+
+			var CodegenFilename = "CodeGenerator.bat";
+			var CodegenArguments = "--json-dir=Source/RpgDemo/Improbable/Generated/json" +
+				" --unreal-output-dir=Source/RpgDemo/Improbable/Generated/cpp/unreal" +
+				" --unreal-project-name=RpgDemo";
+
+			SpatialOS.RunExe(CodegenFilename, CodegenArguments);
 		}
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
