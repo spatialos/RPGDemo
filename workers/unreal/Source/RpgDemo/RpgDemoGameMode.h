@@ -36,6 +36,5 @@ public:
     static void MakeWindowed(int32 Width, int32 Height);
     static UGameUserSettings* GetGameUserSettings();
 
-    static AunrealGameMode* Instance;
     static ARpgDemoGameMode* Instance;
 };

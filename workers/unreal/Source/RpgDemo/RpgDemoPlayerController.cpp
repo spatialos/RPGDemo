@@ -68,11 +68,11 @@ void ARpgDemoPlayerController::MoveToTouchLocation(const ETouchIndex::Type Finge
 
 void ARpgDemoPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
-    APawn* const Pawn = GetPawn();
-    if (Pawn)
+    APawn* const pawn = GetPawn();
+    if (pawn)
     {
         UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-        float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
+        float const Distance = FVector::Dist(DestLocation, pawn->GetActorLocation());
 
         // We need to issue move command only if far enough in order for walk animation to play
         // correctly

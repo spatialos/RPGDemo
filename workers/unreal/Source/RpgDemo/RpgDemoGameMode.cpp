@@ -28,7 +28,7 @@ worker::Entity GetPlayerEntityTemplate()
 
     const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
     const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
-    const improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirementSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
 
     worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
 
@@ -38,12 +38,12 @@ worker::Entity GetPlayerEntityTemplate()
 
     const improbable::ComponentAcl componentAcl(componentAuthority);
 
-    worker::Entity playerTempalte;
-    playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
-    playerTempalte.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
-    playerTempalte.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
-    playerTempalte.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{globalRequirmentSet, componentAcl});
-    return playerTempalte;
+    worker::Entity playerTemplate;
+    playerTemplate.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
+    playerTemplate.Add<improbable::player::Heartbeat>(improbable::player::Heartbeat::Data{});
+    playerTemplate.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
+    playerTemplate.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{ globalRequirementSet, componentAcl});
+    return playerTemplate;
 }
 }  // ::
 

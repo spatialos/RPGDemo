@@ -2,49 +2,29 @@
 
 #include "RpgDemo.h"
 #include "OtherPlayerController.h"
-#include "TransformReceiver.h"
+#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "RpgDemoCharacter.h"
+#include "ConversionsFunctionLibrary.h"
 
 AOtherPlayerController::AOtherPlayerController()
 {
-    mControlledCharacter = nullptr;
 }
 
-void AOtherPlayerController::Initialise()
+void AOtherPlayerController::Possess(APawn* InPawn)
 {
-  if (GetPawn() == nullptr)
-    return;
-  mControlledCharacter = Cast<ARpgDemoCharacter>(GetPawn());
+	Super::Possess(InPawn);
+	auto otherPlayer = Cast<ARpgDemoCharacter>(InPawn);
+	otherPlayer->GetTransformComponent()->OnPositionUpdate.AddDynamic(this, &AOtherPlayerController::OnPositionUpdate);
 }
 
-bool AOtherPlayerController::IsInitialised() const
+void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
-    return mControlledCharacter != nullptr;
-}
-
-void AOtherPlayerController::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-
-    Initialise();
-    if (!IsInitialised())
-        return;
-
-    SetNewMoveDestination(mControlledCharacter->GetTransformReceiver()->GetLocation());
+	auto newUnrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
+	SetNewMoveDestination(newUnrealPosition);
 }
 
 void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
-    const APawn* OtherPawn = GetPawn();
-    if (OtherPawn)
-    {
-        UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-        float const Distance = FVector::Dist(DestLocation, OtherPawn->GetActorLocation());
-
-        // Issue move command only if far enough in order for walk animation to play correctly
-        if (NavSys && (Distance > 120.0f))
-        {
-            NavSys->SimpleMoveToLocation(this, DestLocation);
-        }
-    }
+    UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
+    NavSys->SimpleMoveToLocation(this, DestLocation);
 }

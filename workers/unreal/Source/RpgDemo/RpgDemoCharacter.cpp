@@ -4,8 +4,7 @@
 #include "OtherPlayerController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "TransformReceiver.h"
-#include "TransformSender.h"
+#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "RpgDemoCharacter.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
@@ -60,11 +59,8 @@ ARpgDemoCharacter::ARpgDemoCharacter()
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
 
-    // Create a transform receiver
-    TransformReceiver = CreateDefaultSubobject<UTransformReceiver>(TEXT("TransformReceiver"));
-
-    // Create a transform sender
-    TransformSender = CreateDefaultSubobject<UTransformSender>(TEXT("TransformSender"));
+    // Create a transform component
+    TransformComponent = CreateDefaultSubobject<UTransformComponent>(TEXT("TransformComponent"));
 
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
@@ -73,9 +69,7 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
-    Initialise();
-
-    if (TransformSender->HasAuthority())
+    if (TransformComponent->HasAuthority())
     {
         UpdateCursorPosition();
     }
@@ -84,14 +78,21 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 void ARpgDemoCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+	TransformComponent->OnAuthorityChange.AddDynamic(this, &ARpgDemoCharacter::OnTransformAuthorityChange);
+}
+
+void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
+{
+	Initialise(newAuthority);
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
-void ARpgDemoCharacter::Initialise()
+void ARpgDemoCharacter::Initialise(bool authority)
 {
-    if (TransformSender->HasAuthority())
+    if (authority)
     {
         InitialiseAsOwnPlayer();
     }
@@ -138,7 +139,6 @@ void ARpgDemoCharacter::InitialiseAsOwnPlayer()
 void ARpgDemoCharacter::InitialiseAsOtherPlayer()
 {
     AController* currentController = GetController();
-
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     if (currentController == playerController && playerController != nullptr)
     {

@@ -13,14 +13,12 @@ class RPGDEMO_API AOtherPlayerController : public AAIController
 {
     GENERATED_BODY()
 
-  public:
-    AOtherPlayerController();
+public:
+	AOtherPlayerController();
+	virtual void Possess(APawn* InPawn) override;
 
-  protected:
-    void Initialise();
-    bool IsInitialised() const;
-    virtual void Tick(float DeltaTime) override;
+protected:
+	void OnPositionUpdate(FVector newSpatialOsPosition);
+	void SetNewMoveDestination(const FVector DestLocation);
 
-    class ARpgDemoCharacter* mControlledCharacter;
-    void SetNewMoveDestination(const FVector DestLocation);
 };

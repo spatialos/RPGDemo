@@ -27,14 +27,14 @@ class ARpgDemoCharacter : public ACharacter
         return CameraBoom;
     }
 
-    FORCEINLINE class UTransformReceiver* GetTransformReceiver() const
+    FORCEINLINE class UTransformComponent* GetTransformComponent() const
     {
-        return TransformReceiver;
+        return TransformComponent;
     }
 
   private:
     void UpdateCursorPosition() const;
-    void Initialise();
+    void Initialise(bool authority);
     void InitialiseAsOwnPlayer();
     void InitialiseAsOtherPlayer();
 
@@ -53,13 +53,10 @@ class ARpgDemoCharacter : public ACharacter
               meta = (AllowPrivateAccess = "true"))
     class UDecalComponent* CursorToWorld;
 
-    /** The transform receiver */
+    /** The transform component */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
               meta = (AllowPrivateAccess = "true"))
-    class UTransformReceiver* TransformReceiver;
+    class UTransformComponent* TransformComponent;
 
-    /** The transform sender */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
-              meta = (AllowPrivateAccess = "true"))
-    class UTransformSender* TransformSender;
+	void OnTransformAuthorityChange(bool newAuthority);
 };

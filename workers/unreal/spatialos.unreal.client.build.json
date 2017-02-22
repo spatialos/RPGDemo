@@ -11,12 +11,13 @@
           ]
         },
         {
-          "name": "Add project include to UnrealSdk C++ UCLASS implementation files.",
+          "name": "Add project specific includes and macros to UnrealSdk UCLASS files.",
           "arguments": [
             "invoke",
             "unreal",
             "add_project_includes",
             "RpgDemo",
+            "Source/RpgDemo/SpatialOS/uclasses/**/*.h",
             "Source/RpgDemo/SpatialOS/uclasses/**/*.cpp"
           ]
         },
