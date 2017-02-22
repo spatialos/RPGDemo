@@ -63,43 +63,43 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
     Instance = nullptr;
 }
 
-FString ParseCmdLineArgument(const FString& argument)
+//FString ParseCmdLineArgument(const FString& argument)
+//{
+//	FString argumentValue;
+//	FParse::Value(FCommandLine::Get(), *argument, argumentValue);
+//
+//	UE_LOG(LogTemp, Warning,
+//		TEXT("ParseCmdLineArgument: argument %s, testWorkerType %s"),
+//		*argument,
+//		*argumentValue)
+//
+//	return argumentValue;
+//}
+
+void ARpgDemoGameMode::ConfigureWorker()
 {
-	FString argumentValue;
-	FParse::Value(FCommandLine::Get(), *argument, argumentValue);
+	//EWorkerType setupWorkerType = FSpatialOSWorkerConfiguration::WorkerTypeFromName(ParseCmdLineArgument("engineType"));
+	//FString setupWorkerId = ParseCmdLineArgument("engineId");
 
-	UE_LOG(LogTemp, Warning,
-		TEXT("ParseCmdLineArgument: argument %s, testWorkerType %s"),
-		*argument,
-		*argumentValue)
+	//if (GetWorld()->WorldType != EWorldType::Game)
+	//{
+	//	//in editor: allow worker type and id to be overriden by the user
+	//	setupWorkerType = !(workerType == EWorkerType::Unspecified)
+	//		? workerType
+	//		: EWorkerType::UnrealClient;
 
-	return argumentValue;
-}
+	//	if(!workerId.IsEmpty())
+	//	{
+	//		setupWorkerId = workerId;
+	//	}
+	//}
 
-void AunrealGameMode::ConfigureWorker()
-{
-	EWorkerType setupWorkerType = FSpatialOSWorkerConfiguration::WorkerTypeFromName(ParseCmdLineArgument("engineType"));
-	FString setupWorkerId = ParseCmdLineArgument("engineId");
+	//if(setupWorkerId.IsEmpty())
+	//{
+	//	setupWorkerId = FSpatialOSWorkerConfiguration::WorkerTypeNameFromType(setupWorkerType) + FGuid::NewGuid().ToString();
+	//}
 
-	if (GetWorld()->WorldType != EWorldType::Game)
-	{
-		//in editor: allow worker type and id to be overriden by the user
-		setupWorkerType = !(workerType == EWorkerType::Unspecified)
-			? workerType
-			: EWorkerType::UnrealClient;
-
-		if(!workerId.IsEmpty())
-		{
-			setupWorkerId = workerId;
-		}
-	}
-
-	if(setupWorkerId.IsEmpty())
-	{
-		setupWorkerId = FSpatialOSWorkerConfiguration::WorkerTypeNameFromType(setupWorkerType) + FGuid::NewGuid().ToString();
-	}
-
-	Worker = FSpatialOSWorkerConfiguration(setupWorkerType, setupWorkerId);
+	//Worker = FSpatialOSWorkerConfiguration(setupWorkerType, setupWorkerId);
 }
 
 void ARpgDemoGameMode::StartPlay()
@@ -168,28 +168,28 @@ void ARpgDemoGameMode::CreateWorkerConnection()
 	const auto linkProtocol = parsedLinkProtocol == "Tcp" ? worker::NetworkConnectionType::kTcp :  worker::NetworkConnectionType::kRaknet;
 	
 	//Log parsed input
-	UE_LOG(LogTemp, Warning,
-		   TEXT("PARSED: receptionistIp %s, port %d, engineType %s, workerId %s"),
-		   *receptionistIp,
-		   port,
-		   *Worker.WorkerTypeName(),
-		   *Worker.WorkerId)
+	//UE_LOG(LogTemp, Warning,
+	//	   TEXT("PARSED: receptionistIp %s, port %d, engineType %s, workerId %s"),
+	//	   *receptionistIp,
+	//	   port,
+	//	   *Worker.WorkerTypeName(),
+	//	   *Worker.WorkerId)
 
-	//Setup connection
-    using namespace improbable::unreal::core;
-	FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
-    Connection.Reset(new FWorkerConnection());
-    Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect) {
-        // GIsRequestingExit = true;
-    });
-    worker::ConnectionParameters Params;
-	Params.Network.ConnectionType = linkProtocol;
-	Params.Network.UseExternalIp = false;
+	////Setup connection
+ //   using namespace improbable::unreal::core;
+	//FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
+ //   Connection.Reset(new FWorkerConnection());
+ //   Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect) {
+ //       // GIsRequestingExit = true;
+ //   });
+ //   worker::ConnectionParameters Params;
+	//Params.Network.ConnectionType = linkProtocol;
+	//Params.Network.UseExternalIp = false;
 
-    Params.WorkerType = TCHAR_TO_UTF8(*Worker.WorkerTypeName());
-    Params.WorkerId = TCHAR_TO_UTF8(*Worker.WorkerId);
-    
-    Connection->Connect(receptionistIp, port, Params, GetWorld());
+ //   Params.WorkerType = TCHAR_TO_UTF8(*Worker.WorkerTypeName());
+ //   Params.WorkerId = TCHAR_TO_UTF8(*Worker.WorkerId);
+ //   
+ //   Connection->Connect(receptionistIp, port, Params, GetWorld());
 }
 
 void ARpgDemoGameMode::RegisterEntityBlueprints()
