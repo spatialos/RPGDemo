@@ -73,7 +73,9 @@ void ARpgDemoGameMode::StartPlay()
     AGameMode::StartPlay();
     ConfigureWindowSize();
     CreateWorkerConnection();
+#if !UE_SERVER
     SpawnPlayer();
+#endif
     RegisterEntityBlueprints();
 }
 

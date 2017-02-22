@@ -18,7 +18,9 @@ public:
 	virtual void Possess(APawn* InPawn) override;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
 	void OnPositionUpdate(FVector newSpatialOsPosition);
+
 	void SetNewMoveDestination(const FVector DestLocation);
 
 };

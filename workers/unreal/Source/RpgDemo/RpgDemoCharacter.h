@@ -54,9 +54,10 @@ class ARpgDemoCharacter : public ACharacter
     class UDecalComponent* CursorToWorld;
 
     /** The transform component */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpatialOS",
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RpgDemoCharacter",
               meta = (AllowPrivateAccess = "true"))
     class UTransformComponent* TransformComponent;
 
+	UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
 	void OnTransformAuthorityChange(bool newAuthority);
 };
