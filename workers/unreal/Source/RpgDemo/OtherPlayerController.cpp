@@ -26,7 +26,7 @@ void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
     UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-	float const Distance = FVector::Dist(DestLocation, GetControlledPawn()->GetActorLocation());
+	float const Distance = FVector::Dist(DestLocation, GetPawn()->GetActorLocation());
 	if (NavSys && (Distance > 120.0f))
 	{
 		NavSys->SimpleMoveToLocation(this, DestLocation);
