@@ -24,7 +24,7 @@
             "process_schema",
             "generate",
             "--cachePath=.spatialos/schema_codegen_cache_std",
-            "--output=Source/unreal/Improbable/Generated/cpp/Std",
+            "--output=Source/RpgDemo/Improbable/Generated/cpp/Std",
             "--language=cpp_unreal",
             "--input=../../build/dependencies/schema/WorkerSdkSchema"
           ]
@@ -35,7 +35,7 @@
             "process_schema",
             "generate",
             "--cachePath=.spatialos/schema_codegen_cache_usr",
-            "--output=Source/unreal/Improbable/Generated/cpp/Usr",
+            "--output=Source/RpgDemo/Improbable/Generated/cpp/Usr",
             "--language=cpp_unreal",
             "--input=../../schema"
           ]
@@ -46,7 +46,7 @@
             "process_schema",
             "generate",
             "--cachePath=.spatialos/schema_codegen_cache_json_std",
-            "--output=Source/unreal/Improbable/Generated/json/Std",
+            "--output=Source/RpgDemo/Improbable/Generated/json/Std",
             "--language=ast_json",
             "--input=../../build/dependencies/schema/WorkerSdkSchema"
           ]
@@ -57,7 +57,7 @@
             "process_schema",
             "generate",
             "--cachePath=.spatialos/schema_codegen_cache_json_usr",
-            "--output=Source/unreal/Improbable/Generated/json/Usr",
+            "--output=Source/RpgDemo/Improbable/Generated/json/Usr",
             "--language=ast_json",
             "--input=../../schema",
             "--repository=../../build/dependencies/schema"
@@ -71,8 +71,9 @@
             "unity-mono",
             ".spatialos/bin/CodeGenerator.exe",
             "--",
-            "--json-dir=Source/unreal/Improbable/Generated/json",
-            "--unreal-output-dir=Source/unreal/Improbable/Generated/cpp/unreal"
+            "--json-dir=Source/RpgDemo/Improbable/Generated/json",
+            "--unreal-output-dir=Source/RpgDemo/Improbable/Generated/cpp/unreal",
+            "--unreal-project-name=RpgDemo"
           ]
         }
       ]
@@ -121,7 +122,7 @@
             "process_schema",
             "clean",
             ".spatialos",
-            "Source/unreal/Improbable/Generated"
+            "Source/RpgDemo/Improbable/Generated"
           ]
         }
       ]
