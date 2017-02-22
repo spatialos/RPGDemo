@@ -5,6 +5,7 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "Improbable/Generated/cpp/unreal/TransformComponent.h"
+#include "ConversionsFunctionLibrary.h"
 #include "RpgDemoCharacter.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
@@ -72,6 +73,12 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
     if (TransformComponent->HasAuthority())
     {
         UpdateCursorPosition();
+
+		auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
+		auto rawUpdate = improbable::common::Transform::Update().set_position(
+			improbable::math::Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
+		auto update = NewObject<UTransformComponentUpdate>(this, UTransformComponentUpdate::StaticClass())->Init(rawUpdate);
+		TransformComponent->SendComponentUpdate(update);
     }
 }
 
@@ -80,11 +87,18 @@ void ARpgDemoCharacter::BeginPlay()
     Super::BeginPlay();
 
 	TransformComponent->OnAuthorityChange.AddDynamic(this, &ARpgDemoCharacter::OnTransformAuthorityChange);
+	TransformComponent->OnComponentReady.AddDynamic(this, &ARpgDemoCharacter::OnTransformComponentReady);
 }
 
 void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
 {
 	Initialise(newAuthority);
+}
+
+void ARpgDemoCharacter::OnTransformComponentReady()
+{
+	auto unrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(TransformComponent->GetPosition());
+	SetActorLocation(unrealPosition);
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
@@ -95,6 +109,10 @@ void ARpgDemoCharacter::Initialise(bool authority)
     if (authority)
     {
         InitialiseAsOwnPlayer();
+		UE_LOG(LogTemp, Warning,
+			TEXT("ARpgDemoCharacter::Initialise did just call InitialiseAsOwnPlayer"
+				"controller for actor %s"),
+			*GetName())
     }
     else
     {

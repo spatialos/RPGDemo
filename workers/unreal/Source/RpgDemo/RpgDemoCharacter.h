@@ -60,4 +60,7 @@ class ARpgDemoCharacter : public ACharacter
 
 	UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
 	void OnTransformAuthorityChange(bool newAuthority);
+
+	UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
+	void OnTransformComponentReady();
 };

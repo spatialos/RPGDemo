@@ -69,7 +69,7 @@ void ARpgDemoPlayerController::MoveToTouchLocation(const ETouchIndex::Type Finge
 void ARpgDemoPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
     APawn* const pawn = GetPawn();
-    if (pawn)
+    if (pawn != nullptr)
     {
         UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
         float const Distance = FVector::Dist(DestLocation, pawn->GetActorLocation());
