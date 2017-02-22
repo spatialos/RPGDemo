@@ -63,189 +63,71 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
     Instance = nullptr;
 }
 
-//FString ParseCmdLineArgument(const FString& argument)
-//{
-//	FString argumentValue;
-//	FParse::Value(FCommandLine::Get(), *argument, argumentValue);
-//
-//	UE_LOG(LogTemp, Warning,
-//		TEXT("ParseCmdLineArgument: argument %s, testWorkerType %s"),
-//		*argument,
-//		*argumentValue)
-//
-//	return argumentValue;
-//}
-
-void ARpgDemoGameMode::ConfigureWorker()
-{
-	//EWorkerType setupWorkerType = FSpatialOSWorkerConfiguration::WorkerTypeFromName(ParseCmdLineArgument("engineType"));
-	//FString setupWorkerId = ParseCmdLineArgument("engineId");
-
-	//if (GetWorld()->WorldType != EWorldType::Game)
-	//{
-	//	//in editor: allow worker type and id to be overriden by the user
-	//	setupWorkerType = !(workerType == EWorkerType::Unspecified)
-	//		? workerType
-	//		: EWorkerType::UnrealClient;
-
-	//	if(!workerId.IsEmpty())
-	//	{
-	//		setupWorkerId = workerId;
-	//	}
-	//}
-
-	//if(setupWorkerId.IsEmpty())
-	//{
-	//	setupWorkerId = FSpatialOSWorkerConfiguration::WorkerTypeNameFromType(setupWorkerType) + FGuid::NewGuid().ToString();
-	//}
-
-	//Worker = FSpatialOSWorkerConfiguration(setupWorkerType, setupWorkerId);
-}
-
-void ARpgDemoGameMode::StartPlay()
-{
-    AGameMode::StartPlay();
-	ConfigureWorker();
-
-    ConfigureWindowSize();
-    CreateWorkerConnection();
-    SpawnPlayer();
-    RegisterEntityBlueprints();
-}
-
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
-    AGameMode::Tick(DeltaTime);
-    Connection->ProcessEvents();
+	ASpatialOSGameMode::Tick(DeltaTime);
 }
 
 void ARpgDemoGameMode::SpawnPlayer()
 {
-    auto& connection = Connection->GetConnection();
-    auto& view = Connection->GetView();
+	auto workerConnection = WorkerConnection();
+
+    auto& connection = workerConnection->GetConnection();
+    auto& view = workerConnection->GetView();
 
     const std::uint32_t timeoutMillis = 500;
     const std::string entityType = "Player";
 
     const auto entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
+	UE_LOG(LogTemp, Warning, TEXT("Reserve Request sent"))
+
     view.OnReserveEntityIdResponse([&connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
     {
+		UE_LOG(LogTemp, Warning, TEXT("OnReserveEntityIdResponse"))
         if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
         {
+			UE_LOG(LogTemp, Warning, TEXT("OnReserveEntityIdResponse SUCCESS"))
             connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
         } 
     });
 }
 
-void ARpgDemoGameMode::ConfigureWindowSize()
-{
-#if UE_SERVER
-    MakeWindowed(10, 10);
-#else
-    MakeWindowed(1280, 720);
-#endif
-}
-
-void ARpgDemoGameMode::CreateWorkerConnection()
-{
-	//Commandline arguments
-	const FString receptionistIpArgument = "receptionistIp";
-	const FString receptionistPortArgument = "receptionistPort";
-	const FString engineTypeArgument = "engineType";
-	const FString engineIdArgument = "engineId";
-	const FString linkProtocolArgument = "linkProtocol";
-
-	//Parse commandline properties
-	FString receptionistIp = "127.0.0.1";
-	FParse::Value(FCommandLine::Get(), *receptionistIpArgument, receptionistIp);
-
-	int port = 7777;
-	FParse::Value(FCommandLine::Get(), *receptionistPortArgument, port);
-
-	FString parsedLinkProtocol = "RakNet";
-	FParse::Value(FCommandLine::Get(), *linkProtocolArgument, parsedLinkProtocol);
-	const auto linkProtocol = parsedLinkProtocol == "Tcp" ? worker::NetworkConnectionType::kTcp :  worker::NetworkConnectionType::kRaknet;
-	
-	//Log parsed input
-	//UE_LOG(LogTemp, Warning,
-	//	   TEXT("PARSED: receptionistIp %s, port %d, engineType %s, workerId %s"),
-	//	   *receptionistIp,
-	//	   port,
-	//	   *Worker.WorkerTypeName(),
-	//	   *Worker.WorkerId)
-
-	////Setup connection
- //   using namespace improbable::unreal::core;
-	//FWorkerConnection::SetComponentMetaclasses(worker::GetComponentMetaclasses());
- //   Connection.Reset(new FWorkerConnection());
- //   Connection->GetView().OnDisconnect([](const worker::DisconnectOp& disconnect) {
- //       // GIsRequestingExit = true;
- //   });
- //   worker::ConnectionParameters Params;
-	//Params.Network.ConnectionType = linkProtocol;
-	//Params.Network.UseExternalIp = false;
-
- //   Params.WorkerType = TCHAR_TO_UTF8(*Worker.WorkerTypeName());
- //   Params.WorkerId = TCHAR_TO_UTF8(*Worker.WorkerId);
- //   
- //   Connection->Connect(receptionistIp, port, Params, GetWorld());
-}
-
 void ARpgDemoGameMode::RegisterEntityBlueprints()
 {
-    using namespace improbable::unreal::entity_spawning;
-    Spawner.Reset(
-        new FEntitySpawner(Connection->GetConnection(), Connection->GetView(), GetWorld()));
-    TArray<UObject*> assets;
-    if (EngineUtils::FindOrLoadAssetsByPath(TEXT(ENTITY_BLUEPRINTS_FOLDER), assets,
-                                            EngineUtils::ATL_Class))
-    {
-        for (auto asset : assets)
-        {
-            UBlueprintGeneratedClass* blueprintGeneratedClass =
-                Cast<UBlueprintGeneratedClass>(asset);
-            if (blueprintGeneratedClass != nullptr)
-            {
-                FString blueprintName = blueprintGeneratedClass->GetName().LeftChop(
-                    2);  // generated blueprint class names end with "_C"
-                UE_LOG(LogTemp, Warning,
-                       TEXT("Registering blueprint in entity spawner with name: %s"),
-                       *blueprintName)
-                Spawner->RegisterPrefabName(blueprintName, blueprintGeneratedClass);
-            }
-            else
-            {
-                UE_LOG(
-                    LogTemp, Warning,
-                    TEXT("Found asset in the EntityBlueprints folder which is not a blueprint: %s"),
-                    *(asset->GetFullName()))
-            }
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No assets found in EntityBlueprints folder."))
-    }
-}
+	auto workerConnection = WorkerConnection();
 
-void ARpgDemoGameMode::MakeWindowed(int32 Width, int32 Height)
-{
-    UGameUserSettings* Settings = GetGameUserSettings();
-    if (Settings != nullptr)
-    {
-        Settings->SetFullscreenMode(EWindowMode::Type::Windowed);
-
-        Settings->SetScreenResolution(FIntPoint(Width, Height));
-        Settings->SaveSettings();
-    }
-}
-
-UGameUserSettings* ARpgDemoGameMode::GetGameUserSettings()
-{
-    if (GEngine != nullptr)
-    {
-        return GEngine->GameUserSettings;
-    }
-    return nullptr;
+	using namespace improbable::unreal::entity_spawning;
+	Spawner.Reset(
+		new FEntitySpawner(workerConnection->GetConnection(), workerConnection->GetView(), GetWorld()));
+	TArray<UObject*> assets;
+	if (EngineUtils::FindOrLoadAssetsByPath(TEXT(ENTITY_BLUEPRINTS_FOLDER), assets,
+		EngineUtils::ATL_Class))
+	{
+		for (auto asset : assets)
+		{
+			UBlueprintGeneratedClass* blueprintGeneratedClass =
+				Cast<UBlueprintGeneratedClass>(asset);
+			if (blueprintGeneratedClass != nullptr)
+			{
+				FString blueprintName = blueprintGeneratedClass->GetName().LeftChop(
+					2);  // generated blueprint class names end with "_C"
+				UE_LOG(LogTemp, Warning,
+					TEXT("Registering blueprint in entity spawner with name: %s"),
+					*blueprintName)
+					Spawner->RegisterPrefabName(blueprintName, blueprintGeneratedClass);
+			}
+			else
+			{
+				UE_LOG(
+					LogTemp, Warning,
+					TEXT("Found asset in the EntityBlueprints folder which is not a blueprint: %s"),
+					*(asset->GetFullName()))
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No assets found in EntityBlueprints folder."))
+	}
 }
