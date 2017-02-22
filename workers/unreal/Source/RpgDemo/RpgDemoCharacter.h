@@ -1,15 +1,15 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
-#include "unrealCharacter.generated.h"
+#include "RpgDemoCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class AunrealCharacter : public ACharacter
+class ARpgDemoCharacter : public ACharacter
 {
     GENERATED_BODY()
 
   public:
-    AunrealCharacter();
+    ARpgDemoCharacter();
 
     // Called every frame.
     virtual void Tick(float DeltaSeconds) override;

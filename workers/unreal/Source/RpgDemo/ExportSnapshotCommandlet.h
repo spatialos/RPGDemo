@@ -11,7 +11,7 @@
  */
 
 UCLASS()
-class UNREAL_API UExportSnapshotCommandlet : public UCommandlet
+class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
 {
     GENERATED_BODY()
   public:

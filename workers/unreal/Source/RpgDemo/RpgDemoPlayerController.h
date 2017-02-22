@@ -1,17 +1,17 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/PlayerController.h"
-#include "unrealPlayerController.generated.h"
+#include "RpgDemoPlayerController.generated.h"
 
 UCLASS()
-class AunrealPlayerController : public APlayerController
+class ARpgDemoPlayerController : public APlayerController
 {
     GENERATED_BODY()
 
-  public:
-    AunrealPlayerController();
+public:
+    ARpgDemoPlayerController();
 
-  protected:
+protected:
     /** True if the controlled character should navigate to the mouse cursor. */
     uint32 bMoveToMouseCursor : 1;
 

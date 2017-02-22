@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "path": "Source/unreal/SpatialOS",
+      "path": "Source/RpgDemo/SpatialOS",
       "type": "unreal",
       "packages": [
         {

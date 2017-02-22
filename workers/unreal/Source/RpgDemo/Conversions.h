@@ -11,7 +11,7 @@ constexpr double SpatialToUnrealScale = 100.0;
 
 inline improbable::math::Coordinates ToNativeCoordinates(const FVector& position)
 {
-    auto spatialPosition = SpatialToUnrealCoordinateSpace.GetInverse().RotateVector(position) / SpatialToUnrealScale;
+    const auto spatialPosition = SpatialToUnrealCoordinateSpace.GetInverse().RotateVector(position) / SpatialToUnrealScale;
     return improbable::math::Coordinates{ static_cast<double>(spatialPosition.X),
                                                 static_cast<double>(spatialPosition.Y),
                                                 static_cast<double>(spatialPosition.Z) };
@@ -28,14 +28,14 @@ inline FVector ToUnrealPosition(const improbable::math::Coordinates& position)
   return result;
 }
 
-inline worker::List<float> ToNativeRotation(const FQuat quaternion)                  
+inline worker::List<float> ToNativeRotation(const FQuat& quaternion)                  
 {                                                                                                  
-    FQuat rotatedQuaternion = SpatialToUnrealCoordinateSpace.GetInverse().Quaternion() * quaternion;
+    const FQuat rotatedQuaternion = SpatialToUnrealCoordinateSpace.GetInverse().Quaternion() * quaternion;
     return worker::List<float>{rotatedQuaternion.W, rotatedQuaternion.X, rotatedQuaternion.Y, rotatedQuaternion.Z};
 }                                                                                                  
                                                                                                    
 inline FQuat ToUnrealRotation(const worker::List<float>& quaterion)                                         
 {                                                                                                  
-    FQuat result{ quaterion[1], quaterion[2], quaterion[3], quaterion[0] };
+    const FQuat result{ quaterion[1], quaterion[2], quaterion[3], quaterion[0] };
     return SpatialToUnrealCoordinateSpace.Quaternion() * result;
 }                                                                                                  

@@ -9,7 +9,7 @@
  *
  */
 UCLASS()
-class UNREAL_API AOtherPlayerController : public AAIController
+class RPGDEMO_API AOtherPlayerController : public AAIController
 {
     GENERATED_BODY()
 
@@ -21,6 +21,6 @@ class UNREAL_API AOtherPlayerController : public AAIController
     bool IsInitialised() const;
     virtual void Tick(float DeltaTime) override;
 
-    class AunrealCharacter* mControlledCharacter;
+    class ARpgDemoCharacter* mControlledCharacter;
     void SetNewMoveDestination(const FVector DestLocation);
 };

@@ -15,7 +15,7 @@
           "command": "cmd",
           "arguments": [
             "/c",
-            "copy /y .\\Source\\unreal\\SpatialOS\\SpatialOSModule.Build.cs Source\\unreal"
+            "copy /y .\\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs Source\\RpgDemo"
           ]
         },
         {

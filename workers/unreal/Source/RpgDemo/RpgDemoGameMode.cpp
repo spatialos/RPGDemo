@@ -1,9 +1,9 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "unreal.h"
+#include "RpgDemo.h"
 #include "Engine.h"
-#include "unrealGameMode.h"
-#include "unrealPlayerController.h"
+#include "RpgDemoGameMode.h"
+#include "RpgDemoPlayerController.h"
 #include <improbable/player/heartbeat.h>
 #include <improbable/player/heartbeat_receiver.h>
 #include <improbable/common/transform.h>
@@ -20,15 +20,15 @@ const std::string WorkerType = "UnrealClient";
 namespace {
 worker::Entity GetPlayerEntityTemplate()
 {
-    improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
-    worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
+    const improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+    const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
-    improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
-    improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+    const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
+    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
-    improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
-    improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
-    improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirmentSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
 
     worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
 
@@ -36,7 +36,7 @@ worker::Entity GetPlayerEntityTemplate()
     componentAuthority.emplace(improbable::player::Heartbeat::ComponentId, clientRequirementSet);
     componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, workerRequirementSet);
 
-    improbable::ComponentAcl componentAcl(componentAuthority);
+    const improbable::ComponentAcl componentAcl(componentAuthority);
 
     worker::Entity playerTempalte;
     playerTempalte.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
@@ -47,12 +47,12 @@ worker::Entity GetPlayerEntityTemplate()
 }
 }  // ::
 
-AunrealGameMode* AunrealGameMode::Instance;
+ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
-AunrealGameMode::AunrealGameMode()
+ARpgDemoGameMode::ARpgDemoGameMode()
 {
     // Set the default player controller class
-    PlayerControllerClass = AunrealPlayerController::StaticClass();
+    PlayerControllerClass = ARpgDemoPlayerController::StaticClass();
 
     // Don't spawn players automatically
     bStartPlayersAsSpectators = true;
@@ -63,12 +63,12 @@ AunrealGameMode::AunrealGameMode()
     Instance = this;
 }
 
-AunrealGameMode::~AunrealGameMode()
+ARpgDemoGameMode::~ARpgDemoGameMode()
 {
     Instance = nullptr;
 }
 
-void AunrealGameMode::StartPlay()
+void ARpgDemoGameMode::StartPlay()
 {
     AGameMode::StartPlay();
     ConfigureWindowSize();
@@ -77,13 +77,13 @@ void AunrealGameMode::StartPlay()
     RegisterEntityBlueprints();
 }
 
-void AunrealGameMode::Tick(float DeltaTime)
+void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
     Connection->ProcessEvents();
 }
 
-void AunrealGameMode::SpawnPlayer()
+void ARpgDemoGameMode::SpawnPlayer()
 {
     auto& connection = Connection->GetConnection();
     auto& view = Connection->GetView();
@@ -91,19 +91,18 @@ void AunrealGameMode::SpawnPlayer()
     const std::uint32_t timeoutMillis = 500;
     const std::string entityType = "Player";
 
-    worker::RequestId<worker::ReserveEntityIdRequest> entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
+    const auto entityIdReservationRequestId = connection.SendReserveEntityIdRequest(timeoutMillis);
 
-    worker::RequestId<worker::CreateEntityRequest> entityCreationRequestId;
-    view.OnReserveEntityIdResponse([&entityCreationRequestId, &connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
+    view.OnReserveEntityIdResponse([&connection, entityIdReservationRequestId, entityType, timeoutMillis](const worker::ReserveEntityIdResponseOp& op)
     {
         if (op.RequestId == entityIdReservationRequestId && op.StatusCode == worker::StatusCode::kSuccess)
         {
-            entityCreationRequestId = connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
-        }
+            connection.SendCreateEntityRequest(GetPlayerEntityTemplate(), entityType, op.EntityId, timeoutMillis);
+        } 
     });
 }
 
-void AunrealGameMode::ConfigureWindowSize()
+void ARpgDemoGameMode::ConfigureWindowSize()
 {
 #if UE_SERVER
     MakeWindowed(10, 10);
@@ -112,7 +111,7 @@ void AunrealGameMode::ConfigureWindowSize()
 #endif
 }
 
-void AunrealGameMode::CreateWorkerConnection()
+void ARpgDemoGameMode::CreateWorkerConnection()
 {
 	//Commandline arguments
 	const FString receptionistIpArgument = "receptionistIp";
@@ -175,7 +174,7 @@ void AunrealGameMode::CreateWorkerConnection()
     Connection->Connect(receptionistIp, port, Params, GetWorld());
 }
 
-void AunrealGameMode::RegisterEntityBlueprints()
+void ARpgDemoGameMode::RegisterEntityBlueprints()
 {
     using namespace improbable::unreal::entity_spawning;
     Spawner.Reset(
@@ -212,7 +211,7 @@ void AunrealGameMode::RegisterEntityBlueprints()
     }
 }
 
-void AunrealGameMode::MakeWindowed(int32 Width, int32 Height)
+void ARpgDemoGameMode::MakeWindowed(int32 Width, int32 Height)
 {
     UGameUserSettings* Settings = GetGameUserSettings();
     if (Settings != nullptr)
@@ -224,7 +223,7 @@ void AunrealGameMode::MakeWindowed(int32 Width, int32 Height)
     }
 }
 
-UGameUserSettings* AunrealGameMode::GetGameUserSettings()
+UGameUserSettings* ARpgDemoGameMode::GetGameUserSettings()
 {
     if (GEngine != nullptr)
     {
