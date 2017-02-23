@@ -16,7 +16,7 @@ public:
 
 	static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
 	{
-		return Instance->Spawner.GetOwnedPointer();
+		return Instance->Spawner.Get();
 	}
 
 	void Tick(float DeltaTime) override;
@@ -30,7 +30,7 @@ protected:
 	void RegisterEntityBlueprints();
 
 private:
-	TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
+	TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
 
 	static ARpgDemoGameMode* Instance;
 };
