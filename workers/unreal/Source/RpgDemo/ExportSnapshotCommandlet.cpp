@@ -47,6 +47,7 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 {
 	const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
 
+	//add 5 randomly located NPCs to the snapshot
 	std::unordered_map<worker::EntityId, worker::SnapshotEntity> snapshotEntities;
 	for(int npcId = 1; npcId <=5; npcId++)
 	{
@@ -67,6 +68,7 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
 
     const Coordinates initialPosition{ verticalCorridors[randomVerticalCorridor], 4.0, horizontalCorridors[randomHorizontalCorridor] };
     const worker::List<float> initialRotation{ 1.0f, 0.0f, 0.0f, 0.0f };
+
     auto snapshotEntity = worker::SnapshotEntity();
     snapshotEntity.Prefab = "Npc";
     snapshotEntity.Add<common::Transform>(common::Transform::Data{ initialPosition, initialRotation });
@@ -74,16 +76,14 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
     WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
-    WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
-    WorkerRequirementSet globalRequirmentSet{{unrealClientAttributeSet, unrealWorkerAttributeSet}};
+    WorkerRequirementSet unrealWorkerWritePermission{{unrealWorkerAttributeSet}};
+    WorkerRequirementSet anyWorkerReadPermission{{unrealClientAttributeSet, unrealWorkerAttributeSet}};
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
+    componentAuthority.emplace(common::Transform::ComponentId, unrealWorkerWritePermission);
 
-    componentAuthority.emplace(common::Transform::ComponentId, workerRequirementSet);
-
-    ComponentAcl componentAcl(componentAuthority);
-
-    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(globalRequirmentSet, componentAcl));
+    ComponentAcl componentWritePermissions(componentAuthority);
+    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentWritePermissions));
 
     return snapshotEntity;
 }
