@@ -1,10 +1,17 @@
 package improbable.player;
 
-type HeartbeatEvent {
+type HeartbeatRequest {
 }
 
-component Heartbeat {
+type HeartbeatResponse {
+}
+
+component HeartbeatReceiver {
   id = 21001;
-  event HeartbeatEvent beat;
+  
+  command HeartbeatResponse heartbeat(HeartbeatRequest);
 }
 
+component HeartbeatSender {
+	id = 21002;
+}

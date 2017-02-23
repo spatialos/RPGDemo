@@ -4,7 +4,6 @@
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
 #include <improbable/player/heartbeat.h>
-#include <improbable/player/heartbeat_receiver.h>
 #include <improbable/common/transform.h>
 #include "improbable/standard_library.h"
 
@@ -34,3 +33,30 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 	ASpatialOSGameMode::Tick(DeltaTime);
 }
 
+UEntityTemplate* ARpgDemoGameMode::GetPlayerEntityTemplate()
+{
+    const improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+    const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
+
+    const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
+    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+
+    const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirementSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+
+    worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
+
+    componentAuthority.emplace(improbable::common::Transform::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::player::HeartbeatSender::ComponentId, workerRequirementSet);
+
+    const improbable::ComponentAcl componentAcl(componentAuthority);
+
+    worker::Entity playerTemplate;
+    playerTemplate.Add<improbable::common::Transform>(improbable::common::Transform::Data{ initialPosition, initialRoation });
+    playerTemplate.Add<improbable::player::HeartbeatSender>(improbable::player::HeartbeatSender::Data{});
+    playerTemplate.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
+    playerTemplate.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{globalRequirementSet, componentAcl});
+    return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
+}

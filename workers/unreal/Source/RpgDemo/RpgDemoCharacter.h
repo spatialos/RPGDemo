@@ -32,6 +32,9 @@ class ARpgDemoCharacter : public ACharacter
         return TransformComponent;
     }
 
+    UFUNCTION(BlueprintPure, Category = "RpgDemoCharacter")
+    int GetEntityId();
+
   private:
     void UpdateCursorPosition() const;
     void Initialise(bool authority);

@@ -6,6 +6,8 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "ConversionsFunctionLibrary.h"
+#include "SpatialOSGameMode.h"
+#include "EntitySpawner.h"
 #include "RpgDemoCharacter.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
@@ -209,4 +211,9 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
             CursorToWorld->SetWorldRotation(CursorR);
         }
     }
+}
+
+int ARpgDemoCharacter::GetEntityId()
+{
+    return static_cast<int>(ASpatialOSGameMode::GetSpawner()->GetEntityId(this));
 }

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "SpatialOSGameMode.h"
+#include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -15,6 +16,10 @@ public:
 
 	void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
+	UEntityTemplate* GetPlayerEntityTemplate();
+
 private:
 	static ARpgDemoGameMode* Instance;
+
 };
