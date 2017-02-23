@@ -1,7 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "RpgDemo.h"
-#include "Engine.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
 #include <improbable/player/heartbeat.h>
