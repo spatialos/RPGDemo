@@ -73,14 +73,15 @@ void ARpgDemoGameMode::StartPlay()
     AGameMode::StartPlay();
     ConfigureWindowSize();
     CreateWorkerConnection();
-    SpawnPlayer();
-    RegisterEntityBlueprints();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameMode::Tick(DeltaTime);
-    Connection->ProcessEvents();
+    if(Connection->IsConnected())
+    {
+        Connection->ProcessEvents();
+    }
 }
 
 void ARpgDemoGameMode::SpawnPlayer()
@@ -168,8 +169,17 @@ void ARpgDemoGameMode::CreateWorkerConnection()
 
     Params.WorkerType = WorkerType;
     Params.WorkerId = workerId;
+
+    FOnConnectedDelegate OnConnected;
+    OnConnected.BindLambda([this](bool connected) {
+        if (connected)
+        {
+            SpawnPlayer();
+            RegisterEntityBlueprints();
+        }
+    });
     
-    Connection->Connect(receptionistIp, port, Params, GetWorld());
+    Connection->ConnectToReceptionistAsync(receptionistIp, port, Params, GetWorld(), OnConnected);
 }
 
 void ARpgDemoGameMode::RegisterEntityBlueprints()
