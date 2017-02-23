@@ -79,9 +79,7 @@ public class RpgDemo : ModuleRules
 			SpatialOS.RunSpatial(userJson);
 
 			var CodegenFilename = "CodeGenerator.bat";
-			var CodegenArguments = "--json-dir=Source/RpgDemo/Improbable/Generated/json" +
-				" --unreal-output-dir=Source/RpgDemo/Improbable/Generated/cpp/unreal" +
-				" --unreal-project-name=RpgDemo";
+			var CodegenArguments = "";
 
 			SpatialOS.RunExe(CodegenFilename, CodegenArguments);
 		}
