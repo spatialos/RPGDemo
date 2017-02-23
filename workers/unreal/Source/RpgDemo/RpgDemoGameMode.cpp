@@ -179,8 +179,7 @@ void ARpgDemoGameMode::CreateWorkerConnection()
         }
     });
     
-    std::uint32_t TimeoutMillis = 5000u;
-    Connection->StartConnection(receptionistIp, port, Params, GetWorld(), OnConnected, TimeoutMillis);
+    Connection->ConnectToReceptionistAsync(receptionistIp, port, Params, GetWorld(), OnConnected);
 }
 
 void ARpgDemoGameMode::RegisterEntityBlueprints()
