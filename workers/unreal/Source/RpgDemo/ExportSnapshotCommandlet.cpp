@@ -11,6 +11,7 @@
 #include <improbable/common/transform.h>
 
 #include <improbable/worker.h>
+#include <array>
 
 #include "improbable/standard_library.h"
 
@@ -32,22 +33,39 @@ int32 UExportSnapshotCommandlet::Main(const FString& Params)
     UE_LOG(LogTemp, Display, TEXT("Combined path %s"), *combinedPath);
     if (FPaths::CollapseRelativeDirectories(combinedPath))
     {
-        FString fullPath = FPaths::Combine(*combinedPath, TEXT("default.snapshot"));
-
-        worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), {{454, CreateNPCSnapshotEntity()}});
-        UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
+		GenerateSnapshot(combinedPath);
     }
     else
     {
-        UE_LOG(LogTemp, Display, TEXT("bye world!"));
+        UE_LOG(LogTemp, Display, TEXT("Path was invalid - snapshot not generated"));
     }
 
     return 0;
 }
 
+void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
+{
+	const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
+
+	std::unordered_map<worker::EntityId, worker::SnapshotEntity> snapshotEntities;
+	for(int npcId = 1; npcId <=5; npcId++)
+	{
+		snapshotEntities.emplace(npcId, CreateNPCSnapshotEntity());
+	}
+
+	worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
+	UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
+}
+
+const std::array<float, 5> verticalCorridors = { -2, 2.75, 7.5, 12.25, 17 };
+const std::array<float, 5> horizontalCorridors = { -10, -4, 2, 8, 14 };
+
 worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const
 {
-    const Coordinates initialPosition{ 0.0, 4.0, 0.0 };
+	const int randomVerticalCorridor = FMath::RandRange(0, verticalCorridors.size());
+	const int randomHorizontalCorridor = FMath::RandRange(0, horizontalCorridors.size());
+
+    const Coordinates initialPosition{ verticalCorridors[randomVerticalCorridor], 4.0, horizontalCorridors[randomHorizontalCorridor] };
     const worker::List<float> initialRotation{ 1.0f, 0.0f, 0.0f, 0.0f };
     auto snapshotEntity = worker::SnapshotEntity();
     snapshotEntity.Prefab = "Npc";
