@@ -89,7 +89,8 @@
           "-unattended",
           "-nologtimes",
           "-nopause",
-          "-noini"
+          "-noini",
+		  "+engineType", "UnrealWorker"
         ]
       }
     }

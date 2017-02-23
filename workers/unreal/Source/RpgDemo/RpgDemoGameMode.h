@@ -1,40 +1,36 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
+
+#include "SpatialOSGameMode.h"
 #include "EntitySpawner.h"
-#include "GameFramework/GameMode.h"
-#include "GameFramework/GameUserSettings.h"
-#include "WorkerConnection.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
-class ARpgDemoGameMode : public AGameMode
+class ARpgDemoGameMode : public ASpatialOSGameMode
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-  ARpgDemoGameMode();
-  virtual ~ARpgDemoGameMode();
+	ARpgDemoGameMode();
+	virtual ~ARpgDemoGameMode();
 
-    static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
-    {
-        return Instance->Spawner.GetOwnedPointer();
-    }
+	static improbable::unreal::entity_spawning::FEntitySpawner* GetSpawner()
+	{
+		return Instance->Spawner.Get();
+	}
 
-  private:
-    void StartPlay() override;
-    void Tick(float DeltaTime) override;
+	void Tick(float DeltaTime) override;
 
-    void SpawnPlayer();
+protected:
 
-    TAutoPtr<improbable::unreal::core::FWorkerConnection> Connection;
-    TAutoPtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
-  
-    static void ConfigureWindowSize();
-    void CreateWorkerConnection();
-    void RegisterEntityBlueprints();
+	UFUNCTION(BlueprintCallable, Category = "Worker Startup")
+	void SpawnPlayer();
 
-    static void MakeWindowed(int32 Width, int32 Height);
-    static UGameUserSettings* GetGameUserSettings();
+	UFUNCTION(BlueprintCallable, Category = "Worker Startup")
+	void RegisterEntityBlueprints();
 
-    static ARpgDemoGameMode* Instance;
+private:
+	TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> Spawner;
+
+	static ARpgDemoGameMode* Instance;
 };
