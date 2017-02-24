@@ -88,6 +88,7 @@ void ARpgDemoCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    InitialiseAsOtherPlayer();
 	TransformComponent->OnAuthorityChange.AddDynamic(this, &ARpgDemoCharacter::OnTransformAuthorityChange);
 	TransformComponent->OnComponentReady.AddDynamic(this, &ARpgDemoCharacter::OnTransformComponentReady);
 }
@@ -129,6 +130,11 @@ void ARpgDemoCharacter::Initialise(bool authority)
 void ARpgDemoCharacter::InitialiseAsOwnPlayer()
 {
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+    if (playerController == nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer error, playerController was null"))
+        return;
+    }
     AController* currentController = GetController();
     if (currentController != playerController)
     {
@@ -137,7 +143,10 @@ void ARpgDemoCharacter::InitialiseAsOwnPlayer()
             currentController->UnPossess();
         }
 
-        playerController->UnPossess();
+        if (playerController->GetPawn() != nullptr)
+        {
+            playerController->UnPossess();
+        }
         playerController->Possess(this);
         UE_LOG(LogTemp, Warning, TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer creating own player "
                                       "controller for actor %s"),

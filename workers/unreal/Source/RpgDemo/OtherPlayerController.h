@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AIController.h"
+#include "RpgDemoCharacter.h"
 #include "OtherPlayerController.generated.h"
 
 /**
@@ -16,6 +17,7 @@ class RPGDEMO_API AOtherPlayerController : public AAIController
 public:
 	AOtherPlayerController();
 	virtual void Possess(APawn* InPawn) override;
+	virtual void UnPossess() override;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
@@ -23,4 +25,5 @@ protected:
 
 	void SetNewMoveDestination(const FVector& DestLocation);
 
+	ARpgDemoCharacter* mOtherPlayer;
 };
