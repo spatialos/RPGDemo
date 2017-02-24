@@ -27,8 +27,6 @@ void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
 	const auto newUnrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
 	SetNewMoveDestination(newUnrealPosition);
-	UE_LOG(LogTemp, Warning,
-			TEXT("AOtherPlayerController::OnPositionUpdate updating position for other player"))
 }
 
 void AOtherPlayerController::SetNewMoveDestination(const FVector& DestLocation)
