@@ -1,23 +1,24 @@
-From 76d461051c81450cf47e06afb8daf299f3dc6e59 Mon Sep 17 00:00:00 2001
-From: Jared Hefty <jared@improbable.io>
-Date: Fri, 10 Feb 2017 13:51:39 +0000
-Subject: [PATCH] Make things work with WorkerSdk
+From 20a05bed15b8b6c6bb10f633d8e369facd6b63ea Mon Sep 17 00:00:00 2001
+From: Daniel Hall <danielhall@improbable.io>
+Date: Tue, 21 Feb 2017 15:10:18 +0000
+Subject: [PATCH] Make linux work with WorkerSdk
 
 ---
- Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs   | 6 +++++-
- Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp | 3 +++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs |  6 +++++-
+ Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp        | 10 ++++++++--
+ .../Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp  |  3 +++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
-index 2044ef0..749a28a 100644
+index 2044ef0..4a012d9 100644
 --- a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
 +++ b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
 @@ -307,6 +307,9 @@ namespace UnrealBuildTool
  
  		private static bool ShouldUseLibcxx(NativeBuildEnvironmentConfiguration.TargetInfo Target)
  		{
-+            // Improbable: it's not possible to disable libc++ via the UE4_LINUX_USE_LIBCXX variable, so disable it fully.
-+            return false;
++			// Improbable: it's not possible to disable libc++ via the UE4_LINUX_USE_LIBCXX variable, so disable it fully.
++			return false;
 +            /*
  			// set UE4_LINUX_USE_LIBCXX to either 0 or 1. If unset, defaults to 1.
  			string UseLibcxxEnvVarOverride = Environment.GetEnvironmentVariable("UE4_LINUX_USE_LIBCXX");
@@ -26,7 +27,7 @@ index 2044ef0..749a28a 100644
  
  			// at the moment only x86_64 is supported
  			return Target.Architecture.StartsWith("x86_64");
-+            */
++			*/
          }
  
  		static string GetCLArguments_Global(CPPEnvironment CompileEnvironment)
@@ -39,6 +40,39 @@ index 2044ef0..749a28a 100644
  
  			if (String.IsNullOrEmpty(ClangPath))
  			{
+diff --git a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+index c6b1265..73f2cf7 100644
+--- a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
++++ b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+@@ -429,13 +429,13 @@ struct FMallocBinned::Private
+ 
+ 		UPTRINT BasePtr;
+ 		FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
+-#if PLATFORM_IOS || PLATFORM_MAC
++//#if PLATFORM_IOS || PLATFORM_MAC
+         if (Pool == NULL)
+         {
+             UE_LOG(LogMemory, Warning, TEXT("Attempting to free a pointer we didn't allocate!"));
+             return;
+         }
+-#endif
++//#endif
+ 		checkSlow(Pool);
+ 		checkSlow(Pool->GetBytes() != 0);
+ 		if (Pool->TableIndex < Allocator.BinnedOSTableIndex)
+@@ -1060,6 +1060,12 @@ bool FMallocBinned::GetAllocationSize(void *Original, SIZE_T &SizeOut)
+ 	UPTRINT BasePtr;
+ 	FPoolInfo* Pool = Private::FindPoolInfo(*this, (UPTRINT)Original, BasePtr);
+ 
++	if(Pool == nullptr)
++	{
++		UE_LOG(LogMemory, Warning, TEXT("attemting to delete memory that we did not allocate"))
++		return false;
++	}
++
+ 	PTRINT OffsetFromBase = (PTRINT)Original - (PTRINT)BasePtr;
+ 	check(OffsetFromBase >= 0);
+ 
 diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
 index c2f6045..0c90b9f 100644
 --- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
@@ -58,5 +92,5 @@ index c2f6045..0c90b9f 100644
  
  	if (USE_MALLOC_BINNED2)
 -- 
-2.10.0.windows.1
+2.10.1.windows.1
 
