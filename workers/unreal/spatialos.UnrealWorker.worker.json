@@ -67,7 +67,7 @@
         "${IMPROBABLE_RECEPTIONIST_PORT}",
         "+workerType",
         "${IMPROBABLE_WORKER_NAME}",
-        "+workerType",
+        "+workerId",
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
