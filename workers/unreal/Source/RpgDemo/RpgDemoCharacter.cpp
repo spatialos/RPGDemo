@@ -76,10 +76,10 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
     {
         UpdateCursorPosition();
 
-		auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
-		auto rawUpdate = improbable::common::Transform::Update().set_position(
+		const auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
+		const auto rawUpdate = improbable::common::Transform::Update().set_position(
 			improbable::math::Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
-		auto update = NewObject<UTransformComponentUpdate>(this, UTransformComponentUpdate::StaticClass())->Init(rawUpdate);
+		const auto update = NewObject<UTransformComponentUpdate>(this, UTransformComponentUpdate::StaticClass())->Init(rawUpdate);
 		TransformComponent->SendComponentUpdate(update);
     }
 }
@@ -99,7 +99,7 @@ void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
 
 void ARpgDemoCharacter::OnTransformComponentReady()
 {
-	auto unrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(TransformComponent->GetPosition());
+	const auto unrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(TransformComponent->GetPosition());
 	SetActorLocation(unrealPosition);
 }
 

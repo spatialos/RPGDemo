@@ -13,17 +13,17 @@ AOtherPlayerController::AOtherPlayerController()
 void AOtherPlayerController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
-	auto otherPlayer = Cast<ARpgDemoCharacter>(InPawn);
+	const auto otherPlayer = Cast<ARpgDemoCharacter>(InPawn);
 	otherPlayer->GetTransformComponent()->OnPositionUpdate.AddDynamic(this, &AOtherPlayerController::OnPositionUpdate);
 }
 
 void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
-	auto newUnrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
+	const auto newUnrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
 	SetNewMoveDestination(newUnrealPosition);
 }
 
-void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
+void AOtherPlayerController::SetNewMoveDestination(const FVector& DestLocation)
 {
     UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
 	float const Distance = FVector::Dist(DestLocation, GetPawn()->GetActorLocation());

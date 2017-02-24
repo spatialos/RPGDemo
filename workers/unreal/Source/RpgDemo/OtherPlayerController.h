@@ -21,6 +21,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
 	void OnPositionUpdate(FVector newSpatialOsPosition);
 
-	void SetNewMoveDestination(const FVector DestLocation);
+	void SetNewMoveDestination(const FVector& DestLocation);
 
 };
