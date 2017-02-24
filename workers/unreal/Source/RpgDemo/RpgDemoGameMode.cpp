@@ -39,8 +39,11 @@ UEntityTemplate* ARpgDemoGameMode::GetPlayerEntityTemplate()
     const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
     const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
-	const std::string ownWorkerId = TCHAR_TO_UTF8(*workerId);
+	const std::string ownWorkerId = TCHAR_TO_UTF8(*(GetWorkerConfiguration().WorkerId));
 	const std::string ownAttribute = "workerId:" + ownWorkerId;
+	UE_LOG(LogTemp, Warning,
+		TEXT("Making ourselves authoritative over Player Transform and HeartbeatReceiver with worker ID %s"),
+		*FString(ownAttribute.c_str()))
     const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{ownAttribute}} };
 
     const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
