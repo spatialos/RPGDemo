@@ -57,8 +57,8 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 	UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
 }
 
-const std::array<float, 5> verticalCorridors = { -2, 2.75, 7.5, 12.25, 17 };
-const std::array<float, 5> horizontalCorridors = { -10, -4, 2, 8, 14 };
+const std::array<float, 5> verticalCorridors = { { -2.0f, 2.75f, 7.5f, 12.25f, 17.0f } };
+const std::array<float, 5> horizontalCorridors = { { -10.0f, -4.0f, 2.0f, 8.0f, 14.0f } };
 
 worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const
 {
