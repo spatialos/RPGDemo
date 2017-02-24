@@ -44,16 +44,17 @@ UEntityTemplate* ARpgDemoGameMode::GetPlayerEntityTemplate()
 	UE_LOG(LogTemp, Warning,
 		TEXT("Making ourselves authoritative over Player Transform and HeartbeatReceiver with worker ID %s"),
 		*FString(ownAttribute.c_str()))
-    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{ownAttribute}} };
+    const improbable::WorkerAttributeSet ownUnrealClientAttributeSet{ {worker::Option<std::string>{ownAttribute}} };
+    const improbable::WorkerAttributeSet allUnrealClientsAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
     const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
-    const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
-    const improbable::WorkerRequirementSet globalRequirementSet{ {unrealClientAttributeSet, unrealWorkerAttributeSet} };
+    const improbable::WorkerRequirementSet ownClientRequirementSet{ {ownUnrealClientAttributeSet} };
+    const improbable::WorkerRequirementSet globalRequirementSet{ {allUnrealClientsAttributeSet, unrealWorkerAttributeSet} };
 
     worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
 
-    componentAuthority.emplace(improbable::common::Transform::ComponentId, clientRequirementSet);
-    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, clientRequirementSet);
+    componentAuthority.emplace(improbable::common::Transform::ComponentId, ownClientRequirementSet);
+    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId, ownClientRequirementSet);
     componentAuthority.emplace(improbable::player::HeartbeatSender::ComponentId, workerRequirementSet);
 
     const improbable::ComponentAcl componentAcl(componentAuthority);
