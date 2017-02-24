@@ -39,7 +39,9 @@ UEntityTemplate* ARpgDemoGameMode::GetPlayerEntityTemplate()
     const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
     const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
-    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
+	const std::string ownWorkerId = TCHAR_TO_UTF8(*workerId);
+	const std::string ownAttribute = "workerId:" + ownWorkerId;
+    const improbable::WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{ownAttribute}} };
 
     const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
     const improbable::WorkerRequirementSet clientRequirementSet{ {unrealClientAttributeSet} };
