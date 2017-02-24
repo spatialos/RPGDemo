@@ -4,13 +4,21 @@
       "name": "Codegen",
       "steps": [
         {
-          "name": "Install dependencies",
+          "name": "Dependencies",
           "arguments": [
             "worker_package",
-            "unpack-to",
+            "unpack"
+          ]
+        },
+        {
+          "name": "Add project specific includes and macros to UnrealSdk UCLASS files.",
+          "arguments": [
+            "invoke",
             "unreal",
-            "improbable_sdk_plugin",
-            "Source/RpgDemo/SpatialOS"
+            "add_project_includes",
+            "RpgDemo",
+            "Source/RpgDemo/SpatialOS/uclasses/**/*.h",
+            "Source/RpgDemo/SpatialOS/uclasses/**/*.cpp"
           ]
         },
         {
@@ -19,6 +27,61 @@
           "arguments": [
             "/c",
             "copy /y .\\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs Source\\RpgDemo"
+          ]
+        },
+        {
+          "name": "C++ standard library",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_std",
+            "--output=Source/RpgDemo/Improbable/Generated/cpp/Std",
+            "--language=cpp_unreal",
+            "--input=../../build/dependencies/schema/WorkerSdkSchema"
+          ]
+        },
+        {
+          "name": "C++",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_usr",
+            "--output=Source/RpgDemo/Improbable/Generated/cpp/Usr",
+            "--language=cpp_unreal",
+            "--input=../../schema"
+          ]
+        },
+        {
+          "name": "Json AST standard library",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_json_std",
+            "--output=Source/RpgDemo/Improbable/Generated/json/Std",
+            "--language=ast_json",
+            "--input=../../build/dependencies/schema/WorkerSdkSchema"
+          ]
+        },
+        {
+          "name": "Json AST",
+          "arguments": [
+            "process_schema",
+            "generate",
+            "--cachePath=.spatialos/schema_codegen_cache_json_usr",
+            "--output=Source/RpgDemo/Improbable/Generated/json/Usr",
+            "--language=ast_json",
+            "--input=../../schema",
+            "--repository=../../build/dependencies/schema"
+          ]
+        },
+        {
+          "name": "Unreal Code Generation",
+          "description": "Generates Unreal classes.",
+          "command": ".spatialos/bin/CodeGenerator.exe",
+          "arguments": [
+            "--json-dir=Source/RpgDemo/Improbable/Generated/json",
+            "--unreal-output-dir=Source/RpgDemo/Improbable/Generated/cpp/unreal",
+            "--unreal-project-name=RpgDemo"
           ]
         }
       ]
@@ -62,7 +125,13 @@
       "name": "Clean",
       "steps": [
         {
-          "name": "Clean"
+          "name": "Generated files",
+          "arguments": [
+            "process_schema",
+            "clean",
+            ".spatialos",
+            "Source/RpgDemo/Improbable/Generated"
+          ]
         }
       ]
     }

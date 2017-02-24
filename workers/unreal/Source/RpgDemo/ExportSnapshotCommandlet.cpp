@@ -3,8 +3,6 @@
 #include "RpgDemo.h"
 
 #include "ExportSnapshotCommandlet.h"
-
-#include "Conversions.h"
 #include "improbable/collections.h"
 #include "improbable/math/coordinates.h"
 #include "improbable/math/vector3d.h"
@@ -14,6 +12,7 @@
 #include <array>
 
 #include "improbable/standard_library.h"
+#include "improbable/test/test.h"
 
 using namespace improbable;
 using namespace improbable::math;
@@ -71,16 +70,20 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
 
     auto snapshotEntity = worker::SnapshotEntity();
     snapshotEntity.Prefab = "Npc";
+
     snapshotEntity.Add<common::Transform>(common::Transform::Data{ initialPosition, initialRotation });
+	snapshotEntity.Add<test::TestState>(test::TestState::Data{ 10, "hello world" });
 
     WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
     WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
     WorkerRequirementSet unrealWorkerWritePermission{{unrealWorkerAttributeSet}};
+    WorkerRequirementSet unrealClientWritePermission{ { unrealClientAttributeSet } };
     WorkerRequirementSet anyWorkerReadPermission{{unrealClientAttributeSet, unrealWorkerAttributeSet}};
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
     componentAuthority.emplace(common::Transform::ComponentId, unrealWorkerWritePermission);
+    componentAuthority.emplace(test::TestState::ComponentId, unrealClientWritePermission);
 
     ComponentAcl componentWritePermissions(componentAuthority);
     snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentWritePermissions));

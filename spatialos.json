@@ -1,11 +1,11 @@
 {
   "name": "demo",
   "project_version": "0.0.1",
-  "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
+  "sdk_version": "10.0.0-b9418-1fdcc-SNAPSHOT",
   "dependencies": [
     {
       "name": "WorkerSdkSchema",
-      "version": "999.9.9-LOCAL-SNAPSHOT"
+      "version": "10.0.0-b9418-1fdcc-SNAPSHOT"
     }
   ]
 }

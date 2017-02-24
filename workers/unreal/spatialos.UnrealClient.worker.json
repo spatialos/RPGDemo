@@ -29,8 +29,9 @@
         "artifactName": "UnrealClient@Windows.zip",
         "command": "./RpgDemo/Binaries/Win64/RpgDemo.exe",
         "arguments": [
-			"+engineType", "UnrealClient"
-		]
+          "+workerType",
+          "UnrealClient"
+        ]
       }
     }
   }

@@ -4,8 +4,10 @@
 #include "OtherPlayerController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "TransformReceiver.h"
-#include "TransformSender.h"
+#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
+#include "ConversionsFunctionLibrary.h"
+#include "SpatialOSGameMode.h"
+#include "EntitySpawner.h"
 #include "RpgDemoCharacter.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
@@ -60,11 +62,8 @@ ARpgDemoCharacter::ARpgDemoCharacter()
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
 
-    // Create a transform receiver
-    TransformReceiver = CreateDefaultSubobject<UTransformReceiver>(TEXT("TransformReceiver"));
-
-    // Create a transform sender
-    TransformSender = CreateDefaultSubobject<UTransformSender>(TEXT("TransformSender"));
+    // Create a transform component
+    TransformComponent = CreateDefaultSubobject<UTransformComponent>(TEXT("TransformComponent"));
 
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
@@ -73,27 +72,49 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
-    Initialise();
-
-    if (TransformSender->HasAuthority())
+    if (TransformComponent->HasAuthority())
     {
         UpdateCursorPosition();
+
+		const auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
+		const auto rawUpdate = improbable::common::Transform::Update().set_position(
+			improbable::math::Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
+		const auto update = NewObject<UTransformComponentUpdate>(this, UTransformComponentUpdate::StaticClass())->Init(rawUpdate);
+		TransformComponent->SendComponentUpdate(update);
     }
 }
 
 void ARpgDemoCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+	TransformComponent->OnAuthorityChange.AddDynamic(this, &ARpgDemoCharacter::OnTransformAuthorityChange);
+	TransformComponent->OnComponentReady.AddDynamic(this, &ARpgDemoCharacter::OnTransformComponentReady);
+}
+
+void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
+{
+	Initialise(newAuthority);
+}
+
+void ARpgDemoCharacter::OnTransformComponentReady()
+{
+	const auto unrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(TransformComponent->GetPosition());
+	SetActorLocation(unrealPosition);
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
-void ARpgDemoCharacter::Initialise()
+void ARpgDemoCharacter::Initialise(bool authority)
 {
-    if (TransformSender->HasAuthority())
+    if (authority)
     {
         InitialiseAsOwnPlayer();
+		UE_LOG(LogTemp, Warning,
+			TEXT("ARpgDemoCharacter::Initialise did just call InitialiseAsOwnPlayer"
+				"controller for actor %s"),
+			*GetName())
     }
     else
     {
@@ -138,7 +159,6 @@ void ARpgDemoCharacter::InitialiseAsOwnPlayer()
 void ARpgDemoCharacter::InitialiseAsOtherPlayer()
 {
     AController* currentController = GetController();
-
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     if (currentController == playerController && playerController != nullptr)
     {
@@ -191,4 +211,9 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
             CursorToWorld->SetWorldRotation(CursorR);
         }
     }
+}
+
+int ARpgDemoCharacter::GetEntityId()
+{
+    return static_cast<int>(ASpatialOSGameMode::GetSpawner()->GetEntityId(this));
 }

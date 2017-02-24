@@ -2,49 +2,33 @@
 
 #include "RpgDemo.h"
 #include "OtherPlayerController.h"
-#include "TransformReceiver.h"
+#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "RpgDemoCharacter.h"
+#include "ConversionsFunctionLibrary.h"
 
 AOtherPlayerController::AOtherPlayerController()
 {
-  mControlledCharacter = nullptr;
 }
 
-void AOtherPlayerController::Initialise()
+void AOtherPlayerController::Possess(APawn* InPawn)
 {
-  if (GetPawn() == nullptr)
-    return;
-  mControlledCharacter = Cast<ARpgDemoCharacter>(GetPawn());
+	Super::Possess(InPawn);
+	const auto otherPlayer = Cast<ARpgDemoCharacter>(InPawn);
+	otherPlayer->GetTransformComponent()->OnPositionUpdate.AddDynamic(this, &AOtherPlayerController::OnPositionUpdate);
 }
 
-bool AOtherPlayerController::IsInitialised() const
+void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
-  return mControlledCharacter != nullptr;
+	const auto newUnrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
+	SetNewMoveDestination(newUnrealPosition);
 }
 
-void AOtherPlayerController::Tick(float DeltaTime)
+void AOtherPlayerController::SetNewMoveDestination(const FVector& DestLocation)
 {
-  Super::Tick(DeltaTime);
-
-  Initialise();
-  if (!IsInitialised())
-    return;
-
-  SetNewMoveDestination(mControlledCharacter->GetTransformReceiver()->GetLocation());
-}
-
-void AOtherPlayerController::SetNewMoveDestination(const FVector DestLocation)
-{
-  const APawn* OtherPawn = GetPawn();
-  if (OtherPawn)
-  {
     UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-    float const Distance = FVector::Dist(DestLocation, OtherPawn->GetActorLocation());
-
-    // Issue move command only if far enough in order for walk animation to play correctly
-    if (NavSys && (Distance > 120.0f))
-    {
-      NavSys->SimpleMoveToLocation(this, DestLocation);
-    }
-  }
+	float const Distance = FVector::Dist(DestLocation, GetPawn()->GetActorLocation());
+	if (NavSys && (Distance > 120.0f))
+	{
+		NavSys->SimpleMoveToLocation(this, DestLocation);
+	}
 }

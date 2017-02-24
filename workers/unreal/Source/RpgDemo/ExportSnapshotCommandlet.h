@@ -10,14 +10,14 @@
 UCLASS()
 class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
 {
-  GENERATED_BODY()
-public:
-  UExportSnapshotCommandlet();
-  ~UExportSnapshotCommandlet();
+    GENERATED_BODY()
+  public:
+    UExportSnapshotCommandlet();
+    ~UExportSnapshotCommandlet();
 
-  virtual int32 Main(const FString& Params) override;
+    virtual int32 Main(const FString& Params) override;
 
-private:
-  void GenerateSnapshot(const FString& savePath) const;
-  worker::SnapshotEntity CreateNPCSnapshotEntity() const;
+  private:
+    void GenerateSnapshot(const FString& savePath) const;
+    worker::SnapshotEntity CreateNPCSnapshotEntity() const;
 };

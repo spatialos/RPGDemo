@@ -1,0 +1,24 @@
+package improbable.test;
+
+type StringWrapper {
+	string string_val = 1;
+}
+
+type DamageRequest {
+	uint32 amount = 1;
+}
+
+type DamageResponse {
+	uint32 dealt_damage = 2;
+}
+
+component TestState {
+	id = 1003;
+
+	int32 int32_val = 1;
+	string string_val = 2;
+	
+	event StringWrapper text_event;
+
+	command DamageResponse damage(DamageRequest);
+}

@@ -11,16 +11,16 @@
 UCLASS()
 class RPGDEMO_API AOtherPlayerController : public AAIController
 {
-  GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-  AOtherPlayerController();
+	AOtherPlayerController();
+	virtual void Possess(APawn* InPawn) override;
 
 protected:
-  void Initialise();
-  bool IsInitialised() const;
-  virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
+	void OnPositionUpdate(FVector newSpatialOsPosition);
 
-  class ARpgDemoCharacter* mControlledCharacter;
-  void SetNewMoveDestination(const FVector DestLocation);
+	void SetNewMoveDestination(const FVector& DestLocation);
+
 };
