@@ -18,8 +18,6 @@ class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
     virtual int32 Main(const FString& Params) override;
 
   private:
-    worker::SnapshotEntity CreateNPCSnapshotEntity() const;
-  private:
     void GenerateSnapshot(const FString& savePath) const;
     worker::SnapshotEntity CreateNPCSnapshotEntity() const;
 };
