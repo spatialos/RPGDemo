@@ -72,7 +72,6 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     snapshotEntity.Prefab = "Npc";
 
     snapshotEntity.Add<common::Transform>(common::Transform::Data{ initialPosition, initialRotation });
-	snapshotEntity.Add<test::TestState>(test::TestState::Data{ 10, "hello world" });
 
     WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
     WorkerAttributeSet unrealClientAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
@@ -83,7 +82,6 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
     componentAuthority.emplace(common::Transform::ComponentId, unrealWorkerWritePermission);
-    componentAuthority.emplace(test::TestState::ComponentId, unrealClientWritePermission);
 
     ComponentAcl componentWritePermissions(componentAuthority);
     snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentWritePermissions));
