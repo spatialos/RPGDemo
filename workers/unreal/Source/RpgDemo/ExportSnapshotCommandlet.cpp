@@ -12,7 +12,6 @@
 #include <array>
 
 #include "improbable/standard_library.h"
-#include "improbable/test/test.h"
 
 using namespace improbable;
 using namespace improbable::math;
