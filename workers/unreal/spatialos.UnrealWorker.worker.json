@@ -44,8 +44,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-logfile",
-        "${IMPROBABLE_LOG_FILE}"
+        "-log=${IMPROBABLE_LOG_FILE}"
       ]
     },
     "linux": {
@@ -71,8 +70,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-logfile",
-        "${IMPROBABLE_LOG_FILE}"
+        "-log=${IMPROBABLE_LOG_FILE}"
       ]
     }
   },

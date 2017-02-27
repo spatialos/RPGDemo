@@ -161,15 +161,7 @@
 			"worker_package",
 			"clean"
 		  ]
-		},
-        {
-          "name": "Copied build script",
-          "command": "cmd",
-          "arguments": [
-            "/c",
-            "if exist \\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs del /F \\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs"
-          ]
-        }
+		}
       ]
     }
   ]
