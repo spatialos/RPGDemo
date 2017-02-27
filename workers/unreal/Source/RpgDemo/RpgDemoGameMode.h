@@ -25,5 +25,5 @@ public:
 
 private:
 	static ARpgDemoGameMode* Instance;
-
+	FGetSpawnerEntityIdResultDelegate* mGetSpawnerEntityIdResultCallback;
 };

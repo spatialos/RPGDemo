@@ -72,30 +72,35 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 
 void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs)
 {
-	auto callbackCopy = new FGetSpawnerEntityIdResultDelegate(callback);
+	mGetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
 	const worker::query::EntityQuery& entity_query = {
 		worker::query::ComponentConstraint { improbable::spawner::Spawner::ComponentId },
 		worker::query::SnapshotResultType {}
 	};
 	auto requestId = WorkerConnection()->GetConnection().SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
-	WorkerConnection()->GetView().OnEntityQueryResponse([&](const worker::EntityQueryResponseOp& op) {
+	WorkerConnection()->GetView().OnEntityQueryResponse([this, requestId](const worker::EntityQueryResponseOp& op) {
 		if (op.RequestId != requestId)
 		{
 			return;
 		}
+		if (!mGetSpawnerEntityIdResultCallback->IsBound())
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("mGetSpawnerEntityIdResultCallback is unbound"))
+		}
 		if (op.StatusCode != worker::StatusCode::kSuccess)
 		{
 			std::string errorMessage = "Could not find spawner entity: " + op.Message;
-			callbackCopy->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
+			mGetSpawnerEntityIdResultCallback->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
 			return;
 		}
 		if (op.ResultCount == 0)
 		{
 			std::string errorMessage = "Query returned 0 spawner entities";
-			callbackCopy->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
+			mGetSpawnerEntityIdResultCallback->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
 			return;
 		}
-		callbackCopy->ExecuteIfBound(true, FString(), static_cast<int>(op.Result.begin()->first));
+		mGetSpawnerEntityIdResultCallback->ExecuteIfBound(true, FString(), static_cast<int>(op.Result.begin()->first));
 		return;
 	});
 }
