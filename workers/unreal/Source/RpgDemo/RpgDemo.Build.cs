@@ -85,7 +85,7 @@ public class RpgDemo : ModuleRules
 				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "Source", "RpgDemo", "Improbable", "Generated", "json"))),
 				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "Source", "RpgDemo", "Improbable", "Generated", "cpp", "unreal"))),
 				"RpgDemo");
-			SpatialOS.RunExe(codegenFilename, codegenArguments, codeGenWorkingDirectory);
+			SpatialOS.RunExe(CodegenFilename, CodegenArguments, CodeGenWorkingDirectory);
 		}
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
