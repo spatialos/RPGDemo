@@ -26,8 +26,6 @@
       "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
       "arguments": [
         "-server",
-        "-stdout",
-        "-nowrite",
         "-unattended",
         "-nologtimes",
         "-nopause",
@@ -52,8 +50,6 @@
       "command": "RpgDemoServer.sh",
       "arguments": [
         "-server",
-        "-stdout",
-        "-nowrite",
         "-unattended",
         "-nologtimes",
         "-nopause",
@@ -82,8 +78,6 @@
         "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
         "arguments": [
           "-server",
-          "-stdout",
-          "-nowrite",
           "-unattended",
           "-nologtimes",
           "-nopause",
