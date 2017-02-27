@@ -14,7 +14,7 @@
       "type": "worker_sdk",
       "packages": [
         {
-          "name":  "linux_x64"
+          "name":  "linux_x64_unreal"
         }
       ]
     },
