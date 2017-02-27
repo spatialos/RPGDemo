@@ -19,6 +19,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
 	UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);
 
+	DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, int, spawnerEntityId);
+	UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
+	void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);
+
 private:
 	static ARpgDemoGameMode* Instance;
 

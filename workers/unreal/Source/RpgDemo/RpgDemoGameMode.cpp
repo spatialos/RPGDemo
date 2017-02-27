@@ -5,6 +5,7 @@
 #include "RpgDemoPlayerController.h"
 #include <improbable/player/heartbeat.h>
 #include <improbable/common/transform.h>
+#include <improbable/spawner/spawner.h>
 #include "improbable/standard_library.h"
 #include "ConversionsFunctionLibrary.h"
 
@@ -67,4 +68,34 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     playerTemplate.Add<improbable::player::HeartbeatReceiver>(improbable::player::HeartbeatReceiver::Data{});
     playerTemplate.Add<improbable::EntityAcl>(improbable::EntityAcl::Data{globalRequirementSet, componentAcl});
     return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
+}
+
+void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs)
+{
+	auto callbackCopy = new FGetSpawnerEntityIdResultDelegate(callback);
+	const worker::query::EntityQuery& entity_query = {
+		worker::query::ComponentConstraint { improbable::spawner::Spawner::ComponentId },
+		worker::query::SnapshotResultType {}
+	};
+	auto requestId = WorkerConnection()->GetConnection().SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
+	WorkerConnection()->GetView().OnEntityQueryResponse([&](const worker::EntityQueryResponseOp& op) {
+		if (op.RequestId != requestId)
+		{
+			return;
+		}
+		if (op.StatusCode != worker::StatusCode::kSuccess)
+		{
+			std::string errorMessage = "Could not find spawner entity: " + op.Message;
+			callbackCopy->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
+			return;
+		}
+		if (op.ResultCount == 0)
+		{
+			std::string errorMessage = "Query returned 0 spawner entities";
+			callbackCopy->ExecuteIfBound(false, FString(errorMessage.c_str()), -1);
+			return;
+		}
+		callbackCopy->ExecuteIfBound(true, FString(), static_cast<int>(op.Result.begin()->first));
+		return;
+	});
 }
