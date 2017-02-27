@@ -7,7 +7,7 @@
 #include "improbable/math/coordinates.h"
 #include "improbable/math/vector3d.h"
 #include <improbable/common/transform.h>
-
+#include <improbable/spawner/spawner.h>
 #include <improbable/worker.h>
 #include <array>
 
@@ -45,13 +45,12 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 {
 	const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
 
-	//add 5 randomly located NPCs to the snapshot
 	std::unordered_map<worker::EntityId, worker::SnapshotEntity> snapshotEntities;
+	snapshotEntities.emplace(0, CreateSpawnerSnapshotEntity());
 	for(int npcId = 1; npcId <=5; npcId++)
 	{
 		snapshotEntities.emplace(npcId, CreateNPCSnapshotEntity());
 	}
-
 	worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
 	UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
 }
@@ -86,4 +85,31 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentWritePermissions));
 
     return snapshotEntity;
+}
+
+worker::SnapshotEntity UExportSnapshotCommandlet::CreateSpawnerSnapshotEntity() const
+{
+	const Coordinates initialPosition{ 0, 0, 0 };
+	const worker::List<float> initialRotation{ 1.0f, 0.0f, 0.0f, 0.0f };
+
+	auto snapshotEntity = worker::SnapshotEntity();
+	snapshotEntity.Prefab = "Spawner";
+
+	snapshotEntity.Add<common::Transform>(common::Transform::Data{ initialPosition, initialRotation });
+	snapshotEntity.Add<spawner::Spawner>(spawner::Spawner::Data{ });
+
+	WorkerAttributeSet unrealWorkerAttributeSet{ { worker::Option<std::string>{"UnrealWorker"} } };
+	WorkerAttributeSet unrealClientAttributeSet{ { worker::Option<std::string>{"UnrealClient"} } };
+
+	WorkerRequirementSet unrealWorkerWritePermission{ { unrealWorkerAttributeSet } };
+	WorkerRequirementSet anyWorkerReadPermission{ { unrealClientAttributeSet, unrealWorkerAttributeSet } };
+
+	worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
+	componentAuthority.emplace(common::Transform::ComponentId, unrealWorkerWritePermission);
+	componentAuthority.emplace(spawner::Spawner::ComponentId, unrealWorkerWritePermission);
+
+	ComponentAcl componentWritePermissions(componentAuthority);
+	snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentWritePermissions));
+
+	return snapshotEntity;
 }

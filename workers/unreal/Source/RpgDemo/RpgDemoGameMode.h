@@ -17,7 +17,7 @@ public:
 	void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
-	UEntityTemplate* GetPlayerEntityTemplate();
+	UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);
 
 private:
 	static ARpgDemoGameMode* Instance;

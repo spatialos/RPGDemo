@@ -6,6 +6,7 @@
 #include <improbable/player/heartbeat.h>
 #include <improbable/common/transform.h>
 #include "improbable/standard_library.h"
+#include "ConversionsFunctionLibrary.h"
 
 ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
@@ -33,18 +34,19 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 	ASpatialOSGameMode::Tick(DeltaTime);
 }
 
-UEntityTemplate* ARpgDemoGameMode::GetPlayerEntityTemplate()
+UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position)
 {
-    const improbable::math::Coordinates initialPosition{ 1.0, 20.0, 0.0 };
+	const auto& spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
+    const improbable::math::Coordinates initialPosition{ spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z };
     const worker::List<float> initialRoation{ 1.0f, 0.0f, 0.0f, 0.0f };
 
     const improbable::WorkerAttributeSet unrealWorkerAttributeSet{ {worker::Option<std::string>{"UnrealWorker"}} };
-	const std::string ownWorkerId = TCHAR_TO_UTF8(*(GetWorkerConfiguration().WorkerId));
-	const std::string ownAttribute = "workerId:" + ownWorkerId;
+	const std::string clientWorkerIdString = TCHAR_TO_UTF8(*clientWorkerId);
+	const std::string clientAttribute = "workerId:" + clientWorkerIdString;
 	UE_LOG(LogTemp, Warning,
 		TEXT("Making ourselves authoritative over Player Transform and HeartbeatReceiver with worker ID %s"),
-		*FString(ownAttribute.c_str()))
-    const improbable::WorkerAttributeSet ownUnrealClientAttributeSet{ {worker::Option<std::string>{ownAttribute}} };
+		*FString(clientAttribute.c_str()))
+    const improbable::WorkerAttributeSet ownUnrealClientAttributeSet{ {worker::Option<std::string>{clientAttribute}} };
     const improbable::WorkerAttributeSet allUnrealClientsAttributeSet{ {worker::Option<std::string>{"UnrealClient"}} };
 
     const improbable::WorkerRequirementSet workerRequirementSet{ {unrealWorkerAttributeSet} };
