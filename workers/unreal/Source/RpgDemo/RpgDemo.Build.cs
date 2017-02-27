@@ -82,8 +82,8 @@ public class RpgDemo : ModuleRules
 			var CodegenFilename = Path.GetFullPath(Path.Combine(CodeGenWorkingDirectory, "CodeGenerator.exe"));
 			
 			var CodegenArguments = String.Format("--json-dir={0} --unreal-output-dir={1} --unreal-project-name={2}", 
-				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "Source", "RpgDemo", "Improbable", "Generated", "json"))),
-				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "Source", "RpgDemo", "Improbable", "Generated", "cpp", "unreal"))),
+				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated", "json"))),
+				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated", "cpp", "unreal"))),
 				"RpgDemo");
 			SpatialOS.RunExe(CodegenFilename, CodegenArguments, CodeGenWorkingDirectory);
 		}
