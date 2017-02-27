@@ -1,1 +1,0 @@
-"workers/unreal/.spatialos/bin/CodeGenerator.exe" --json-dir=workers/unreal/Source/RpgDemo/Improbable/Generated/json --unreal-output-dir=workers/unreal/Source/RpgDemo/Improbable/Generated/cpp/unreal --unreal-project-name=RpgDemo

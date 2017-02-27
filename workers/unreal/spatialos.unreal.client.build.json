@@ -123,6 +123,29 @@
     {
       "name": "Clean",
       "steps": [
+		{
+          "name": "Clean windows editor",
+          "target": "development",
+          "arguments": [
+            "invoke",
+            "unreal",
+            "clean",
+            "--target=Editor",
+            "--configuration=Development",
+            "--platform=Win64"
+          ]
+        },
+		{
+          "name": "Clean windows client",
+          "arguments": [
+            "invoke",
+            "unreal",
+            "clean",
+            "--target=",
+            "--configuration=Development",
+            "--platform=Win64"
+          ]
+        },
         {
           "name": "Generated files",
           "arguments": [
@@ -130,6 +153,21 @@
             "clean",
             ".spatialos",
             "Source/RpgDemo/Improbable/Generated"
+          ]
+        },
+		{
+		  "name": "Worker packages",
+		  "arguments": [
+			"worker_package",
+			"clean"
+		  ]
+		},
+        {
+          "name": "Copied build script",
+          "command": "cmd",
+          "arguments": [
+            "/c",
+            "if exist \\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs del /F \\Source\\RpgDemo\\SpatialOS\\SpatialOSModule.Build.cs"
           ]
         }
       ]
