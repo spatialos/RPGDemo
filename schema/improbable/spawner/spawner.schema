@@ -1,0 +1,14 @@
+package improbable.spawner;
+
+type SpawnPlayerRequest {
+	Coordinates position;
+}
+
+type SpawnPlayerResponse {
+}
+
+component Spawner {
+	id = 21010;
+
+	command SpawnPlayerResponse spawn_player(SpawnPlayerRequest);
+}
