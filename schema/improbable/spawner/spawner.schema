@@ -1,7 +1,7 @@
 package improbable.spawner;
 
 type SpawnPlayerRequest {
-	Coordinates position;
+	Coordinates position = 1;
 }
 
 type SpawnPlayerResponse {
