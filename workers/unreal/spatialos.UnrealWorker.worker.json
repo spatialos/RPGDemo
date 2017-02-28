@@ -25,11 +25,6 @@
       "artifact_name": "UnrealWorker@Windows.zip",
       "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
       "arguments": [
-        "-server",
-        "-unattended",
-        "-nologtimes",
-        "-nopause",
-        "-noini",
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
@@ -42,18 +37,13 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-log=${IMPROBABLE_LOG_FILE}"
+        "log=${IMPROBABLE_LOG_FILE}"
       ]
     },
     "linux": {
       "artifact_name": "UnrealWorker@Linux.zip",
       "command": "RpgDemoServer.sh",
       "arguments": [
-        "-server",
-        "-unattended",
-        "-nologtimes",
-        "-nopause",
-        "-noini",
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
@@ -66,7 +56,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-log=${IMPROBABLE_LOG_FILE}"
+        "log=${IMPROBABLE_LOG_FILE}"
       ]
     }
   },
@@ -77,13 +67,9 @@
         "artifact_name": "UnrealWorker@Windows.zip",
         "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
         "arguments": [
-          "-server",
-          "-unattended",
-          "-nologtimes",
-          "-nopause",
-          "-noini",
           "+workerType",
-          "UnrealWorker"
+          "UnrealWorker",
+          "log=unrealWorker.log"
         ]
       }
     }
