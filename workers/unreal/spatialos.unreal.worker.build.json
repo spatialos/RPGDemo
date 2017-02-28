@@ -136,42 +136,6 @@
     {
       "name": "Clean",
       "steps": [
-		{
-          "name": "Windows editor",
-          "target": "development",
-          "arguments": [
-            "invoke",
-            "unreal",
-            "clean",
-            "--target=Editor",
-            "--configuration=Development",
-            "--platform=Win64"
-          ]
-        },
-        {
-          "name": "Windows Server",
-          "target": "development",
-          "arguments": [
-            "invoke",
-            "unreal",
-            "clean",
-            "--target=Server",
-            "--configuration=Development",
-            "--platform=Win64"
-          ]
-        },
-        {
-          "name": "Linux Server",
-          "target": "production",
-          "arguments": [
-            "invoke",
-            "unreal",
-            "clean",
-            "--target=Server",
-            "--configuration=Development",
-            "--platform=Linux"
-          ]
-        },
         {
           "name": "Generated files",
           "arguments": [
@@ -181,13 +145,13 @@
             "Source/RpgDemo/Improbable/Generated"
           ]
         },
-		{
-		  "name": "Worker packages",
-		  "arguments": [
-			"worker_package",
-			"clean"
-		  ]
-		}
+        {
+          "name": "Worker packages",
+          "arguments": [
+           "worker_package",
+           "clean"
+         ]
+        }
       ]
     }
   ]
