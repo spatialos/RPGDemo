@@ -71,7 +71,7 @@ ARpgDemoCharacter::ARpgDemoCharacter()
 void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-
+	
     if (TransformComponent->HasAuthority())
     {
         UpdateCursorPosition();
@@ -79,7 +79,8 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 		const auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
 		const auto rawUpdate = improbable::common::Transform::Update().set_position(
 			improbable::math::Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
-		const auto update = NewObject<UTransformComponentUpdate>(this, UTransformComponentUpdate::StaticClass())->Init(rawUpdate);
+		
+		const auto update = NewObject<UTransformComponentUpdate>()->Init(rawUpdate);
 		TransformComponent->SendComponentUpdate(update);
     }
 }
