@@ -32,7 +32,7 @@ public class RpgDemo : ModuleRules
 		SpatialOS.SetupSpatialOS();
 		if (UEBuildConfiguration.bCleanProject)
 		{
-			SpatialOS.RunSpatial("process_schema clean --language=cpp_unreal " + SpatialOS.QuoteString(GeneratedCodeDir));
+			SpatialOS.RunSpatial("process_schema clean " + SpatialOS.QuoteString(GeneratedCodeDir));
 		}
 		else
 		{
@@ -76,12 +76,16 @@ public class RpgDemo : ModuleRules
 				" --input=../../schema" +
 				" --repository=../../build/dependencies/schema";
 
-			SpatialOS.RunSpatial(userJson);
-
-			var CodegenFilename = "CodeGenerator.bat";
-			var CodegenArguments = "";
-
-			SpatialOS.RunExe(CodegenFilename, CodegenArguments);
+			SpatialOS.RunSpatial(userJson);		
+			
+			var CodeGenWorkingDirectory = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", ".spatialos", "bin"));
+			var CodegenFilename = Path.GetFullPath(Path.Combine(CodeGenWorkingDirectory, "CodeGenerator.exe"));
+			
+			var CodegenArguments = String.Format("--json-dir={0} --unreal-output-dir={1} --unreal-project-name={2}", 
+				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated", "json"))),
+				SpatialOS.QuoteString(Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated", "cpp", "unreal"))),
+				"RpgDemo");
+			SpatialOS.RunExe(CodegenFilename, CodegenArguments, CodeGenWorkingDirectory);
 		}
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });

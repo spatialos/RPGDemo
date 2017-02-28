@@ -26,8 +26,6 @@
       "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
       "arguments": [
         "-server",
-        "-stdout",
-        "-nowrite",
         "-unattended",
         "-nologtimes",
         "-nopause",
@@ -44,8 +42,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-logfile",
-        "${IMPROBABLE_LOG_FILE}"
+        "-log=${IMPROBABLE_LOG_FILE}"
       ]
     },
     "linux": {
@@ -53,8 +50,6 @@
       "command": "RpgDemoServer.sh",
       "arguments": [
         "-server",
-        "-stdout",
-        "-nowrite",
         "-unattended",
         "-nologtimes",
         "-nopause",
@@ -71,8 +66,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "-logfile",
-        "${IMPROBABLE_LOG_FILE}"
+        "-log=${IMPROBABLE_LOG_FILE}"
       ]
     }
   },
@@ -84,8 +78,6 @@
         "command": "RpgDemo/Binaries/Win64/RpgDemoServer.exe",
         "arguments": [
           "-server",
-          "-stdout",
-          "-nowrite",
           "-unattended",
           "-nologtimes",
           "-nopause",
