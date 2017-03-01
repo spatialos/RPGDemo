@@ -1,23 +1,26 @@
-# Unreal Top Down C++ SpatialOS Demo
+# RPG demo (SpatialOS)
 
-This example project is the Unreal Top Down Character (C++) template project (available from the Epic Unreal Engine launcher) integrated with SpatialOS. With a few easy steps, we've converted this simple single player Unreal project into an online multiplayer game with NPCs attached to AIControllers that run on managed Unreal workers.
+![RPG demo Logo](rpg-demo-logo.jpg)
 
-To see the demo in action:
-- Ensure that the environment variable `UNREAL_HOME` is set to the root directory of your Unreal Installation
-- Clone the repo: `git clone https://github.com/improbable-public/unreal-top-down.git`
-- Move into the directory: `cd unreal-top-down`
-- Build the project: `spatial build`
-- Run: `spatial local start`
-- Open the World Viewer to see the NPCs and the spooled up managed Unreal AI worker moving them all about: `http://localhost:5050`
-- Connect multiple player clients: `spatial worker launch unreal client`
+*****
 
-## Project Structure
+Copyright Improbable 2017
+* Link to docs/blog: https://spatialos.improbable.io/docs/reference/latest/tutorials/helloworld/hello-world.
+* GitHub Repository: https://github.com/spatialos/HelloWorld/
 
-Since this project is adapted from the template Top Down C++ project, all of the logic for `Player` entities and the player controller is in C++. However, to exemplify blueprint integration with SpatialOS, the logic for `Npc` entities and NPC controllers is all contained in blueprints.
+*****
 
-Important things to note:
-- The prefab name of a nature, as defined in the Gsim, must correspond to the name of a blueprint in the `EntityBlueprints` folder in the root of the Content Browser in the Unreal Editor. Note that, even though all of our `Player` logic is in C++, specifically in the `AunrealCharacter` class, we have created a blueprint child of this class called `Player` that resides in the `EntityBlueprints` folder.
-- The `TransformSender` (`UTransformSender`) and `TransformReceiver` (`UTransformReceiver`) components can be added to Actors to sync the `Transform` state between Unreal workers and SpatialOS.
-- A `TransformReceiver` simply reads values from the `TransformState` and exposes them in public methods for consumption by your game-specific logic.
-- A `TransformSender` will read the Actor's location and rotation every frame, and send `TransformState` updates to SpatialOS, but only if it is running on an Unreal worker that is authoritative over the transform of that entity.
-- For now, the same code runs on an Unreal Fsim / managed worker and an Unreal Client. When we build our project, both a client and fsim are generated in the `build/assembly/worker` folder, with the only difference being that the former connects to SpatialOS with `WorkerType = "UnrealClient"` and the latter with `WorkerType = "UnrealFsim"`. See the Gsim bridge settings and the player lifecycle manager for how we distinguish between the two in the Gsim.
+### Introduction
+
+This repository contains the project files for the RPG demo built with the Unreal Engine 4 integration for [SpatialOS](http://www.spatialos.com).
+It demonstrates how to use SpatialOS with Unreal Engine 4.
+
+More instructions on how to get started with the RPG demo and general information on using SpatialOS with Unreal Engine 4 
+can be found in the [SpatialOS Unreal intgration documentation](https://spatialos.improbable.io/docs/reference/latest/tutorials/helloworld/hello-world).
+
+The main documentation for SpatialOS can be found [here](https://spatialos.improbable.io/docs/reference/latest/index).
+
+#### To use the repository
+
+Detailed instructions on how to build and run this demo can be found in the [setting up the example projects page]() 
+within the SpatialOS documentation.
