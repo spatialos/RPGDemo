@@ -12,6 +12,7 @@
 ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
 ARpgDemoGameMode::ARpgDemoGameMode()
+	: entityQueryCallback(-1)
 {
     // Set the default player controller class
     PlayerControllerClass = ARpgDemoPlayerController::StaticClass();
@@ -23,11 +24,14 @@ ARpgDemoGameMode::ARpgDemoGameMode()
     DefaultPawnClass = nullptr;
 
     Instance = this;
+
+	UnbindEntityQueryDelegate.BindUObject(this, &ARpgDemoGameMode::UnbindEntityQueryCallback);
 }
 
 ARpgDemoGameMode::~ARpgDemoGameMode()
 {
     Instance = nullptr;
+	UnbindEntityQueryCallback();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
@@ -78,7 +82,7 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 		worker::query::SnapshotResultType {}
 	};
 	auto requestId = WorkerConnection()->GetConnection().SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
-	WorkerConnection()->GetView().OnEntityQueryResponse([this, requestId](const worker::EntityQueryResponseOp& op) {
+	entityQueryCallback = WorkerConnection()->GetView().OnEntityQueryResponse([this, requestId](const worker::EntityQueryResponseOp& op) {
 		if (op.RequestId != requestId)
 		{
 			return;
@@ -101,6 +105,16 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 			return;
 		}
 		mGetSpawnerEntityIdResultCallback->ExecuteIfBound(true, FString(), static_cast<int>(op.Result.begin()->first));
+		GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
 		return;
 	});
+}
+
+void ARpgDemoGameMode::UnbindEntityQueryCallback()
+{
+	if (entityQueryCallback != -1)
+	{
+		WorkerConnection()->GetView().Remove(entityQueryCallback);
+		entityQueryCallback = -1;
+	}
 }

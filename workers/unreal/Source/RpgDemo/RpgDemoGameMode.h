@@ -24,6 +24,12 @@ public:
 	void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);
 
 private:
+	DECLARE_DELEGATE(FUnbindDelegate);
+
 	static ARpgDemoGameMode* Instance;
 	FGetSpawnerEntityIdResultDelegate* mGetSpawnerEntityIdResultCallback;
+
+	FUnbindDelegate UnbindEntityQueryDelegate;
+	void UnbindEntityQueryCallback();
+	std::uint64_t entityQueryCallback;
 };
