@@ -1,5 +1,5 @@
 From 20a05bed15b8b6c6bb10f633d8e369facd6b63ea Mon Sep 17 00:00:00 2001
-From: Improbable worlds ltd.
+From: SpatialOS (https://spatialos.improbable.io/), Improbable worlds ltd.
 Date: Tue, 21 Feb 2017 15:10:18 +0000
 Subject: [PATCH] Make linux work with WorkerSdk
 
