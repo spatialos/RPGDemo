@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{EC9D07A2-4F95-65FC-8A4D-74AC1BCC1295}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "RpgDemo",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"AIModule",
+				"Engine"
+			]
+		}
+	],
+	"PostBuildSteps":
+	{
+		"Win64": [
+			"cd /D \"$(ProjectDir)\"",
+			"spatial invoke unreal package \"$(EngineDir)\" \"$(ProjectDir)\" \"$(ProjectFile)\" \"$(TargetPlatform)\" \"$(TargetType)\"",
+			"exit /B %ERRORLEVEL%"
+		],
+		"Linux": [
+			"cd \"$(ProjectDir)\"",
+			"spatial invoke unreal package \"$(EngineDir)\" \"$(ProjectDir)\" \"$(ProjectFile)\" \"$(TargetPlatform)\" \"$(TargetType)\""
+		]
+	}
+}

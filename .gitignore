@@ -1,0 +1,20 @@
+toolbelt.log
+build/
+.idea/
+
+/.spatialos
+
+## Ignore the generated gsim build file
+spatialos.gsim.build.json
+
+## Ignore schema.iml files
+/schema/schema.iml
+
+## Ignore ./logs folder
+/logs
+
+## Ignore spatial.log files
+spatial.log
+
+## Ignore zip_toolbelt.log files
+*zip_toolbelt.log

@@ -1,0 +1,96 @@
+From 20a05bed15b8b6c6bb10f633d8e369facd6b63ea Mon Sep 17 00:00:00 2001
+From: SpatialOS (https://spatialos.improbable.io/), Improbable Worlds, Ltd.
+Date: Tue, 21 Feb 2017 15:10:18 +0000
+Subject: [PATCH] Make linux work with WorkerSdk
+
+---
+ Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs |  6 +++++-
+ Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp        | 10 ++++++++--
+ .../Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp  |  3 +++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+index 2044ef0..4a012d9 100644
+--- a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
++++ b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+@@ -307,6 +307,9 @@ namespace UnrealBuildTool
+ 
+ 		private static bool ShouldUseLibcxx(NativeBuildEnvironmentConfiguration.TargetInfo Target)
+ 		{
++			// Improbable: it's not possible to disable libc++ via the UE4_LINUX_USE_LIBCXX variable, so disable it fully.
++			return false;
++            /*
+ 			// set UE4_LINUX_USE_LIBCXX to either 0 or 1. If unset, defaults to 1.
+ 			string UseLibcxxEnvVarOverride = Environment.GetEnvironmentVariable("UE4_LINUX_USE_LIBCXX");
+ 			if (UseLibcxxEnvVarOverride != null && (UseLibcxxEnvVarOverride == "1"))
+@@ -316,6 +319,7 @@ namespace UnrealBuildTool
+ 
+ 			// at the moment only x86_64 is supported
+ 			return Target.Architecture.StartsWith("x86_64");
++			*/
+         }
+ 
+ 		static string GetCLArguments_Global(CPPEnvironment CompileEnvironment)
+@@ -343,7 +347,7 @@ namespace UnrealBuildTool
+ 			Result += ArchitectureSpecificSwitches(CompileEnvironment.Config.Target.Architecture);
+ 
+ 			Result += " -fno-math-errno";               // do not assume that math ops have side effects
+-			Result += " -fno-rtti";                     // no run-time type info
++			//Result += " -fno-rtti";                     // no run-time type info
+ 
+ 			if (String.IsNullOrEmpty(ClangPath))
+ 			{
+diff --git a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+index c6b1265..73f2cf7 100644
+--- a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
++++ b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+@@ -429,13 +429,13 @@ struct FMallocBinned::Private
+ 
+ 		UPTRINT BasePtr;
+ 		FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
+-#if PLATFORM_IOS || PLATFORM_MAC
++//#if PLATFORM_IOS || PLATFORM_MAC
+         if (Pool == NULL)
+         {
+             UE_LOG(LogMemory, Warning, TEXT("Attempting to free a pointer we didn't allocate!"));
+             return;
+         }
+-#endif
++//#endif
+ 		checkSlow(Pool);
+ 		checkSlow(Pool->GetBytes() != 0);
+ 		if (Pool->TableIndex < Allocator.BinnedOSTableIndex)
+@@ -1060,6 +1060,12 @@ bool FMallocBinned::GetAllocationSize(void *Original, SIZE_T &SizeOut)
+ 	UPTRINT BasePtr;
+ 	FPoolInfo* Pool = Private::FindPoolInfo(*this, (UPTRINT)Original, BasePtr);
+ 
++	if(Pool == nullptr)
++	{
++		UE_LOG(LogMemory, Warning, TEXT("attemting to delete memory that we did not allocate"))
++		return false;
++	}
++
+ 	PTRINT OffsetFromBase = (PTRINT)Original - (PTRINT)BasePtr;
+ 	check(OffsetFromBase >= 0);
+ 
+diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+index c2f6045..0c90b9f 100644
+--- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
++++ b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+@@ -35,10 +35,13 @@ class FMalloc* FLinuxPlatformMemory::BaseAllocator()
+ 	// This makes it ideal, if unobvious, place for a root privilege check.
+ 	if (geteuid() == 0)
+ 	{
++		/* Improbable: We must currently run as root on our deployments.
+ 		fprintf(stderr, "Refusing to run with the root privileges.\n");
+ 		FPlatformMisc::RequestExit(true);
+ 		// unreachable
+ 		return nullptr;
++		*/
++		fprintf(stdout, "Running with root privileges.\n");
+ 	}
+ 
+ 	if (USE_MALLOC_BINNED2)
+-- 
+2.10.1.windows.1
+
