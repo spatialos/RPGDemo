@@ -1,11 +1,11 @@
 {
-  "name": "demo",
+  "name": "your_project_name_here",
   "project_version": "0.0.1",
-  "sdk_version": "10.0.0-b9488-3ee54-SNAPSHOT",
+  "sdk_version": "10.1.0",
   "dependencies": [
     {
       "name": "WorkerSdkSchema",
-      "version": "10.0.0-b9488-3ee54-SNAPSHOT"
+      "version": "10.1.0"
     }
   ]
 }
