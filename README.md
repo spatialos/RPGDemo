@@ -7,7 +7,6 @@
 Copyright Improbable 2017
 
 * Link to docs: [SpatialOS Unreal Engine 4 integration documentation](https://spatialos.improbable.io/docs/reference/latest/experimental/unreal/introduction)
-* GitHub repository: [https://github.com/spatialos/HelloWorld/](https://github.com/spatialos/HelloWorld/)
 
 *****
 
