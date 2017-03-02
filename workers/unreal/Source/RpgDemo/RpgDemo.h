@@ -1,4 +1,4 @@
-// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #ifndef __UNREAL_H__
 #define __UNREAL_H__
