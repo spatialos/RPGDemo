@@ -33,7 +33,7 @@ void AOtherPlayerController::SetNewMoveDestination(const FVector& DestLocation)
 {
     UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
 	float const Distance = FVector::Dist(DestLocation, mOtherPlayer->GetActorLocation());
-	if (NavSys && (Distance > 120.0f))
+	if (NavSys)
 	{
 		NavSys->SimpleMoveToLocation(this, DestLocation);
 	}
