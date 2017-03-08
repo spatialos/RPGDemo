@@ -13,7 +13,7 @@ public class RpgDemo : ModuleRules
     /// </summary>
     protected string GeneratedCodeDir
     {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated")); }
+        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "Improbable", "Generated", "cpp")); }
     }
 
 	private string StandardLibraryDir
