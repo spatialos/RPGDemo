@@ -8,6 +8,7 @@
 #include <improbable/spawner/spawner.h>
 #include "improbable/standard_library.h"
 #include "ConversionsFunctionLibrary.h"
+#include "WorkerConnection.h"
 
 ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
@@ -81,8 +82,8 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 		worker::query::ComponentConstraint { improbable::spawner::Spawner::ComponentId },
 		worker::query::SnapshotResultType {}
 	};
-	auto requestId = WorkerConnection()->GetConnection().SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
-	entityQueryCallback = WorkerConnection()->GetView().OnEntityQueryResponse([this, requestId](const worker::EntityQueryResponseOp& op) {
+	auto requestId = improbable::unreal::core::FWorkerConnection::GetInstance().GetConnection().SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
+	entityQueryCallback = improbable::unreal::core::FWorkerConnection::GetInstance().GetView().OnEntityQueryResponse([this, requestId](const worker::EntityQueryResponseOp& op) {
 		if (op.RequestId != requestId)
 		{
 			return;
@@ -114,7 +115,7 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
 	if (entityQueryCallback != -1)
 	{
-		WorkerConnection()->GetView().Remove(entityQueryCallback);
+		improbable::unreal::core::FWorkerConnection::GetInstance().GetView().Remove(entityQueryCallback);
 		entityQueryCallback = -1;
 	}
 }
