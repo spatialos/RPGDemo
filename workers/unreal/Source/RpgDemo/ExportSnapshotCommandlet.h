@@ -6,7 +6,6 @@
 #include <improbable/worker.h>
 #include "ExportSnapshotCommandlet.generated.h"
 
-
 UCLASS()
 class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
 {
@@ -20,5 +19,5 @@ class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
   private:
     void GenerateSnapshot(const FString& savePath) const;
     worker::SnapshotEntity CreateNPCSnapshotEntity() const;
-	worker::SnapshotEntity CreateSpawnerSnapshotEntity() const;
+    worker::SnapshotEntity CreateSpawnerSnapshotEntity() const;
 };

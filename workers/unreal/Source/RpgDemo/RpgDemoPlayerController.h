@@ -8,10 +8,10 @@ class ARpgDemoPlayerController : public APlayerController
 {
     GENERATED_BODY()
 
-public:
+  public:
     ARpgDemoPlayerController();
 
-protected:
+  protected:
     /** True if the controlled character should navigate to the mouse cursor. */
     uint32 bMoveToMouseCursor : 1;
 
