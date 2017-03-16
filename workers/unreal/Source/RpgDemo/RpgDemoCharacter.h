@@ -61,8 +61,8 @@ class ARpgDemoCharacter : public ACharacter
               meta = (AllowPrivateAccess = "true"))
     class UTransformComponent* TransformComponent;
 
-	UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-	void OnTransformComponentReady();
+    UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
+    void OnTransformComponentReady();
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
     void OnTransformAuthorityChange(bool newAuthority);

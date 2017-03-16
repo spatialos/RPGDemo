@@ -1,37 +1,38 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RpgDemo.h"
 #include "ConversionsFunctionLibrary.h"
+#include "RpgDemo.h"
 
 FRotator UConversionsFunctionLibrary::GetSpatialOsToUnrealCoordinateSpace()
 {
-	return FRotator{ 0.0f, -90.0f, -90.0f };
+    return FRotator{0.0f, -90.0f, -90.0f};
 }
 
 float UConversionsFunctionLibrary::GetSpatialOsToUnrealScale()
 {
-	return 100.0;
+    return 100.0;
 }
 
-FVector UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(const FVector& unrealCoordinates)
+FVector UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
+    const FVector& unrealCoordinates)
 {
-	return GetSpatialOsToUnrealCoordinateSpace().GetInverse().RotateVector(unrealCoordinates) / GetSpatialOsToUnrealScale();
+    return GetSpatialOsToUnrealCoordinateSpace().GetInverse().RotateVector(unrealCoordinates) /
+        GetSpatialOsToUnrealScale();
 }
 
-FVector UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(const FVector& spatialOsCoordinates)
+FVector UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+    const FVector& spatialOsCoordinates)
 {
-	return GetSpatialOsToUnrealCoordinateSpace().RotateVector(spatialOsCoordinates) * GetSpatialOsToUnrealScale();
+    return GetSpatialOsToUnrealCoordinateSpace().RotateVector(spatialOsCoordinates) *
+        GetSpatialOsToUnrealScale();
 }
 
 FQuat UConversionsFunctionLibrary::UnrealRotationToSpatialOsRotation(const FQuat& unrealRotation)
 {
-	return GetSpatialOsToUnrealCoordinateSpace().GetInverse().Quaternion() * unrealRotation;
+    return GetSpatialOsToUnrealCoordinateSpace().GetInverse().Quaternion() * unrealRotation;
 }
 
 FQuat UConversionsFunctionLibrary::SpatialOsRotationToUnrealRotation(const FQuat& spatialOsRotation)
 {
-	return GetSpatialOsToUnrealCoordinateSpace().Quaternion() * spatialOsRotation;
+    return GetSpatialOsToUnrealCoordinateSpace().Quaternion() * spatialOsRotation;
 }
-
-
-
