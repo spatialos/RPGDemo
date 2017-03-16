@@ -14,16 +14,16 @@ class RPGDEMO_API AOtherPlayerController : public AAIController
 {
     GENERATED_BODY()
 
-public:
-	AOtherPlayerController();
-	virtual void Possess(APawn* InPawn) override;
-	virtual void UnPossess() override;
+  public:
+    AOtherPlayerController();
+    virtual void Possess(APawn* InPawn) override;
+    virtual void UnPossess() override;
 
-protected:
-	UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
-	void OnPositionUpdate(FVector newSpatialOsPosition);
+  protected:
+    UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
+    void OnPositionUpdate(FVector newSpatialOsPosition);
 
-	void SetNewMoveDestination(const FVector& DestLocation);
+    void SetNewMoveDestination(const FVector& DestLocation);
 
-	ARpgDemoCharacter* mOtherPlayer;
+    ARpgDemoCharacter* mOtherPlayer;
 };

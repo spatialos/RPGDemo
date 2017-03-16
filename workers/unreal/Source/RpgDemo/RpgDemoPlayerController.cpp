@@ -27,15 +27,15 @@ void ARpgDemoPlayerController::SetupInputComponent()
     Super::SetupInputComponent();
 
     InputComponent->BindAction("SetDestination", IE_Pressed, this,
-                                &ARpgDemoPlayerController::OnSetDestinationPressed);
+                               &ARpgDemoPlayerController::OnSetDestinationPressed);
     InputComponent->BindAction("SetDestination", IE_Released, this,
-                                &ARpgDemoPlayerController::OnSetDestinationReleased);
+                               &ARpgDemoPlayerController::OnSetDestinationReleased);
 
     // support touch devices
     InputComponent->BindTouch(EInputEvent::IE_Pressed, this,
-                                &ARpgDemoPlayerController::MoveToTouchLocation);
+                              &ARpgDemoPlayerController::MoveToTouchLocation);
     InputComponent->BindTouch(EInputEvent::IE_Repeat, this,
-                                &ARpgDemoPlayerController::MoveToTouchLocation);
+                              &ARpgDemoPlayerController::MoveToTouchLocation);
 }
 
 void ARpgDemoPlayerController::MoveToMouseCursor()
@@ -52,7 +52,7 @@ void ARpgDemoPlayerController::MoveToMouseCursor()
 }
 
 void ARpgDemoPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex,
-                                                  const FVector Location)
+                                                   const FVector Location)
 {
     FVector2D ScreenSpaceLocation(Location);
 
