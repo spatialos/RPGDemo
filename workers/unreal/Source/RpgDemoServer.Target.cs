@@ -3,24 +3,23 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public
-class RpgDemoServerTarget : TargetRules
+public class RpgDemoServerTarget : TargetRules
 {
-  public
-    RpgDemoServerTarget(TargetInfo Target)
-    {
-        Type = TargetType.Server;
-    }
+	public RpgDemoServerTarget(TargetInfo Target)
+	{
+		Type = TargetType.Server;
+	}
 
-    //
-    // TargetRules interface.
-    //
+	//
+	// TargetRules interface.
+	//
 
-  public
-    override void SetupBinaries(TargetInfo Target,
-                                ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-                                ref List<string> OutExtraModuleNames)
-    {
-        OutExtraModuleNames.AddRange(new[]{"RpgDemo"});
-    }
+	public override void SetupBinaries(
+		TargetInfo Target,
+		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
+		ref List<string> OutExtraModuleNames
+		)
+	{
+		OutExtraModuleNames.AddRange(new [] { "RpgDemo" });
+	}
 }

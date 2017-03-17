@@ -19,8 +19,9 @@ class ARpgDemoGameMode : public ASpatialOSGameMode
     UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
     UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);
 
-    DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString,
-                                         errorMessage, int, spawnerEntityId);
+    // clang-format off
+    DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, int, spawnerEntityId);
+    // clang-format on    
     UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
     void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);
 
