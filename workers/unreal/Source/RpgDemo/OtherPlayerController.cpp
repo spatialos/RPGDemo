@@ -1,9 +1,10 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "OtherPlayerController.h"
+#include "RpgDemo.h"
+
 #include "ConversionsFunctionLibrary.h"
 #include "Improbable/Generated/cpp/unreal/TransformComponent.h"
-#include "RpgDemo.h"
+#include "OtherPlayerController.h"
 #include "RpgDemoCharacter.h"
 
 AOtherPlayerController::AOtherPlayerController()

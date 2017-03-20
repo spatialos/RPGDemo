@@ -3,24 +3,23 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public
-class RpgDemoEditorTarget : TargetRules
+public class RpgDemoEditorTarget : TargetRules
 {
-  public
-    RpgDemoEditorTarget(TargetInfo Target)
-    {
-        Type = TargetType.Editor;
-    }
+	public RpgDemoEditorTarget(TargetInfo Target)
+	{
+		Type = TargetType.Editor;
+	}
 
-    //
-    // TargetRules interface.
-    //
+	//
+	// TargetRules interface.
+	//
 
-  public
-    override void SetupBinaries(TargetInfo Target,
-                                ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-                                ref List<string> OutExtraModuleNames)
-    {
-        OutExtraModuleNames.AddRange(new[]{"RpgDemo"});
+	public override void SetupBinaries(
+		TargetInfo Target,
+		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
+		ref List<string> OutExtraModuleNames
+		)
+	{
+        OutExtraModuleNames.AddRange(new[] { "RpgDemo" });
     }
 }
