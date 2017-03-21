@@ -10,7 +10,7 @@
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
 
-ARpgDemoGameMode* ARpgDemoGameMode::Instance;
+//ARpgDemoGameMode* ARpgDemoGameMode::Instance;
 
 ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1)
 {
@@ -23,14 +23,14 @@ ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1)
     // No need for default pawn class
     DefaultPawnClass = nullptr;
 
-    Instance = this;
+ //   Instance = this;
 
     UnbindEntityQueryDelegate.BindUObject(this, &ARpgDemoGameMode::UnbindEntityQueryCallback);
 }
 
 ARpgDemoGameMode::~ARpgDemoGameMode()
 {
-    Instance = nullptr;
+ //   Instance = nullptr;
     UnbindEntityQueryCallback();
 }
 

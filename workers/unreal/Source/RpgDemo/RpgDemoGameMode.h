@@ -28,7 +28,7 @@ class ARpgDemoGameMode : public ASpatialOSGameMode
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
 
-    static ARpgDemoGameMode* Instance;
+   // static ARpgDemoGameMode* Instance;
     FGetSpawnerEntityIdResultDelegate* mGetSpawnerEntityIdResultCallback;
 
     FUnbindDelegate UnbindEntityQueryDelegate;

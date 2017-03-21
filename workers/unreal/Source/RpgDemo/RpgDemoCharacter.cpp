@@ -9,6 +9,9 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOSGameMode.h"
+#include "SpatialOS.h"
+
+using improbable::unreal::core::FSpatialOS;
 
 ARpgDemoCharacter::ARpgDemoCharacter()
 {
@@ -234,5 +237,5 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
 
 int ARpgDemoCharacter::GetEntityId()
 {
-    return static_cast<int>(ASpatialOSGameMode::GetSpawner()->GetEntityId(this));
+    return static_cast<int>(FSpatialOS::GetInstance()->GetSpawner()->GetEntityId(this));
 }
