@@ -5,15 +5,21 @@
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
 #include "WorkerConnection.h"
+#include "SpatialOS.h"
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
 
-//ARpgDemoGameMode* ARpgDemoGameMode::Instance;
+#define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
-ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1)
+using namespace improbable;
+using namespace improbable::unreal::core;
+
+ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1), WorkerTypeOverride(""), WorkerIdOverride("")
 {
+	PrimaryActorTick.bCanEverTick = true;
+
     // Set the default player controller class
     PlayerControllerClass = ARpgDemoPlayerController::StaticClass();
 
@@ -23,20 +29,17 @@ ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1)
     // No need for default pawn class
     DefaultPawnClass = nullptr;
 
- //   Instance = this;
-
     UnbindEntityQueryDelegate.BindUObject(this, &ARpgDemoGameMode::UnbindEntityQueryCallback);
 }
 
 ARpgDemoGameMode::~ARpgDemoGameMode()
 {
- //   Instance = nullptr;
     UnbindEntityQueryCallback();
 }
 
-void ARpgDemoGameMode::Tick(float DeltaTime)
+FString ARpgDemoGameMode::GetSpatialOsWorkerType()
 {
-    ASpatialOSGameMode::Tick(DeltaTime);
+	return FSpatialOS::GetInstance()->GetWorkerType();
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -44,46 +47,46 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 {
     const auto& spatialOsPosition =
         UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
-    const improbable::math::Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
+    const math::Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                                         spatialOsPosition.Z};
     const worker::List<float> initialRoation{1.0f, 0.0f, 0.0f, 0.0f};
 
-    const improbable::WorkerAttributeSet unrealWorkerAttributeSet{
+    const WorkerAttributeSet unrealWorkerAttributeSet{
         {worker::Option<std::string>{"UnrealWorker"}}};
     const std::string clientWorkerIdString = TCHAR_TO_UTF8(*clientWorkerId);
     const std::string clientAttribute = "workerId:" + clientWorkerIdString;
     UE_LOG(LogTemp, Warning, TEXT("Making ourselves authoritative over Player Transform and "
                                   "HeartbeatReceiver with worker ID %s"),
            *FString(clientAttribute.c_str()))
-    const improbable::WorkerAttributeSet ownUnrealClientAttributeSet{
+    const WorkerAttributeSet ownUnrealClientAttributeSet{
         {worker::Option<std::string>{clientAttribute}}};
-    const improbable::WorkerAttributeSet allUnrealClientsAttributeSet{
+    const WorkerAttributeSet allUnrealClientsAttributeSet{
         {worker::Option<std::string>{"UnrealClient"}}};
 
-    const improbable::WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
-    const improbable::WorkerRequirementSet ownClientRequirementSet{{ownUnrealClientAttributeSet}};
-    const improbable::WorkerRequirementSet globalRequirementSet{
+    const WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
+    const WorkerRequirementSet ownClientRequirementSet{{ownUnrealClientAttributeSet}};
+    const WorkerRequirementSet globalRequirementSet{
         {allUnrealClientsAttributeSet, unrealWorkerAttributeSet}};
 
-    worker::Map<std::uint32_t, improbable::WorkerRequirementSet> componentAuthority;
+    worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
 
-    componentAuthority.emplace(improbable::common::Transform::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(improbable::player::HeartbeatReceiver::ComponentId,
+    componentAuthority.emplace(common::Transform::ComponentId, ownClientRequirementSet);
+    componentAuthority.emplace(player::HeartbeatReceiver::ComponentId,
                                ownClientRequirementSet);
-    componentAuthority.emplace(improbable::player::HeartbeatSender::ComponentId,
+    componentAuthority.emplace(player::HeartbeatSender::ComponentId,
                                workerRequirementSet);
 
     const improbable::ComponentAcl componentAcl(componentAuthority);
 
     worker::Entity playerTemplate;
-    playerTemplate.Add<improbable::common::Transform>(
-        improbable::common::Transform::Data{initialPosition, initialRoation});
-    playerTemplate.Add<improbable::player::HeartbeatSender>(
-        improbable::player::HeartbeatSender::Data{});
-    playerTemplate.Add<improbable::player::HeartbeatReceiver>(
-        improbable::player::HeartbeatReceiver::Data{});
-    playerTemplate.Add<improbable::EntityAcl>(
-        improbable::EntityAcl::Data{globalRequirementSet, componentAcl});
+    playerTemplate.Add<common::Transform>(
+        common::Transform::Data{initialPosition, initialRoation});
+    playerTemplate.Add<player::HeartbeatSender>(
+        player::HeartbeatSender::Data{});
+    playerTemplate.Add<player::HeartbeatReceiver>(
+        player::HeartbeatReceiver::Data{});
+    playerTemplate.Add<EntityAcl>(
+        EntityAcl::Data{globalRequirementSet, componentAcl});
     return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
 }
 
@@ -92,14 +95,14 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 {
     mGetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
     const worker::query::EntityQuery& entity_query = {
-        worker::query::ComponentConstraint{improbable::spawner::Spawner::ComponentId},
+        worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
         worker::query::SnapshotResultType{}};
     auto requestId =
-        improbable::unreal::core::FWorkerConnection::GetInstance()
+        unreal::core::FWorkerConnection::GetInstance()
             .GetConnection()
             .SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
     entityQueryCallback =
-        improbable::unreal::core::FWorkerConnection::GetInstance().GetView().OnEntityQueryResponse(
+        unreal::core::FWorkerConnection::GetInstance().GetView().OnEntityQueryResponse(
             [this, requestId](const worker::EntityQueryResponseOp& op) {
                 if (op.RequestId != requestId)
                 {
@@ -130,11 +133,53 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
             });
 }
 
+void ARpgDemoGameMode::StartPlay()
+{
+	AGameModeBase::StartPlay();
+
+	FSpatialOS::StaticInitialize();
+	FSpatialOS::GetInstance()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
+	FSpatialOS::GetInstance()->OnConnectedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+	FSpatialOS::GetInstance()->OnConnectionFailedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
+	FSpatialOS::GetInstance()->OnDisconnectedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsDisconnected);
+	UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
+		FSpatialOS::GetInstance()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride, WorkerIdOverride);
+}
+
+void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	AGameModeBase::EndPlay(EndPlayReason);
+	FSpatialOS::GetInstance()->TeardownWorkerConnection();
+	FSpatialOS::StaticDestroy();
+}
+
+void ARpgDemoGameMode::Tick(float DeltaTime)
+{
+	AGameModeBase::Tick(DeltaTime);
+	FSpatialOS::GetInstance()->ProcessEvents();
+}
+
+bool ARpgDemoGameMode::IsConnectedToSpatialOs()
+{
+	return FSpatialOS::GetInstance()->IsConnectedToSpatialOs();
+}
+
+UCommander* ARpgDemoGameMode::SendWorkerCommand()
+{
+	if (Commander == nullptr)
+	{
+		auto& WorkerConnection = FWorkerConnection::GetInstance();
+		Commander = NewObject<UCommander>(this, UCommander::StaticClass())
+			->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
+	}
+	return Commander;
+}
+
 void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        improbable::unreal::core::FWorkerConnection::GetInstance().GetView().Remove(
+        unreal::core::FWorkerConnection::GetInstance().GetView().Remove(
             entityQueryCallback);
         entityQueryCallback = -1;
     }
