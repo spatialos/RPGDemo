@@ -8,7 +8,6 @@
 #include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "SpatialOSGameMode.h"
 #include "SpatialOS.h"
 
 using improbable::unreal::core::FSpatialOS;

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
-#include "SpatialOSGameMode.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
