@@ -13,17 +13,17 @@ class ARpgDemoGameMode : public AGameModeBase
     ARpgDemoGameMode();
     virtual ~ARpgDemoGameMode();
 
-	UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
-	FString GetSpatialOsWorkerType();
+    UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
+    FString GetSpatialOsWorkerType();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
-	void OnSpatialOsConnected();
+    UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
+    void OnSpatialOsConnected();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
-	void OnSpatialOsDisconnected();
+    UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
+    void OnSpatialOsDisconnected();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
-	void OnSpatialOsFailedToConnect();
+    UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
+    void OnSpatialOsFailedToConnect();
 
     UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
     UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);

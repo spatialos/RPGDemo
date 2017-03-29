@@ -4,8 +4,8 @@
 #include "ConversionsFunctionLibrary.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
-#include "WorkerConnection.h"
 #include "SpatialOS.h"
+#include "WorkerConnection.h"
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
@@ -16,9 +16,10 @@
 using namespace improbable;
 using namespace improbable::unreal::core;
 
-ARpgDemoGameMode::ARpgDemoGameMode() : entityQueryCallback(-1), WorkerTypeOverride(""), WorkerIdOverride("")
+ARpgDemoGameMode::ARpgDemoGameMode()
+: entityQueryCallback(-1), WorkerTypeOverride(""), WorkerIdOverride("")
 {
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
     // Set the default player controller class
     PlayerControllerClass = ARpgDemoPlayerController::StaticClass();
@@ -39,7 +40,7 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
 
 FString ARpgDemoGameMode::GetSpatialOsWorkerType()
 {
-	return FSpatialOS::GetInstance()->GetWorkerType();
+    return FSpatialOS::GetInstance()->GetWorkerType();
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -48,7 +49,7 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const auto& spatialOsPosition =
         UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const math::Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
-                                                        spatialOsPosition.Z};
+                                            spatialOsPosition.Z};
     const worker::List<float> initialRoation{1.0f, 0.0f, 0.0f, 0.0f};
 
     const WorkerAttributeSet unrealWorkerAttributeSet{
@@ -71,22 +72,16 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
 
     componentAuthority.emplace(common::Transform::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatReceiver::ComponentId,
-                               ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatSender::ComponentId,
-                               workerRequirementSet);
+    componentAuthority.emplace(player::HeartbeatReceiver::ComponentId, ownClientRequirementSet);
+    componentAuthority.emplace(player::HeartbeatSender::ComponentId, workerRequirementSet);
 
     const improbable::ComponentAcl componentAcl(componentAuthority);
 
     worker::Entity playerTemplate;
-    playerTemplate.Add<common::Transform>(
-        common::Transform::Data{initialPosition, initialRoation});
-    playerTemplate.Add<player::HeartbeatSender>(
-        player::HeartbeatSender::Data{});
-    playerTemplate.Add<player::HeartbeatReceiver>(
-        player::HeartbeatReceiver::Data{});
-    playerTemplate.Add<EntityAcl>(
-        EntityAcl::Data{globalRequirementSet, componentAcl});
+    playerTemplate.Add<common::Transform>(common::Transform::Data{initialPosition, initialRoation});
+    playerTemplate.Add<player::HeartbeatSender>(player::HeartbeatSender::Data{});
+    playerTemplate.Add<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{});
+    playerTemplate.Add<EntityAcl>(EntityAcl::Data{globalRequirementSet, componentAcl});
     return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
 }
 
@@ -98,9 +93,8 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
         worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
         worker::query::SnapshotResultType{}};
     auto requestId =
-        unreal::core::FWorkerConnection::GetInstance()
-            .GetConnection()
-            .SendEntityQueryRequest(entity_query, static_cast<std::uint32_t>(timeoutMs));
+        unreal::core::FWorkerConnection::GetInstance().GetConnection().SendEntityQueryRequest(
+            entity_query, static_cast<std::uint32_t>(timeoutMs));
     entityQueryCallback =
         unreal::core::FWorkerConnection::GetInstance().GetView().OnEntityQueryResponse(
             [this, requestId](const worker::EntityQueryResponseOp& op) {
@@ -135,52 +129,56 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 
 void ARpgDemoGameMode::StartPlay()
 {
-	AGameModeBase::StartPlay();
+    AGameModeBase::StartPlay();
 
-	FSpatialOS::StaticInitialize();
-	FSpatialOS::GetInstance()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
-	FSpatialOS::GetInstance()->OnConnectedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
-	FSpatialOS::GetInstance()->OnConnectionFailedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-	FSpatialOS::GetInstance()->OnDisconnectedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsDisconnected);
-	UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
-		FSpatialOS::GetInstance()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride, WorkerIdOverride);
+    FSpatialOS::StaticInitialize();
+    FSpatialOS::GetInstance()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
+    FSpatialOS::GetInstance()->OnConnectedDelegate.BindUObject(
+        this, &ARpgDemoGameMode::OnSpatialOsConnected);
+    FSpatialOS::GetInstance()->OnConnectionFailedDelegate.BindUObject(
+        this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
+    FSpatialOS::GetInstance()->OnDisconnectedDelegate.BindUObject(
+        this, &ARpgDemoGameMode::OnSpatialOsDisconnected);
+    UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
+    FSpatialOS::GetInstance()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride,
+                                                      WorkerIdOverride);
 }
 
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	AGameModeBase::EndPlay(EndPlayReason);
-	FSpatialOS::GetInstance()->TeardownWorkerConnection();
-	FSpatialOS::StaticDestroy();
+    AGameModeBase::EndPlay(EndPlayReason);
+    FSpatialOS::GetInstance()->TeardownWorkerConnection();
+    FSpatialOS::StaticDestroy();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
-	AGameModeBase::Tick(DeltaTime);
-	FSpatialOS::GetInstance()->ProcessEvents();
+    AGameModeBase::Tick(DeltaTime);
+    FSpatialOS::GetInstance()->ProcessEvents();
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs()
 {
-	return FSpatialOS::GetInstance()->IsConnectedToSpatialOs();
+    return FSpatialOS::GetInstance()->IsConnectedToSpatialOs();
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
-	if (Commander == nullptr)
-	{
-		auto& WorkerConnection = FWorkerConnection::GetInstance();
-		Commander = NewObject<UCommander>(this, UCommander::StaticClass())
-			->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
-	}
-	return Commander;
+    if (Commander == nullptr)
+    {
+        auto& WorkerConnection = FWorkerConnection::GetInstance();
+        Commander =
+            NewObject<UCommander>(this, UCommander::StaticClass())
+                ->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
+    }
+    return Commander;
 }
 
 void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        unreal::core::FWorkerConnection::GetInstance().GetView().Remove(
-            entityQueryCallback);
+        unreal::core::FWorkerConnection::GetInstance().GetView().Remove(entityQueryCallback);
         entityQueryCallback = -1;
     }
 }
