@@ -93,10 +93,10 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
         worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
         worker::query::SnapshotResultType{}};
     auto requestId =
-        unreal::core::FWorkerConnection::GetInstance().GetConnection().SendEntityQueryRequest(
+        FSpatialOS::GetInstance()->GetWorkerConnection().GetConnection().SendEntityQueryRequest(
             entity_query, static_cast<std::uint32_t>(timeoutMs));
     entityQueryCallback =
-        unreal::core::FWorkerConnection::GetInstance().GetView().OnEntityQueryResponse(
+		FSpatialOS::GetInstance()->GetWorkerConnection().GetView().OnEntityQueryResponse(
             [this, requestId](const worker::EntityQueryResponseOp& op) {
                 if (op.RequestId != requestId)
                 {
@@ -166,7 +166,7 @@ UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
     if (Commander == nullptr)
     {
-        auto& WorkerConnection = FWorkerConnection::GetInstance();
+        auto& WorkerConnection = FSpatialOS::GetInstance()->GetWorkerConnection();
         Commander =
             NewObject<UCommander>(this, UCommander::StaticClass())
                 ->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
@@ -178,7 +178,7 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        unreal::core::FWorkerConnection::GetInstance().GetView().Remove(entityQueryCallback);
+		FSpatialOS::GetInstance()->GetWorkerConnection().GetView().Remove(entityQueryCallback);
         entityQueryCallback = -1;
     }
 }
