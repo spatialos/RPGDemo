@@ -1,10 +1,10 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
+#include "RPGDemoGameInstance.h"
 #include "ConversionsFunctionLibrary.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
-#include "SpatialOS.h"
 #include "WorkerConnection.h"
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
@@ -40,7 +40,7 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
 
 FString ARpgDemoGameMode::GetSpatialOsWorkerType()
 {
-    return FSpatialOS::GetInstance()->GetWorkerType();
+    return GetSpatialOS()->GetWorkerType();
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -93,10 +93,10 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
         worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
         worker::query::SnapshotResultType{}};
     auto requestId =
-        FSpatialOS::GetInstance()->GetWorkerConnection().GetConnection().SendEntityQueryRequest(
+		GetSpatialOS()->GetWorkerConnection().GetConnection().SendEntityQueryRequest(
             entity_query, static_cast<std::uint32_t>(timeoutMs));
     entityQueryCallback =
-		FSpatialOS::GetInstance()->GetWorkerConnection().GetView().OnEntityQueryResponse(
+		GetSpatialOS()->GetWorkerConnection().GetView().OnEntityQueryResponse(
             [this, requestId](const worker::EntityQueryResponseOp& op) {
                 if (op.RequestId != requestId)
                 {
@@ -131,42 +131,40 @@ void ARpgDemoGameMode::StartPlay()
 {
     AGameModeBase::StartPlay();
 
-    FSpatialOS::StaticInitialize();
-    FSpatialOS::GetInstance()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
-    FSpatialOS::GetInstance()->OnConnectedDelegate.BindUObject(
+	GetSpatialOS()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
+	GetSpatialOS()->OnConnectedDelegate.BindUObject(
         this, &ARpgDemoGameMode::OnSpatialOsConnected);
-    FSpatialOS::GetInstance()->OnConnectionFailedDelegate.BindUObject(
+	GetSpatialOS()->OnConnectionFailedDelegate.BindUObject(
         this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-    FSpatialOS::GetInstance()->OnDisconnectedDelegate.BindUObject(
+	GetSpatialOS()->OnDisconnectedDelegate.BindUObject(
         this, &ARpgDemoGameMode::OnSpatialOsDisconnected);
     UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
-    FSpatialOS::GetInstance()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride,
+	GetSpatialOS()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride,
                                                       WorkerIdOverride);
 }
 
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
-    FSpatialOS::GetInstance()->TeardownWorkerConnection();
-    FSpatialOS::StaticDestroy();
+	GetSpatialOS()->TeardownWorkerConnection();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameModeBase::Tick(DeltaTime);
-    FSpatialOS::GetInstance()->ProcessEvents();
+	GetSpatialOS()->ProcessEvents();
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs()
 {
-    return FSpatialOS::GetInstance()->IsConnectedToSpatialOs();
+    return GetSpatialOS()->IsConnectedToSpatialOs();
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
     if (Commander == nullptr)
     {
-        auto& WorkerConnection = FSpatialOS::GetInstance()->GetWorkerConnection();
+        auto& WorkerConnection = GetSpatialOS()->GetWorkerConnection();
         Commander =
             NewObject<UCommander>(this, UCommander::StaticClass())
                 ->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
@@ -178,7 +176,19 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-		FSpatialOS::GetInstance()->GetWorkerConnection().GetView().Remove(entityQueryCallback);
+		GetSpatialOS()->GetWorkerConnection().GetView().Remove(entityQueryCallback);
         entityQueryCallback = -1;
     }
+}
+
+FSpatialOS* ARpgDemoGameMode::GetSpatialOS()
+{
+	auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+
+	if(gameInstance != nullptr)
+	{
+		return &gameInstance->GetSpatialOS();
+	}
+
+	return nullptr;
 }

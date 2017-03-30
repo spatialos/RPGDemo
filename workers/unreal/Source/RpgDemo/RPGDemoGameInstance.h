@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "SpatialOS.h"
 #include "RPGDemoGameInstance.generated.h"
 
 /**
@@ -15,4 +16,9 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
   public:
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
+
+	improbable::unreal::core::FSpatialOS& GetSpatialOS();
+
+  private:
+	  improbable::unreal::core::FSpatialOS SpatialOSInstance;
 };

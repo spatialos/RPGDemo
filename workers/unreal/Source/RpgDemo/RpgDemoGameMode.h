@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
+#include "SpatialOS.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -41,7 +42,7 @@ class ARpgDemoGameMode : public AGameModeBase
 	void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
-	static bool IsConnectedToSpatialOs();
+	bool IsConnectedToSpatialOs();
 
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
 	UCommander* SendWorkerCommand();
@@ -54,6 +55,8 @@ class ARpgDemoGameMode : public AGameModeBase
 
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
+
+	improbable::unreal::core::FSpatialOS* GetSpatialOS();
 
 	UPROPERTY()
 	UCommander* Commander;
