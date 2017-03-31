@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{F9492074-4486-2C7A-C923-1490AE8B5735}",
+	"EngineAssociation": "{DCEEE86C-4090-02E0-A49D-9AAB5F006135}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -18,12 +18,12 @@
 	{
 		"Win64": [
 			"cd /D \"$(ProjectDir)\"",
-			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -nativizeAssets -allmaps",
+			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -allmaps",
 			"exit /B %ERRORLEVEL%"
 		],
 		"Linux": [
 			"cd \"$(ProjectDir)\"",
-			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -nativizeAssets -allmaps",
+			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -allmaps",
 			"exit /B %ERRORLEVEL%"
 		]
 	}
