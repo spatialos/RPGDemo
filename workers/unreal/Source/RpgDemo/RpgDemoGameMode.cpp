@@ -88,43 +88,52 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback,
                                           int timeoutMs)
 {
-    mGetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
-    const worker::query::EntityQuery& entity_query = {
-        worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
-        worker::query::SnapshotResultType{}};
-    auto requestId =
-		GetSpatialOS()->GetWorkerConnection().GetConnection().SendEntityQueryRequest(
-            entity_query, static_cast<std::uint32_t>(timeoutMs));
-    entityQueryCallback =
-		GetSpatialOS()->GetWorkerConnection().GetView().OnEntityQueryResponse(
-            [this, requestId](const worker::EntityQueryResponseOp& op) {
-                if (op.RequestId != requestId)
-                {
-                    return;
-                }
-                if (!mGetSpawnerEntityIdResultCallback->IsBound())
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("mGetSpawnerEntityIdResultCallback is unbound"))
-                }
-                if (op.StatusCode != worker::StatusCode::kSuccess)
-                {
-                    std::string errorMessage = "Could not find spawner entity: " + op.Message;
-                    mGetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                        false, FString(errorMessage.c_str()), -1);
-                    return;
-                }
-                if (op.ResultCount == 0)
-                {
-                    std::string errorMessage = "Query returned 0 spawner entities";
-                    mGetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                        false, FString(errorMessage.c_str()), -1);
-                    return;
-                }
-                mGetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                    true, FString(), static_cast<int>(op.Result.begin()->first));
-                GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
-                return;
-            });
+	auto LockedConnection = GetSpatialOS()->GetWorkerConnection().GetConnection().Pin();
+
+	if(LockedConnection.IsValid())
+	{
+		auto LockedView = GetSpatialOS()->GetWorkerConnection().GetView().Pin();
+
+		if(LockedView.IsValid())
+		{
+			GetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
+			const worker::query::EntityQuery& entity_query = {
+				worker::query::ComponentConstraint{ spawner::Spawner::ComponentId },
+				worker::query::SnapshotResultType{} };
+
+			auto requestId = LockedConnection->SendEntityQueryRequest(
+				entity_query, static_cast<std::uint32_t>(timeoutMs));
+			entityQueryCallback = LockedView->OnEntityQueryResponse(
+					[this, requestId](const worker::EntityQueryResponseOp& op) {
+				if (op.RequestId != requestId)
+				{
+					return;
+				}
+				if (!GetSpawnerEntityIdResultCallback->IsBound())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("GetSpawnerEntityIdResultCallback is unbound"))
+				}
+				if (op.StatusCode != worker::StatusCode::kSuccess)
+				{
+					std::string errorMessage = "Could not find spawner entity: " + op.Message;
+					GetSpawnerEntityIdResultCallback->ExecuteIfBound(
+						false, FString(errorMessage.c_str()), -1);
+					return;
+				}
+				if (op.ResultCount == 0)
+				{
+					std::string errorMessage = "Query returned 0 spawner entities";
+					GetSpawnerEntityIdResultCallback->ExecuteIfBound(
+						false, FString(errorMessage.c_str()), -1);
+					return;
+				}
+				GetSpawnerEntityIdResultCallback->ExecuteIfBound(
+					true, FString(), static_cast<int>(op.Result.begin()->first));
+				GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
+				return;
+			});
+		}
+	}
 }
 
 void ARpgDemoGameMode::StartPlay()
@@ -167,7 +176,7 @@ UCommander* ARpgDemoGameMode::SendWorkerCommand()
         auto& WorkerConnection = GetSpatialOS()->GetWorkerConnection();
         Commander =
             NewObject<UCommander>(this, UCommander::StaticClass())
-                ->Init(nullptr, &WorkerConnection.GetConnection(), &WorkerConnection.GetView());
+                ->Init(nullptr, WorkerConnection.GetConnection(), WorkerConnection.GetView());
     }
     return Commander;
 }
@@ -176,8 +185,13 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-		GetSpatialOS()->GetWorkerConnection().GetView().Remove(entityQueryCallback);
-        entityQueryCallback = -1;
+		auto LockedView = GetSpatialOS()->GetWorkerConnection().GetView().Pin();
+
+		if(LockedView.IsValid())
+		{
+			LockedView->Remove(entityQueryCallback);
+			entityQueryCallback = -1;
+		}
     }
 }
 

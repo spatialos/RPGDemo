@@ -61,7 +61,7 @@ class ARpgDemoGameMode : public AGameModeBase
 	UPROPERTY()
 	UCommander* Commander;
 
-    FGetSpawnerEntityIdResultDelegate* mGetSpawnerEntityIdResultCallback;
+    FGetSpawnerEntityIdResultDelegate* GetSpawnerEntityIdResultCallback;
 
     FUnbindDelegate UnbindEntityQueryDelegate;
     void UnbindEntityQueryCallback();
