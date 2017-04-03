@@ -1,11 +1,11 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "RPGDemoGameInstance.h"
 #include "ConversionsFunctionLibrary.h"
 #include "EntitySpawner.h"
 #include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "OtherPlayerController.h"
+#include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
@@ -237,11 +237,11 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
 
 int ARpgDemoCharacter::GetEntityId()
 {
-	auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+    auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
-	if (gameInstance != nullptr)
-	{
-		return gameInstance->GetSpatialOS().GetSpawner()->GetEntityId(this);
-	}
+    if (gameInstance != nullptr)
+    {
+        return gameInstance->GetSpatialOS().GetSpawner()->GetEntityId(this);
+    }
     return static_cast<int>(-1);
 }

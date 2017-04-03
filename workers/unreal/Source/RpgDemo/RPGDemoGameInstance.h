@@ -17,8 +17,8 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
 
-	improbable::unreal::core::FSpatialOS& GetSpatialOS();
+    improbable::unreal::core::FSpatialOS& GetSpatialOS();
 
   private:
-	  improbable::unreal::core::FSpatialOS SpatialOSInstance;
+    improbable::unreal::core::FSpatialOS SpatialOSInstance;
 };
