@@ -6,6 +6,7 @@
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
 #include "WorkerConnection.h"
+#include "SpatialOSWorkerConfigurationData.h"
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
@@ -146,14 +147,28 @@ void ARpgDemoGameMode::StartPlay()
         this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
     GetSpatialOS()->OnDisconnectedDelegate.BindUObject(this,
                                                        &ARpgDemoGameMode::OnSpatialOsDisconnected);
-    UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
-    GetSpatialOS()->CreateWorkerConnection(GetWorld(), WorkerTypeOverride, WorkerIdOverride);
+	UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
+
+	auto workerConfig = unreal::FSpatialOSWorkerConfigurationData();
+
+	if(!WorkerTypeOverride.IsEmpty())
+	{
+		workerConfig.SpatialOSApplication.WorkerPlatform = WorkerTypeOverride;
+	}
+
+	if(!WorkerIdOverride.IsEmpty())
+	{
+		workerConfig.SpatialOSApplication.WorkerId = WorkerIdOverride;
+	}
+
+	GetSpatialOS()->ApplyConfiguration(workerConfig);
+    GetSpatialOS()->Connect(GetWorld());
 }
 
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
-    GetSpatialOS()->TeardownWorkerConnection();
+    GetSpatialOS()->Disconnect();
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
@@ -164,7 +179,7 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs()
 {
-    return GetSpatialOS()->IsConnectedToSpatialOs();
+    return GetSpatialOS()->IsConnected();
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()
