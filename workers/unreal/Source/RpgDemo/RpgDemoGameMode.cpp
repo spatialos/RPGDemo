@@ -41,7 +41,7 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
 
 FString ARpgDemoGameMode::GetSpatialOsWorkerType()
 {
-    return GetSpatialOS()->GetWorkerType();
+    return GetSpatialOS()->GetWorkerConfiguration().GetWorkerType();
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -89,13 +89,13 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback,
                                           int timeoutMs)
 {
-    auto LockedConnection = GetSpatialOS()->GetWorkerConnection().GetConnection().Pin();
+    auto LockedConnection = GetSpatialOS()->GetConnection().Pin();
 
     if (LockedConnection.IsValid())
     {
-        auto LockedView = GetSpatialOS()->GetWorkerConnection().GetView().Pin();
+        auto LockedDispatcher = GetSpatialOS()->GetDispatcher().Pin();
 
-        if (LockedView.IsValid())
+        if (LockedDispatcher.IsValid())
         {
             GetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
             const worker::query::EntityQuery& entity_query = {
@@ -104,7 +104,7 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 
             auto requestId = LockedConnection->SendEntityQueryRequest(
                 entity_query, static_cast<std::uint32_t>(timeoutMs));
-            entityQueryCallback = LockedView->OnEntityQueryResponse([this, requestId](
+            entityQueryCallback = LockedDispatcher->OnEntityQueryResponse([this, requestId](
                 const worker::EntityQueryResponseOp& op) {
                 if (op.RequestId != requestId)
                 {
@@ -142,11 +142,11 @@ void ARpgDemoGameMode::StartPlay()
     AGameModeBase::StartPlay();
 
     GetSpatialOS()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
-    GetSpatialOS()->OnConnectedDelegate.BindUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
-    GetSpatialOS()->OnConnectionFailedDelegate.BindUObject(
+    GetSpatialOS()->OnConnectedDelegate.AddUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+    GetSpatialOS()->OnConnectionFailedDelegate.AddUObject(
         this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-    GetSpatialOS()->OnDisconnectedDelegate.BindUObject(this,
-                                                       &ARpgDemoGameMode::OnSpatialOsDisconnected);
+    GetSpatialOS()->OnDisconnectedDelegate.AddUObject(this,
+                                                      &ARpgDemoGameMode::OnSpatialOsDisconnected);
 	UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
 	auto workerConfig = unreal::FSpatialOSWorkerConfigurationData();
@@ -186,10 +186,9 @@ UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
     if (Commander == nullptr)
     {
-        auto& WorkerConnection = GetSpatialOS()->GetWorkerConnection();
         Commander =
             NewObject<UCommander>(this, UCommander::StaticClass())
-                ->Init(nullptr, WorkerConnection.GetConnection(), WorkerConnection.GetView());
+                ->Init(nullptr, GetSpatialOS()->GetConnection(), GetSpatialOS()->GetDispatcher());
     }
     return Commander;
 }
@@ -198,11 +197,11 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        auto LockedView = GetSpatialOS()->GetWorkerConnection().GetView().Pin();
+        auto LockedDispatcher = GetSpatialOS()->GetDispatcher().Pin();
 
-        if (LockedView.IsValid())
+        if (LockedDispatcher.IsValid())
         {
-            LockedView->Remove(entityQueryCallback);
+            LockedDispatcher->Remove(entityQueryCallback);
             entityQueryCallback = -1;
         }
     }

@@ -241,7 +241,7 @@ int ARpgDemoCharacter::GetEntityId()
 
     if (gameInstance != nullptr)
     {
-        return gameInstance->GetSpatialOS().GetSpawner()->GetEntityId(this);
+        return gameInstance->GetSpatialOS().GetEntityId(this);
     }
     return static_cast<int>(-1);
 }
