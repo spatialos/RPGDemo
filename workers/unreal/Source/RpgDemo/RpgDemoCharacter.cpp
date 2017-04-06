@@ -237,11 +237,15 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
 
 int ARpgDemoCharacter::GetEntityId()
 {
-    auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+    auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
-    if (gameInstance != nullptr)
+    if (GameInstance != nullptr)
     {
-        return gameInstance->GetSpatialOS().GetEntityId(this);
+        auto EntitySpawner = GameInstance->GetEntitySpawner();
+        if (EntitySpawner != nullptr)
+        {
+            return EntitySpawner->GetEntityId(this);
+        }
     }
     return static_cast<int>(-1);
 }

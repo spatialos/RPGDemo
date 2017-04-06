@@ -5,8 +5,8 @@
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
-#include "WorkerConnection.h"
 #include "SpatialOSWorkerConfigurationData.h"
+#include "WorkerConnection.h"
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
@@ -93,7 +93,7 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
 
     if (LockedConnection.IsValid())
     {
-        auto LockedDispatcher = GetSpatialOS()->GetDispatcher().Pin();
+        auto LockedDispatcher = GetSpatialOS()->GetView().Pin();
 
         if (LockedDispatcher.IsValid())
         {
@@ -141,27 +141,26 @@ void ARpgDemoGameMode::StartPlay()
 {
     AGameModeBase::StartPlay();
 
-    GetSpatialOS()->RegisterBlueprintFolder(TEXT(ENTITY_BLUEPRINTS_FOLDER));
     GetSpatialOS()->OnConnectedDelegate.AddUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
     GetSpatialOS()->OnConnectionFailedDelegate.AddUObject(
         this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
     GetSpatialOS()->OnDisconnectedDelegate.AddUObject(this,
                                                       &ARpgDemoGameMode::OnSpatialOsDisconnected);
-	UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
+    UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
-	auto workerConfig = unreal::FSpatialOSWorkerConfigurationData();
+    auto workerConfig = unreal::FSpatialOSWorkerConfigurationData();
 
-	if(!WorkerTypeOverride.IsEmpty())
-	{
-		workerConfig.SpatialOSApplication.WorkerPlatform = WorkerTypeOverride;
-	}
+    if (!WorkerTypeOverride.IsEmpty())
+    {
+        workerConfig.SpatialOSApplication.WorkerPlatform = WorkerTypeOverride;
+    }
 
-	if(!WorkerIdOverride.IsEmpty())
-	{
-		workerConfig.SpatialOSApplication.WorkerId = WorkerIdOverride;
-	}
+    if (!WorkerIdOverride.IsEmpty())
+    {
+        workerConfig.SpatialOSApplication.WorkerId = WorkerIdOverride;
+    }
 
-	GetSpatialOS()->ApplyConfiguration(workerConfig);
+    GetSpatialOS()->ApplyConfiguration(workerConfig);
     GetSpatialOS()->Connect(GetWorld());
 }
 
@@ -186,9 +185,8 @@ UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
     if (Commander == nullptr)
     {
-        Commander =
-            NewObject<UCommander>(this, UCommander::StaticClass())
-                ->Init(nullptr, GetSpatialOS()->GetConnection(), GetSpatialOS()->GetDispatcher());
+        Commander = NewObject<UCommander>(this, UCommander::StaticClass())
+                        ->Init(nullptr, GetSpatialOS()->GetConnection(), GetSpatialOS()->GetView());
     }
     return Commander;
 }
@@ -197,7 +195,7 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        auto LockedDispatcher = GetSpatialOS()->GetDispatcher().Pin();
+        auto LockedDispatcher = GetSpatialOS()->GetView().Pin();
 
         if (LockedDispatcher.IsValid())
         {
