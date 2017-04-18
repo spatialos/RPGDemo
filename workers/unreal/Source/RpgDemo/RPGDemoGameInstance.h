@@ -18,11 +18,14 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
 
-    improbable::unreal::core::FSpatialOS& GetSpatialOS();
+	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+    USpatialOS* GetSpatialOS();
     improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
 
   private:
-    improbable::unreal::core::FSpatialOS SpatialOSInstance;
+	UPROPERTY()
+    USpatialOS* SpatialOSInstance;
+
     TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
 
     FDelegateHandle OnConnectedDelegateHandle;

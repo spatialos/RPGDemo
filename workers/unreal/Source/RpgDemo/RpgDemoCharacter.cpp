@@ -11,8 +11,6 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"
 
-using improbable::unreal::core::FSpatialOS;
-
 ARpgDemoCharacter::ARpgDemoCharacter()
 {
     // Set size for player capsule

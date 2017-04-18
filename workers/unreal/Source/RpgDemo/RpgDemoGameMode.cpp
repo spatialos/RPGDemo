@@ -148,7 +148,7 @@ void ARpgDemoGameMode::StartPlay()
                                                       &ARpgDemoGameMode::OnSpatialOsDisconnected);
     UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
-    auto workerConfig = unreal::FSpatialOSWorkerConfigurationData();
+    auto workerConfig = FSOSWorkerConfigurationData();
 
     if (!WorkerTypeOverride.IsEmpty())
     {
@@ -205,13 +205,13 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
     }
 }
 
-FSpatialOS* ARpgDemoGameMode::GetSpatialOS()
+USpatialOS* ARpgDemoGameMode::GetSpatialOS()
 {
     auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
     if (gameInstance != nullptr)
     {
-        return &gameInstance->GetSpatialOS();
+        return gameInstance->GetSpatialOS();
     }
 
     return nullptr;

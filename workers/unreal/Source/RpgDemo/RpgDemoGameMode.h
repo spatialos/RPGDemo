@@ -56,7 +56,7 @@ class ARpgDemoGameMode : public AGameModeBase
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
 
-	improbable::unreal::core::FSpatialOS* GetSpatialOS();
+	USpatialOS* GetSpatialOS();
 
 	UPROPERTY()
 	UCommander* Commander;
