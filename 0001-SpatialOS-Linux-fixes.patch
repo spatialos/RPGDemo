@@ -1,0 +1,83 @@
+From 353b9b185cb5e7bb1fdcdbde65ef1fefddf76c19 Mon Sep 17 00:00:00 2001
+From: Improbable <support@improbable.io>
+Date: Thu, 23 Mar 2017 09:59:44 +0000
+Subject: [PATCH] SpatialOS Linux fixes
+
+Patch LinuxToolChain to support using libstdc++
+Patch memory allocator to allow unknown allocations on Linux
+Patch memory allocator to allow running as root
+---
+ Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs   | 8 ++++++--
+ Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp          | 4 ++--
+ Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp | 3 +++
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+index a994f8b5ce..2fc97bdbda 100644
+--- a/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
++++ b/Engine/Source/Programs/UnrealBuildTool/Linux/LinuxToolChain.cs
+@@ -304,8 +304,11 @@ namespace UnrealBuildTool
+ 
+ 		private static bool ShouldUseLibcxx(string Architecture)
+ 		{
+-			// set UE4_LINUX_USE_LIBCXX to either 0 or 1. If unset, defaults to 1.
+-			string UseLibcxxEnvVarOverride = Environment.GetEnvironmentVariable("UE4_LINUX_USE_LIBCXX");
++			// Improbable: it's not possible to disable libc++ via the UE4_LINUX_USE_LIBCXX variable, so disable it fully.
++            return false;
++            /*
++            // set UE4_LINUX_USE_LIBCXX to either 0 or 1. If unset, defaults to 1.
++            string UseLibcxxEnvVarOverride = Environment.GetEnvironmentVariable("UE4_LINUX_USE_LIBCXX");
+ 			if (UseLibcxxEnvVarOverride != null && (UseLibcxxEnvVarOverride == "1"))
+ 			{
+ 				return true;
+@@ -313,6 +316,7 @@ namespace UnrealBuildTool
+ 
+ 			// at the moment only x86_64 is supported
+ 			return Architecture.StartsWith("x86_64") || Architecture.StartsWith("aarch64");
++            */
+ 		}
+ 
+ 		static string GetCLArguments_Global(CPPEnvironment CompileEnvironment)
+diff --git a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+index 9c4235ff92..583251530e 100644
+--- a/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
++++ b/Engine/Source/Runtime/Core/Private/HAL/MallocBinned.cpp
+@@ -430,7 +430,7 @@ struct FMallocBinned::Private
+ 
+ 		UPTRINT BasePtr;
+ 		FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
+-#if PLATFORM_IOS || PLATFORM_MAC
++#if PLATFORM_IOS || PLATFORM_MAC || PLATFORM_LINUX
+         if (Pool == NULL)
+         {
+             UE_LOG(LogMemory, Warning, TEXT("Attempting to free a pointer we didn't allocate!"));
+@@ -1061,7 +1061,7 @@ bool FMallocBinned::GetAllocationSize(void *Original, SIZE_T &SizeOut)
+ 	UPTRINT BasePtr;
+ 	FPoolInfo* Pool = Private::FindPoolInfo(*this, (UPTRINT)Original, BasePtr);
+ 
+-#if PLATFORM_IOS || PLATFORM_MAC
++#if PLATFORM_IOS || PLATFORM_MAC || PLATFORM_LINUX
+ 	if (Pool == NULL)
+ 	{
+ 		UE_LOG(LogMemory, Warning, TEXT("Attempting to access memory pool info for a pointer we didn't allocate!"));
+diff --git a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+index aaafad5fa4..cebd7eb17e 100644
+--- a/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
++++ b/Engine/Source/Runtime/Core/Private/Linux/LinuxPlatformMemory.cpp
+@@ -49,10 +49,13 @@ class FMalloc* FLinuxPlatformMemory::BaseAllocator()
+ 	// This makes it ideal, if unobvious, place for a root privilege check.
+ 	if (geteuid() == 0)
+ 	{
++		/* Improbable: We must currently run as root on our deployments.
+ 		fprintf(stderr, "Refusing to run with the root privileges.\n");
+ 		FPlatformMisc::RequestExit(true);
+ 		// unreachable
+ 		return nullptr;
++		*/
++		fprintf(stdout, "Running with root privileges.\n");
+ 	}
+ #endif // UE4_DO_ROOT_PRIVILEGE_CHECK
+ 
+-- 
+2.12.0.windows.1
+
