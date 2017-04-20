@@ -11,7 +11,7 @@ URPGDemoGameInstance::URPGDemoGameInstance()
 , OnConnectedDelegateHandle()
 , OnDisconnectedDelegateHandle()
 {
-	SpatialOSInstance = NewObject<USpatialOS>();
+    SpatialOSInstance = NewObject<USpatialOS>();
 
     OnConnectedDelegateHandle =
         SpatialOSInstance->OnConnectedDelegate.AddLambda([this](UWorld* InWorld) {

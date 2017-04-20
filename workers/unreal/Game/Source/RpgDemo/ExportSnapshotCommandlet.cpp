@@ -27,7 +27,7 @@ UExportSnapshotCommandlet::~UExportSnapshotCommandlet()
 int32 UExportSnapshotCommandlet::Main(const FString& Params)
 {
     FString combinedPath =
-        FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../snapshots"));
+        FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../../snapshots"));
     UE_LOG(LogTemp, Display, TEXT("Combined path %s"), *combinedPath);
     if (FPaths::CollapseRelativeDirectories(combinedPath))
     {

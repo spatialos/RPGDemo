@@ -18,12 +18,12 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
 
-	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+    UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
     improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
 
   private:
-	UPROPERTY()
+    UPROPERTY()
     USpatialOS* SpatialOSInstance;
 
     TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;

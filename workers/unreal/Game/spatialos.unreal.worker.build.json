@@ -3,7 +3,7 @@
     {
       "name": "Codegen",
       "steps": [
-       {
+        {
           "name": "Dependencies",
           "arguments": [
             "worker_package",
