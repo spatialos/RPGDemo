@@ -20,6 +20,7 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
 
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
+
     improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
 
   private:

@@ -245,5 +245,5 @@ int ARpgDemoCharacter::GetEntityId()
             return EntitySpawner->GetEntityId(this);
         }
     }
-    return static_cast<int>(-1);
+    return -1;
 }
