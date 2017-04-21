@@ -182,7 +182,7 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
     GetSpatialOS()->ProcessEvents();
 }
 
-bool ARpgDemoGameMode::IsConnectedToSpatialOs()
+bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
 {
     return GetSpatialOS()->IsConnected();
 }
@@ -211,7 +211,7 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
     }
 }
 
-USpatialOS* ARpgDemoGameMode::GetSpatialOS()
+USpatialOS* ARpgDemoGameMode::GetSpatialOS() const
 {
     auto gameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 

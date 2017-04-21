@@ -42,7 +42,7 @@ class ARpgDemoGameMode : public AGameModeBase
 	void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
-	bool IsConnectedToSpatialOs();
+	bool IsConnectedToSpatialOs() const;
 
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
 	UCommander* SendWorkerCommand();
@@ -56,7 +56,7 @@ class ARpgDemoGameMode : public AGameModeBase
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
 
-	USpatialOS* GetSpatialOS();
+	USpatialOS* GetSpatialOS() const;
 
 	UPROPERTY()
 	UCommander* Commander;
