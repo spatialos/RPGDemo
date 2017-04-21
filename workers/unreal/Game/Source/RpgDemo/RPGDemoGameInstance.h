@@ -30,10 +30,13 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
 
-    TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
+	UFUNCTION()
+	void OnSpatialOsConnected();
 
-    FDelegateHandle OnConnectedDelegateHandle;
-    FDelegateHandle OnDisconnectedDelegateHandle;
+	UFUNCTION()
+	void OnSpatialOsDisconneced();
+
+    TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
 
 	FTimerHandle MetricsReporterHandle;
 };

@@ -141,10 +141,10 @@ void ARpgDemoGameMode::StartPlay()
 {
     AGameModeBase::StartPlay();
 
-    GetSpatialOS()->OnConnectedDelegate.AddUObject(this, &ARpgDemoGameMode::OnSpatialOsConnected);
-    GetSpatialOS()->OnConnectionFailedDelegate.AddUObject(
+    GetSpatialOS()->OnConnectedDelegate.AddDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+    GetSpatialOS()->OnConnectionFailedDelegate.AddDynamic(
         this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-    GetSpatialOS()->OnDisconnectedDelegate.AddUObject(this,
+    GetSpatialOS()->OnDisconnectedDelegate.AddDynamic(this,
                                                       &ARpgDemoGameMode::OnSpatialOsDisconnected);
     UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
@@ -168,6 +168,12 @@ void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
     GetSpatialOS()->Disconnect();
+
+	GetSpatialOS()->OnConnectedDelegate.RemoveDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+	GetSpatialOS()->OnConnectionFailedDelegate.RemoveDynamic(
+		this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
+	GetSpatialOS()->OnDisconnectedDelegate.RemoveDynamic(this,
+		&ARpgDemoGameMode::OnSpatialOsDisconnected);
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)

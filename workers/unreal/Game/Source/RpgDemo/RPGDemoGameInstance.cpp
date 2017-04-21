@@ -8,8 +8,6 @@
 URPGDemoGameInstance::URPGDemoGameInstance()
 : SpatialOSInstance()
 , EntitySpawner(nullptr)
-, OnConnectedDelegateHandle()
-, OnDisconnectedDelegateHandle()
 , MetricsReporterHandle()
 {
   
@@ -26,44 +24,14 @@ void URPGDemoGameInstance::Init()
 
 	SpatialOSInstance = NewObject<USpatialOS>(this);
 
-	OnConnectedDelegateHandle =
-		SpatialOSInstance->OnConnectedDelegate.AddLambda([this]() {
-		using namespace improbable::unreal::entity_spawning;
-		EntitySpawner.Reset(new FEntitySpawner(SpatialOSInstance->GetConnection(),
-			SpatialOSInstance->GetView(), GetWorld()));
-
-		TArray<FString> BlueprintPaths;
-		BlueprintPaths.Add(TEXT(ENTITY_BLUEPRINTS_FOLDER));
-
-		EntitySpawner->RegisterEntityBlueprints(BlueprintPaths);
-
-		constexpr auto ShouldTimerLoop = true;
-		constexpr auto InitialDelay = 2.0f;
-		constexpr auto LoopDelay = 2.0f;
-
-		auto MetricsDelegate = FTimerDelegate::CreateLambda([this]() {
-			auto Connection = SpatialOSInstance->GetConnection().Pin();
-
-			if (Connection.IsValid())
-			{
-				Connection->SendMetrics(SpatialOSInstance->GetMetrics());
-			}
-		});
-
-		GetWorld()->GetTimerManager().SetTimer(MetricsReporterHandle, MetricsDelegate, LoopDelay,
-			ShouldTimerLoop, InitialDelay);
-	});
-
-	OnDisconnectedDelegateHandle = SpatialOSInstance->OnDisconnectedDelegate.AddLambda([this]() {
-		EntitySpawner.Reset(nullptr);
-		GetWorld()->GetTimerManager().ClearTimer(MetricsReporterHandle);
-	});
+	SpatialOSInstance->OnConnectedDelegate.AddDynamic(this, &URPGDemoGameInstance::OnSpatialOsConnected);
+	SpatialOSInstance->OnDisconnectedDelegate.AddDynamic(this, &URPGDemoGameInstance::OnSpatialOsDisconneced);
 }
 
 void URPGDemoGameInstance::Shutdown()
 {
-	SpatialOSInstance->OnConnectedDelegate.Remove(OnConnectedDelegateHandle);
-	SpatialOSInstance->OnConnectedDelegate.Remove(OnDisconnectedDelegateHandle);
+	SpatialOSInstance->OnConnectedDelegate.RemoveDynamic(this, &URPGDemoGameInstance::OnSpatialOsConnected);
+	SpatialOSInstance->OnDisconnectedDelegate.RemoveDynamic(this,  &URPGDemoGameInstance::OnSpatialOsDisconneced);
 }
 
 USpatialOS* URPGDemoGameInstance::GetSpatialOS()
@@ -74,4 +42,38 @@ USpatialOS* URPGDemoGameInstance::GetSpatialOS()
 improbable::unreal::entity_spawning::FEntitySpawner* URPGDemoGameInstance::GetEntitySpawner()
 {
     return EntitySpawner.Get();
+}
+
+void URPGDemoGameInstance::OnSpatialOsConnected()
+{
+	using namespace improbable::unreal::entity_spawning;
+	EntitySpawner.Reset(new FEntitySpawner(SpatialOSInstance->GetConnection(),
+		SpatialOSInstance->GetView(), GetWorld()));
+
+	TArray<FString> BlueprintPaths;
+	BlueprintPaths.Add(TEXT(ENTITY_BLUEPRINTS_FOLDER));
+
+	EntitySpawner->RegisterEntityBlueprints(BlueprintPaths);
+
+	constexpr auto ShouldTimerLoop = true;
+	constexpr auto InitialDelay = 2.0f;
+	constexpr auto LoopDelay = 2.0f;
+
+	auto MetricsDelegate = FTimerDelegate::CreateLambda([this]() {
+		auto Connection = SpatialOSInstance->GetConnection().Pin();
+
+		if (Connection.IsValid())
+		{
+			Connection->SendMetrics(SpatialOSInstance->GetMetrics());
+		}
+	});
+
+	GetWorld()->GetTimerManager().SetTimer(MetricsReporterHandle, MetricsDelegate, LoopDelay,
+		ShouldTimerLoop, InitialDelay);
+}
+
+void URPGDemoGameInstance::OnSpatialOsDisconneced()
+{
+	EntitySpawner.Reset(nullptr);
+	GetWorld()->GetTimerManager().ClearTimer(MetricsReporterHandle);
 }
