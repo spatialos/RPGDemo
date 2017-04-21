@@ -233,7 +233,7 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
     }
 }
 
-int ARpgDemoCharacter::GetEntityId()
+int ARpgDemoCharacter::GetEntityId() const
 {
     auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
