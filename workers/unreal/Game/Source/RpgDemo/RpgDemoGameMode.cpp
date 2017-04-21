@@ -39,7 +39,7 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
     UnbindEntityQueryCallback();
 }
 
-FString ARpgDemoGameMode::GetSpatialOsWorkerType()
+FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
 {
     return GetSpatialOS()->GetWorkerConfiguration().GetWorkerType();
 }
