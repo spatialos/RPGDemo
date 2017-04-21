@@ -30,6 +30,8 @@ void URPGDemoGameInstance::Init()
 
 void URPGDemoGameInstance::Shutdown()
 {
+	UGameInstance::Shutdown();
+
 	SpatialOSInstance->OnConnectedDelegate.RemoveDynamic(this, &URPGDemoGameInstance::OnSpatialOsConnected);
 	SpatialOSInstance->OnDisconnectedDelegate.RemoveDynamic(this,  &URPGDemoGameInstance::OnSpatialOsDisconneced);
 }
