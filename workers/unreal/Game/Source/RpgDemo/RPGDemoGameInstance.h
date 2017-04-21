@@ -18,6 +18,9 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
 
+	virtual void Init() override;
+	virtual void Shutdown() override;
+
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
 
@@ -31,4 +34,6 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
 
     FDelegateHandle OnConnectedDelegateHandle;
     FDelegateHandle OnDisconnectedDelegateHandle;
+
+	FTimerHandle MetricsReporterHandle;
 };

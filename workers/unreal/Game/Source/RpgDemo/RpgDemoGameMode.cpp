@@ -161,7 +161,7 @@ void ARpgDemoGameMode::StartPlay()
     }
 
     GetSpatialOS()->ApplyConfiguration(workerConfig);
-    GetSpatialOS()->Connect(GetWorld());
+    GetSpatialOS()->Connect();
 }
 
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

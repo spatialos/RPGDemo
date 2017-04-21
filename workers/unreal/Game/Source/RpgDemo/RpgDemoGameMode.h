@@ -18,7 +18,7 @@ class ARpgDemoGameMode : public AGameModeBase
     FString GetSpatialOsWorkerType();
 
     UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
-    void OnSpatialOsConnected(UWorld* World);
+    void OnSpatialOsConnected();
 
     UFUNCTION(BlueprintImplementableEvent, Category = "RpgDemoGameMode")
     void OnSpatialOsDisconnected();
