@@ -41,7 +41,12 @@ ARpgDemoGameMode::~ARpgDemoGameMode()
 
 FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
 {
-    return GetSpatialOS()->GetWorkerConfiguration().GetWorkerType();
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
+    {
+        SpatialOS->GetWorkerConfiguration().GetWorkerType();
+    }
+    return FString::Empty();
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -89,50 +94,55 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback,
                                           int timeoutMs)
 {
-    auto LockedConnection = GetSpatialOS()->GetConnection().Pin();
-
-    if (LockedConnection.IsValid())
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
     {
-        auto LockedDispatcher = GetSpatialOS()->GetView().Pin();
+        auto LockedConnection = SpatialOS->GetConnection().Pin();
 
-        if (LockedDispatcher.IsValid())
+        if (LockedConnection.IsValid())
         {
-            GetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
-            const worker::query::EntityQuery& entity_query = {
-                worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
-                worker::query::SnapshotResultType{}};
+            auto LockedDispatcher = SpatialOS->GetView().Pin();
 
-            auto requestId = LockedConnection->SendEntityQueryRequest(
-                entity_query, static_cast<std::uint32_t>(timeoutMs));
-            entityQueryCallback = LockedDispatcher->OnEntityQueryResponse([this, requestId](
-                const worker::EntityQueryResponseOp& op) {
-                if (op.RequestId != requestId)
-                {
-                    return;
-                }
-                if (!GetSpawnerEntityIdResultCallback->IsBound())
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("GetSpawnerEntityIdResultCallback is unbound"))
-                }
-                if (op.StatusCode != worker::StatusCode::kSuccess)
-                {
-                    std::string errorMessage = "Could not find spawner entity: " + op.Message;
+            if (LockedDispatcher.IsValid())
+            {
+                GetSpawnerEntityIdResultCallback = new FGetSpawnerEntityIdResultDelegate(callback);
+                const worker::query::EntityQuery& entity_query = {
+                    worker::query::ComponentConstraint{spawner::Spawner::ComponentId},
+                    worker::query::SnapshotResultType{}};
+
+                auto requestId = LockedConnection->SendEntityQueryRequest(
+                    entity_query, static_cast<std::uint32_t>(timeoutMs));
+                entityQueryCallback = LockedDispatcher->OnEntityQueryResponse([this, requestId](
+                    const worker::EntityQueryResponseOp& op) {
+                    if (op.RequestId != requestId)
+                    {
+                        return;
+                    }
+                    if (!GetSpawnerEntityIdResultCallback->IsBound())
+                    {
+                        UE_LOG(LogTemp, Warning,
+                               TEXT("GetSpawnerEntityIdResultCallback is unbound"))
+                    }
+                    if (op.StatusCode != worker::StatusCode::kSuccess)
+                    {
+                        std::string errorMessage = "Could not find spawner entity: " + op.Message;
+                        GetSpawnerEntityIdResultCallback->ExecuteIfBound(
+                            false, FString(errorMessage.c_str()), -1);
+                        return;
+                    }
+                    if (op.ResultCount == 0)
+                    {
+                        std::string errorMessage = "Query returned 0 spawner entities";
+                        GetSpawnerEntityIdResultCallback->ExecuteIfBound(
+                            false, FString(errorMessage.c_str()), -1);
+                        return;
+                    }
                     GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                        false, FString(errorMessage.c_str()), -1);
+                        true, FString(), static_cast<int>(op.Result.begin()->first));
+                    GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
                     return;
-                }
-                if (op.ResultCount == 0)
-                {
-                    std::string errorMessage = "Query returned 0 spawner entities";
-                    GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                        false, FString(errorMessage.c_str()), -1);
-                    return;
-                }
-                GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                    true, FString(), static_cast<int>(op.Result.begin()->first));
-                GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
-                return;
-            });
+                });
+            }
         }
     }
 }
@@ -141,58 +151,80 @@ void ARpgDemoGameMode::StartPlay()
 {
     AGameModeBase::StartPlay();
 
-    GetSpatialOS()->OnConnectedDelegate.AddDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
-    GetSpatialOS()->OnConnectionFailedDelegate.AddDynamic(
-        this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-    GetSpatialOS()->OnDisconnectedDelegate.AddDynamic(this,
-                                                      &ARpgDemoGameMode::OnSpatialOsDisconnected);
-    UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
-
-    auto workerConfig = FSOSWorkerConfigurationData();
-
-    if (!WorkerTypeOverride.IsEmpty())
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
     {
-        workerConfig.SpatialOSApplication.WorkerPlatform = WorkerTypeOverride;
-    }
+        SpatialOS->OnConnectedDelegate.AddDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+        SpatialOS->OnConnectionFailedDelegate.AddDynamic(
+            this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
+        SpatialOS->OnDisconnectedDelegate.AddDynamic(this,
+                                                     &ARpgDemoGameMode::OnSpatialOsDisconnected);
+        UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
-    if (!WorkerIdOverride.IsEmpty())
-    {
-        workerConfig.SpatialOSApplication.WorkerId = WorkerIdOverride;
-    }
+        auto workerConfig = FSOSWorkerConfigurationData();
 
-    GetSpatialOS()->ApplyConfiguration(workerConfig);
-    GetSpatialOS()->Connect();
+        if (!WorkerTypeOverride.IsEmpty())
+        {
+            workerConfig.SpatialOSApplication.WorkerPlatform = WorkerTypeOverride;
+        }
+
+        if (!WorkerIdOverride.IsEmpty())
+        {
+            workerConfig.SpatialOSApplication.WorkerId = WorkerIdOverride;
+        }
+
+        SpatialOS->ApplyConfiguration(workerConfig);
+        SpatialOS->Connect();
+    }
 }
 
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
-    GetSpatialOS()->Disconnect();
 
-	GetSpatialOS()->OnConnectedDelegate.RemoveDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
-	GetSpatialOS()->OnConnectionFailedDelegate.RemoveDynamic(
-		this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
-	GetSpatialOS()->OnDisconnectedDelegate.RemoveDynamic(this,
-		&ARpgDemoGameMode::OnSpatialOsDisconnected);
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
+    {
+        SpatialOS->Disconnect();
+
+        SpatialOS->OnConnectedDelegate.RemoveDynamic(this, &ARpgDemoGameMode::OnSpatialOsConnected);
+        SpatialOS->OnConnectionFailedDelegate.RemoveDynamic(
+            this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
+        SpatialOS->OnDisconnectedDelegate.RemoveDynamic(this,
+                                                        &ARpgDemoGameMode::OnSpatialOsDisconnected);
+    }
 }
 
 void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameModeBase::Tick(DeltaTime);
-    GetSpatialOS()->ProcessEvents();
+
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
+    {
+        SpatialOS->ProcessEvents();
+    }
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
 {
-    return GetSpatialOS()->IsConnected();
+    auto SpatialOS = GetSpatialOS();
+    if (SpatialOS != nullptr)
+    {
+        return SpatialOS->IsConnected();
+    }
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()
 {
     if (Commander == nullptr)
     {
-        Commander = NewObject<UCommander>(this, UCommander::StaticClass())
-                        ->Init(nullptr, GetSpatialOS()->GetConnection(), GetSpatialOS()->GetView());
+        auto SpatialOS = GetSpatialOS();
+        if (SpatialOS != nullptr)
+        {
+            Commander = NewObject<UCommander>(this, UCommander::StaticClass())
+                            ->Init(nullptr, SpatialOS->GetConnection(), SpatialOS->GetView());
+        }
     }
     return Commander;
 }
@@ -201,12 +233,16 @@ void ARpgDemoGameMode::UnbindEntityQueryCallback()
 {
     if (entityQueryCallback != -1)
     {
-        auto LockedDispatcher = GetSpatialOS()->GetView().Pin();
-
-        if (LockedDispatcher.IsValid())
+        auto SpatialOS = GetSpatialOS();
+        if (SpatialOS != nullptr)
         {
-            LockedDispatcher->Remove(entityQueryCallback);
-            entityQueryCallback = -1;
+            auto LockedDispatcher = SpatialOS->GetView().Pin();
+
+            if (LockedDispatcher.IsValid())
+            {
+                LockedDispatcher->Remove(entityQueryCallback);
+                entityQueryCallback = -1;
+            }
         }
     }
 }

@@ -18,8 +18,8 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     URPGDemoGameInstance();
     ~URPGDemoGameInstance();
 
-	virtual void Init() override;
-	virtual void Shutdown() override;
+    virtual void Init() override;
+    virtual void Shutdown() override;
 
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
@@ -30,13 +30,13 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
 
-	UFUNCTION()
-	void OnSpatialOsConnected();
+    UFUNCTION()
+    void OnSpatialOsConnected();
 
-	UFUNCTION()
-	void OnSpatialOsDisconneced();
+    UFUNCTION()
+    void OnSpatialOsDisconneced();
 
     TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
 
-	FTimerHandle MetricsReporterHandle;
+    FTimerHandle MetricsReporterHandle;
 };
