@@ -44,7 +44,7 @@ FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
     auto SpatialOS = GetSpatialOS();
     if (SpatialOS != nullptr)
     {
-        SpatialOS->GetWorkerConfiguration().GetWorkerType();
+       return SpatialOS->GetWorkerConfiguration().GetWorkerType();
     }
     return "";
 }
