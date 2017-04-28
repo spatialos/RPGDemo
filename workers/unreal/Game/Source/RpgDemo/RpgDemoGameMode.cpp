@@ -46,7 +46,7 @@ FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
     {
         SpatialOS->GetWorkerConfiguration().GetWorkerType();
     }
-    return FString::Empty();
+    return "";
 }
 
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
@@ -213,6 +213,7 @@ bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
     {
         return SpatialOS->IsConnected();
     }
+	return false;
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()

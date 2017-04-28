@@ -1,7 +1,8 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RPGDemoGameInstance.h"
 #include "RpgDemo.h"
+#include "RPGDemoGameInstance.h"
+
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
