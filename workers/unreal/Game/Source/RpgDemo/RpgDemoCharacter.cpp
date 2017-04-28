@@ -1,14 +1,14 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
+#include "ConversionsFunctionLibrary.h"
+#include "EntitySpawner.h"
+#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "OtherPlayerController.h"
+#include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
-#include "ConversionsFunctionLibrary.h"
 #include "SpatialOSGameMode.h"
-#include "EntitySpawner.h"
-#include "RpgDemoCharacter.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
 {
@@ -71,17 +71,20 @@ ARpgDemoCharacter::ARpgDemoCharacter()
 void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-	
+
     if (TransformComponent->HasAuthority())
     {
         UpdateCursorPosition();
 
-		const auto spatialOsPosition = UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(GetActorLocation());
-		const auto rawUpdate = improbable::common::Transform::Update().set_position(
-			improbable::math::Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
-		
-		const auto update = NewObject<UTransformComponentUpdate>()->Init(rawUpdate);
-		TransformComponent->SendComponentUpdate(update);
+        const auto spatialOsPosition =
+            UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
+                GetActorLocation());
+        const auto rawUpdate =
+            improbable::common::Transform::Update().set_position(improbable::math::Coordinates(
+                spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
+
+        const auto update = NewObject<UTransformComponentUpdate>()->Init(rawUpdate);
+        TransformComponent->SendComponentUpdate(update);
     }
 }
 
@@ -90,19 +93,23 @@ void ARpgDemoCharacter::BeginPlay()
     Super::BeginPlay();
 
     InitialiseAsOtherPlayer();
-	TransformComponent->OnAuthorityChange.AddDynamic(this, &ARpgDemoCharacter::OnTransformAuthorityChange);
-	TransformComponent->OnComponentReady.AddDynamic(this, &ARpgDemoCharacter::OnTransformComponentReady);
+    TransformComponent->OnAuthorityChange.AddDynamic(
+        this, &ARpgDemoCharacter::OnTransformAuthorityChange);
+    TransformComponent->OnComponentReady.AddDynamic(this,
+                                                    &ARpgDemoCharacter::OnTransformComponentReady);
 }
 
 void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
 {
-	Initialise(newAuthority);
+    Initialise(newAuthority);
 }
 
 void ARpgDemoCharacter::OnTransformComponentReady()
 {
-	const auto unrealPosition = UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(TransformComponent->GetPosition());
-	SetActorLocation(unrealPosition);
+    const auto unrealPosition =
+        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+            TransformComponent->GetPosition());
+    SetActorLocation(unrealPosition);
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
@@ -113,10 +120,10 @@ void ARpgDemoCharacter::Initialise(bool authority)
     if (authority)
     {
         InitialiseAsOwnPlayer();
-		UE_LOG(LogTemp, Warning,
-			TEXT("ARpgDemoCharacter::Initialise did just call InitialiseAsOwnPlayer"
-				"controller for actor %s"),
-			*GetName())
+        UE_LOG(LogTemp, Warning,
+               TEXT("ARpgDemoCharacter::Initialise did just call InitialiseAsOwnPlayer"
+                    "controller for actor %s"),
+               *GetName())
     }
     else
     {
@@ -133,7 +140,8 @@ void ARpgDemoCharacter::InitialiseAsOwnPlayer()
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     if (playerController == nullptr)
     {
-        UE_LOG(LogTemp, Warning, TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer error, playerController was null"))
+        UE_LOG(LogTemp, Warning,
+               TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer error, playerController was null"))
         return;
     }
     AController* currentController = GetController();
@@ -149,8 +157,9 @@ void ARpgDemoCharacter::InitialiseAsOwnPlayer()
             playerController->UnPossess();
         }
         playerController->Possess(this);
-        UE_LOG(LogTemp, Warning, TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer creating own player "
-                                      "controller for actor %s"),
+        UE_LOG(LogTemp, Warning,
+               TEXT("ARpgDemoCharacter::InitialiseAsOwnPlayer creating own player "
+                    "controller for actor %s"),
                *GetName())
     }
 
