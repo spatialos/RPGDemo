@@ -81,8 +81,10 @@
           "arguments": [
             "process_schema",
             "clean",
+			"--cachePath=Game/Intermediate/Improbable",
             "Game/Intermediate/Improbable",
-            "Game/Source/RpgDemo/Improbable"
+            "Game/Source/RpgDemo/Improbable",
+			"Game/Source/RpgDemo/SpatialOs"
           ]
         }
       ]
