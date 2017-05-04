@@ -14,8 +14,6 @@
 #include <improbable/spawner/spawner.h>
 #undef IMPROBABLE_MATH_NO_PROTO
 
-  
-
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
 using namespace improbable;
@@ -48,7 +46,7 @@ FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
     auto SpatialOS = GetSpatialOS();
     if (SpatialOS != nullptr)
     {
-       return SpatialOS->GetWorkerConfiguration().GetWorkerType();
+        return SpatialOS->GetWorkerConfiguration().GetWorkerType();
     }
     return "";
 }
@@ -217,7 +215,7 @@ bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
     {
         return SpatialOS->IsConnected();
     }
-	return false;
+    return false;
 }
 
 UCommander* ARpgDemoGameMode::SendWorkerCommand()

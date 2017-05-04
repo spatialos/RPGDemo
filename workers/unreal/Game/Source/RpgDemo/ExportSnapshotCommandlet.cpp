@@ -10,9 +10,9 @@
 #include <improbable/worker.h>
 #undef IMPROBABLE_MATH_NO_PROTO
 #include "improbable/collections.h"
+#include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/spawner/spawner.h>
-#include "improbable/standard_library.h"
 #include <array>
 
 using namespace improbable;
