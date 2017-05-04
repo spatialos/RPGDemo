@@ -6,7 +6,6 @@
 #define IMPROBABLE_MATH_NO_PROTO 1
 #include <improbable/worker.h>
 #undef IMPROBABLE_MATH_NO_PROTO
-
 #include "ExportSnapshotCommandlet.generated.h"
 
 UCLASS()
