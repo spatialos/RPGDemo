@@ -7,10 +7,14 @@
 #include "RpgDemoPlayerController.h"
 #include "SpatialOSWorkerConfigurationData.h"
 #include "WorkerConnection.h"
+#define IMPROBABLE_MATH_NO_PROTO 1
 #include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
+#undef IMPROBABLE_MATH_NO_PROTO
+
+  
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
