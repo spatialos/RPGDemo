@@ -9,7 +9,6 @@
 #include "WorkerConnection.h"
 #define IMPROBABLE_MATH_NO_PROTO 1
 #include "improbable/standard_library.h"
-#include <improbable/common/transform.h>
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
 #undef IMPROBABLE_MATH_NO_PROTO
@@ -56,21 +55,20 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 {
     const auto& spatialOsPosition =
         UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
-    const math::Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
+    const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                             spatialOsPosition.Z};
-    const worker::List<float> initialRoation{1.0f, 0.0f, 0.0f, 0.0f};
+    const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
-    const WorkerAttributeSet unrealWorkerAttributeSet{
-        {worker::Option<std::string>{"UnrealWorker"}}};
+    const WorkerAttributeSet unrealWorkerAttributeSet {worker::List<std::string>{"UnrealWorker"}};
+
     const std::string clientWorkerIdString = TCHAR_TO_UTF8(*clientWorkerId);
     const std::string clientAttribute = "workerId:" + clientWorkerIdString;
     UE_LOG(LogTemp, Warning, TEXT("Making ourselves authoritative over Player Transform and "
                                   "HeartbeatReceiver with worker ID %s"),
+
            *FString(clientAttribute.c_str()))
-    const WorkerAttributeSet ownUnrealClientAttributeSet{
-        {worker::Option<std::string>{clientAttribute}}};
-    const WorkerAttributeSet allUnrealClientsAttributeSet{
-        {worker::Option<std::string>{"UnrealClient"}}};
+    const WorkerAttributeSet ownUnrealClientAttributeSet {worker::List<std::string>{clientAttribute}};
+    const WorkerAttributeSet allUnrealClientsAttributeSet {worker::List<std::string>{"UnrealClient"}};
 
     const WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
     const WorkerRequirementSet ownClientRequirementSet{{ownUnrealClientAttributeSet}};
@@ -79,17 +77,15 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
 
-    componentAuthority.emplace(common::Transform::ComponentId, ownClientRequirementSet);
+    componentAuthority.emplace(Position::ComponentId, ownClientRequirementSet);
     componentAuthority.emplace(player::HeartbeatReceiver::ComponentId, ownClientRequirementSet);
     componentAuthority.emplace(player::HeartbeatSender::ComponentId, workerRequirementSet);
 
-    const improbable::ComponentAcl componentAcl(componentAuthority);
-
     worker::Entity playerTemplate;
-    playerTemplate.Add<common::Transform>(common::Transform::Data{initialPosition, initialRoation});
+    playerTemplate.Add<Position>(Position::Data{initialPosition});
     playerTemplate.Add<player::HeartbeatSender>(player::HeartbeatSender::Data{});
     playerTemplate.Add<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{});
-    playerTemplate.Add<EntityAcl>(EntityAcl::Data{globalRequirementSet, componentAcl});
+    playerTemplate.Add<EntityAcl>(EntityAcl::Data{globalRequirementSet, componentAuthority});
     return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
 }
 

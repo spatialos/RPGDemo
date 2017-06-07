@@ -1,8 +1,0 @@
-package improbable.common;
-
-component Transform
-{
-    id = 20001;
-    EntityPosition position = 1;
-    list<float> rotation = 2;
-}

@@ -3,7 +3,7 @@
 #include "RpgDemo.h"
 
 #include "ConversionsFunctionLibrary.h"
-#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
+#include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "OtherPlayerController.h"
 #include "RpgDemoCharacter.h"
 
@@ -14,15 +14,16 @@ AOtherPlayerController::AOtherPlayerController()
 void AOtherPlayerController::Possess(APawn* InPawn)
 {
     Super::Possess(InPawn);
-    mOtherPlayer = Cast<ARpgDemoCharacter>(InPawn);
-    mOtherPlayer->GetTransformComponent()->OnPositionUpdate.AddDynamic(
-        this, &AOtherPlayerController::OnPositionUpdate);
+	 mOtherPlayer = Cast<ARpgDemoCharacter>(InPawn);
+
+	 mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.AddDynamic(
+		 this, &AOtherPlayerController::OnPositionUpdate);
 }
 
 void AOtherPlayerController::UnPossess()
 {
     Super::UnPossess();
-    mOtherPlayer->GetTransformComponent()->OnPositionUpdate.RemoveDynamic(
+    mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.RemoveDynamic(
         this, &AOtherPlayerController::OnPositionUpdate);
 }
 

@@ -27,9 +27,9 @@ class ARpgDemoCharacter : public ACharacter
         return CameraBoom;
     }
 
-    FORCEINLINE class UTransformComponent* GetTransformComponent() const
+    FORCEINLINE class UPositionComponent* GetPositionComponent() const
     {
-        return TransformComponent;
+        return PositionComponent;
     }
 
     UFUNCTION(BlueprintPure, Category = "RpgDemoCharacter")
@@ -59,11 +59,11 @@ class ARpgDemoCharacter : public ACharacter
     /** The transform component */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RpgDemoCharacter",
               meta = (AllowPrivateAccess = "true"))
-    class UTransformComponent* TransformComponent;
+    class UPositionComponent* PositionComponent;
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-    void OnTransformComponentReady();
+    void OnPositionComponentReady();
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-    void OnTransformAuthorityChange(bool newAuthority);
+    void OnPositionAuthorityChange(bool newAuthority);
 };
