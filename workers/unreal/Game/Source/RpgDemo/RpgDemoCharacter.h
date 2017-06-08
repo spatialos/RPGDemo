@@ -33,7 +33,7 @@ class ARpgDemoCharacter : public ACharacter
     }
 
     UFUNCTION(BlueprintPure, Category = "RpgDemoCharacter")
-    int GetEntityId();
+    int GetEntityId() const;
 
   private:
     void UpdateCursorPosition() const;
