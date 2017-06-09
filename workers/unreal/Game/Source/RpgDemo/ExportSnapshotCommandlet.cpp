@@ -3,15 +3,17 @@
 #include "RpgDemo.h"
 
 #include "ExportSnapshotCommandlet.h"
-#include "improbable/collections.h"
+
+#define IMPROBABLE_MATH_NO_PROTO 1
 #include "improbable/math/coordinates.h"
 #include "improbable/math/vector3d.h"
+#include <improbable/worker.h>
+#undef IMPROBABLE_MATH_NO_PROTO
+#include "improbable/collections.h"
+#include "improbable/standard_library.h"
 #include <improbable/common/transform.h>
 #include <improbable/spawner/spawner.h>
-#include <improbable/worker.h>
 #include <array>
-
-#include "improbable/standard_library.h"
 
 using namespace improbable;
 using namespace improbable::math;
@@ -27,7 +29,7 @@ UExportSnapshotCommandlet::~UExportSnapshotCommandlet()
 int32 UExportSnapshotCommandlet::Main(const FString& Params)
 {
     FString combinedPath =
-        FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../snapshots"));
+        FPaths::Combine(*FPaths::GetPath(FPaths::GetProjectFilePath()), TEXT("../../../snapshots"));
     UE_LOG(LogTemp, Display, TEXT("Combined path %s"), *combinedPath);
     if (FPaths::CollapseRelativeDirectories(combinedPath))
     {
