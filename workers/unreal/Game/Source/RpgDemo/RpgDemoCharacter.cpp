@@ -5,10 +5,11 @@
 #include "EntitySpawner.h"
 #include "Improbable/Generated/cpp/unreal/TransformComponent.h"
 #include "OtherPlayerController.h"
+#include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "SpatialOSGameMode.h"
+#include "SpatialOS.h"
 
 ARpgDemoCharacter::ARpgDemoCharacter()
 {
@@ -232,7 +233,17 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
     }
 }
 
-int ARpgDemoCharacter::GetEntityId()
+int ARpgDemoCharacter::GetEntityId() const
 {
-    return static_cast<int>(ASpatialOSGameMode::GetSpawner()->GetEntityId(this));
+    auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+
+    if (GameInstance != nullptr)
+    {
+        auto EntitySpawner = GameInstance->GetEntitySpawner();
+        if (EntitySpawner != nullptr)
+        {
+            return EntitySpawner->GetEntityId(this);
+        }
+    }
+    return -1;
 }
