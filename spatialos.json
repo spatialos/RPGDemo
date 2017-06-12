@@ -1,11 +1,11 @@
 {
-  "name": "your_project_name_here",
+  "name": "demo",
   "project_version": "0.0.1",
-  "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
+  "sdk_version": "11.0-experimental-05",
   "dependencies": [
     {
       "name": "standard_library",
-      "version": "999.9.9-LOCAL-SNAPSHOT"
+      "version": "11.0-experimental-05"
     }
   ]
 }
