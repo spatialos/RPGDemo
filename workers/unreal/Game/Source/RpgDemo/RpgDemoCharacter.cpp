@@ -3,11 +3,11 @@
 #include "RpgDemo.h"
 #include "ConversionsFunctionLibrary.h"
 #include "EntitySpawner.h"
-#include "Improbable/standard_library.h"
+#include "improbable/standard_library.h"
 #include "OtherPlayerController.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
-#include "improbable/Generated/cpp/unreal/PositionComponent.h"
+#include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"
@@ -236,7 +236,7 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
     }
 }
 
-int ARpgDemoCharacter::GetEntityId() const
+FEntityId ARpgDemoCharacter::GetEntityId() const
 {
     auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
@@ -245,8 +245,9 @@ int ARpgDemoCharacter::GetEntityId() const
         auto EntitySpawner = GameInstance->GetEntitySpawner();
         if (EntitySpawner != nullptr)
         {
-            return EntitySpawner->GetEntityId(this);
+            return FEntityId(EntitySpawner->GetEntityId(this));
         }
     }
-    return -1;
+
+    return FEntityId();
 }

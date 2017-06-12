@@ -3,6 +3,7 @@
 
 #include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
 #include "SpatialOS.h"
+#include "EntityId.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -30,7 +31,7 @@ class ARpgDemoGameMode : public AGameModeBase
     UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);
 
     // clang-format off
-    DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, int, spawnerEntityId);
+    DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, FEntityId, spawnerEntityId);
     // clang-format on    
     UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
     void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);

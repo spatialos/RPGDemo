@@ -125,18 +125,18 @@ void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegat
                     {
                         std::string errorMessage = "Could not find spawner entity: " + op.Message;
                         GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                            false, FString(errorMessage.c_str()), -1);
+                            false, FString(errorMessage.c_str()), FEntityId());
                         return;
                     }
                     if (op.ResultCount == 0)
                     {
                         std::string errorMessage = "Query returned 0 spawner entities";
                         GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                            false, FString(errorMessage.c_str()), -1);
+                            false, FString(errorMessage.c_str()), FEntityId());
                         return;
                     }
                     GetSpawnerEntityIdResultCallback->ExecuteIfBound(
-                        true, FString(), static_cast<int>(op.Result.begin()->first));
+                        true, FString(), FEntityId(op.Result.begin()->first));
                     GetWorldTimerManager().SetTimerForNextTick(UnbindEntityQueryDelegate);
                     return;
                 });

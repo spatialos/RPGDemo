@@ -1,11 +1,11 @@
 {
   "name": "your_project_name_here",
   "project_version": "0.0.1",
-  "sdk_version": "10.3.0",
+  "sdk_version": "999.9.9-LOCAL-SNAPSHOT",
   "dependencies": [
     {
-      "name": "WorkerSdkSchema",
-      "version": "10.3.0"
+      "name": "standard_library",
+      "version": "999.9.9-LOCAL-SNAPSHOT"
     }
   ]
 }
