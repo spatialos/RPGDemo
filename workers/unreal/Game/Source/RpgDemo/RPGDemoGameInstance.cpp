@@ -2,7 +2,10 @@
 
 #include "RpgDemo.h"
 #include "RPGDemoGameInstance.h"
-
+#include "SimpleEntitySpawnerBlock.h"
+#include "EntityRegistry.h"
+#include "improbable/Generated/cpp/unreal/EntityPipeline.h"
+#include "improbable/Generated/cpp/unreal/CallbackDispatcher.h"
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
@@ -24,7 +27,11 @@ void URPGDemoGameInstance::Init()
     SpatialOSInstance->OnConnectedDelegate.AddDynamic(this,
                                                       &URPGDemoGameInstance::OnSpatialOsConnected);
     SpatialOSInstance->OnDisconnectedDelegate.AddDynamic(
-        this, &URPGDemoGameInstance::OnSpatialOsDisconneced);
+        this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
+
+	EntityRegistry = NewObject<UEntityRegistry>(this);
+	EntityPipeline = NewObject<UEntityPipeline>(this);
+	CallbackDispatcher = NewObject<UCallbackDispatcher>(this);
 }
 
 void URPGDemoGameInstance::Shutdown()
@@ -34,7 +41,16 @@ void URPGDemoGameInstance::Shutdown()
     SpatialOSInstance->OnConnectedDelegate.RemoveDynamic(
         this, &URPGDemoGameInstance::OnSpatialOsConnected);
     SpatialOSInstance->OnDisconnectedDelegate.RemoveDynamic(
-        this, &URPGDemoGameInstance::OnSpatialOsDisconneced);
+        this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
+}
+
+void URPGDemoGameInstance::ProcessEvents()
+{
+	if (SpatialOSInstance != nullptr && EntityPipeline != nullptr)
+	{
+		SpatialOSInstance->ProcessEvents();
+		EntityPipeline->ProcessOps(SpatialOSInstance->GetView(), SpatialOSInstance->GetConnection(), GetWorld());
+	}
 }
 
 USpatialOS* URPGDemoGameInstance::GetSpatialOS()
@@ -58,6 +74,15 @@ void URPGDemoGameInstance::OnSpatialOsConnected()
 
     EntitySpawner->RegisterEntityBlueprints(BlueprintPaths);
 
+	auto Block = NewObject<USimpleEntitySpawnerBlock>();
+	Block->Init(EntityRegistry);
+	EntityPipeline->AddBlock(Block);
+
+	CallbackDispatcher->Init(SpatialOSInstance->GetView());
+
+	EntityRegistry->RegisterEntityBlueprints(BlueprintPaths);
+	EntityPipeline->Init(SpatialOSInstance->GetView(), CallbackDispatcher);
+
     constexpr auto ShouldTimerLoop = true;
     constexpr auto InitialDelay = 2.0f;
     constexpr auto LoopDelay = 2.0f;
@@ -75,7 +100,7 @@ void URPGDemoGameInstance::OnSpatialOsConnected()
                                            ShouldTimerLoop, InitialDelay);
 }
 
-void URPGDemoGameInstance::OnSpatialOsDisconneced()
+void URPGDemoGameInstance::OnSpatialOsDisconnected()
 {
     EntitySpawner.Reset(nullptr);
     GetWorld()->GetTimerManager().ClearTimer(MetricsReporterHandle);

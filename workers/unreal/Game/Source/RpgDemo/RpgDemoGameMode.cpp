@@ -197,11 +197,12 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameModeBase::Tick(DeltaTime);
 
-    auto SpatialOS = GetSpatialOS();
-    if (SpatialOS != nullptr)
-    {
-        SpatialOS->ProcessEvents();
-    }
+	auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+
+	if (GameInstance != nullptr)
+	{
+		GameInstance->ProcessEvents();
+	}
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
