@@ -7,6 +7,10 @@
 #include "SpatialOS.h"
 #include "RPGDemoGameInstance.generated.h"
 
+class UEntityPipeline;
+class UEntityRegistry;
+class UCallbackDispatcher;
+
 /**
  *
  */
@@ -21,20 +25,31 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     virtual void Init() override;
     virtual void Shutdown() override;
 
+	void ProcessEvents();
+
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
 
     improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
 
+	UPROPERTY()
+		UCallbackDispatcher* CallbackDispatcher;
+
   private:
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
+
+	UPROPERTY()
+	UEntityPipeline* EntityPipeline;
+
+	UPROPERTY()
+	UEntityRegistry* EntityRegistry;
 
     UFUNCTION()
     void OnSpatialOsConnected();
 
     UFUNCTION()
-    void OnSpatialOsDisconneced();
+    void OnSpatialOsDisconnected();
 
     TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
 
