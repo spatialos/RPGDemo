@@ -1,6 +1,7 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 #pragma once
 #include "GameFramework/Character.h"
+#include "EntityId.h"
 #include "RpgDemoCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -33,7 +34,7 @@ class ARpgDemoCharacter : public ACharacter
     }
 
     UFUNCTION(BlueprintPure, Category = "RpgDemoCharacter")
-    int GetEntityId() const;
+    FEntityId GetEntityId() const;
 
   private:
     void UpdateCursorPosition() const;
