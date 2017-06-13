@@ -36,9 +36,7 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "log=${IMPROBABLE_LOG_FILE}",
-		"+useExternalIpForBridge",
-		"true"
+        "log=${IMPROBABLE_LOG_FILE}"
       ]
     },
     "linux": {
