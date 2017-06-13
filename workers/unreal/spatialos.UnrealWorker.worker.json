@@ -36,7 +36,9 @@
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
         "RakNet",
-        "log=${IMPROBABLE_LOG_FILE}"
+        "log=${IMPROBABLE_LOG_FILE}",
+		"+useExternalIpForBridge",
+		"true"
       ]
     },
     "linux": {
@@ -68,7 +70,7 @@
         "arguments": [
           "+workerType",
           "UnrealWorker",
-          "log=unrealWorker.log"
+          "log=unrealWorker.log",
         ]
       }
     }
