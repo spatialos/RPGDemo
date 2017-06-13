@@ -68,7 +68,7 @@
         "arguments": [
           "+workerType",
           "UnrealWorker",
-          "log=unrealWorker.log",
+          "log=unrealWorker.log"
         ]
       }
     }
