@@ -30,17 +30,12 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
 
-    improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
-
-	UPROPERTY()
-		UCallbackDispatcher* CallbackDispatcher;
-
+	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+	UEntityRegistry* GetEntityRegistry();
+	    	
   private:
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
-
-	UPROPERTY()
-	UEntityPipeline* EntityPipeline;
 
 	UPROPERTY()
 	UEntityRegistry* EntityRegistry;
@@ -50,8 +45,6 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
 
     UFUNCTION()
     void OnSpatialOsDisconnected();
-
-    TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
-
+	    
     FTimerHandle MetricsReporterHandle;
 };

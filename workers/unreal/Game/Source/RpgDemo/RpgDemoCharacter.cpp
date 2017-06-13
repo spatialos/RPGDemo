@@ -2,7 +2,7 @@
 
 #include "RpgDemo.h"
 #include "ConversionsFunctionLibrary.h"
-#include "EntitySpawner.h"
+#include "EntityRegistry.h"
 #include "improbable/standard_library.h"
 #include "OtherPlayerController.h"
 #include "RPGDemoGameInstance.h"
@@ -242,11 +242,11 @@ FEntityId ARpgDemoCharacter::GetEntityId() const
 
     if (GameInstance != nullptr)
     {
-        auto EntitySpawner = GameInstance->GetEntitySpawner();
-        if (EntitySpawner != nullptr)
-        {
-            return FEntityId(EntitySpawner->GetEntityId(this));
-        }
+        auto EntityRegistry = GameInstance->GetEntityRegistry();
+		if (EntityRegistry != nullptr)
+		{
+			FEntityId(EntityRegistry->GetEntityIdFromActor(this));
+		}
     }
 
     return FEntityId();
