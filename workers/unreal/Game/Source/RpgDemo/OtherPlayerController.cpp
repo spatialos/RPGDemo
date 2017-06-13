@@ -14,10 +14,10 @@ AOtherPlayerController::AOtherPlayerController()
 void AOtherPlayerController::Possess(APawn* InPawn)
 {
     Super::Possess(InPawn);
-	 mOtherPlayer = Cast<ARpgDemoCharacter>(InPawn);
+    mOtherPlayer = Cast<ARpgDemoCharacter>(InPawn);
 
-	 mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.AddDynamic(
-		 this, &AOtherPlayerController::OnPositionUpdate);
+    mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.AddDynamic(
+        this, &AOtherPlayerController::OnPositionUpdate);
 }
 
 void AOtherPlayerController::UnPossess()
