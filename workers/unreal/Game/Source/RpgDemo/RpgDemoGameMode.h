@@ -54,6 +54,9 @@ class ARpgDemoGameMode : public AGameModeBase
 	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, NoClear)
 	FString WorkerIdOverride;
 
+	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, NoClear)
+	bool UseExternalIp;
+
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
 

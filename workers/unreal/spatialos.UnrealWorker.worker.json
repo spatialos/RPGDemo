@@ -41,8 +41,9 @@
     },
     "linux": {
       "artifact_name": "UnrealWorker@Linux.zip",
-      "command": "RpgDemoServer.sh",
+      "command": "StartServer.sh",
       "arguments": [
+        "RpgDemoServer",
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",

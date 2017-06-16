@@ -7,11 +7,9 @@
 #include "RpgDemoPlayerController.h"
 #include "SpatialOSWorkerConfigurationData.h"
 #include "WorkerConnection.h"
-#define IMPROBABLE_MATH_NO_PROTO 1
 #include "improbable/standard_library.h"
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
-#undef IMPROBABLE_MATH_NO_PROTO
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
@@ -19,7 +17,7 @@ using namespace improbable;
 using namespace improbable::unreal::core;
 
 ARpgDemoGameMode::ARpgDemoGameMode()
-: entityQueryCallback(-1), WorkerTypeOverride(""), WorkerIdOverride("")
+: entityQueryCallback(-1), WorkerTypeOverride(""), WorkerIdOverride(""), UseExternalIp(false)
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -56,10 +54,10 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const auto& spatialOsPosition =
         UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
-                                            spatialOsPosition.Z};
+                                      spatialOsPosition.Z};
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
-    const WorkerAttributeSet unrealWorkerAttributeSet {worker::List<std::string>{"UnrealWorker"}};
+    const WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
 
     const std::string clientWorkerIdString = TCHAR_TO_UTF8(*clientWorkerId);
     const std::string clientAttribute = "workerId:" + clientWorkerIdString;
@@ -67,8 +65,10 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
                                   "HeartbeatReceiver with worker ID %s"),
 
            *FString(clientAttribute.c_str()))
-    const WorkerAttributeSet ownUnrealClientAttributeSet {worker::List<std::string>{clientAttribute}};
-    const WorkerAttributeSet allUnrealClientsAttributeSet {worker::List<std::string>{"UnrealClient"}};
+    const WorkerAttributeSet ownUnrealClientAttributeSet{
+        worker::List<std::string>{clientAttribute}};
+    const WorkerAttributeSet allUnrealClientsAttributeSet{
+        worker::List<std::string>{"UnrealClient"}};
 
     const WorkerRequirementSet workerRequirementSet{{unrealWorkerAttributeSet}};
     const WorkerRequirementSet ownClientRequirementSet{{ownUnrealClientAttributeSet}};
@@ -160,6 +160,8 @@ void ARpgDemoGameMode::StartPlay()
         UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
 
         auto workerConfig = FSOSWorkerConfigurationData();
+
+        workerConfig.Networking.UseExternalIp = UseExternalIp;
 
         if (!WorkerTypeOverride.IsEmpty())
         {
