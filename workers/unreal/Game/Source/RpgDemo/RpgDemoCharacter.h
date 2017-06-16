@@ -1,7 +1,7 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 #pragma once
-#include "GameFramework/Character.h"
 #include "EntityId.h"
+#include "GameFramework/Character.h"
 #include "RpgDemoCharacter.generated.h"
 
 UCLASS(Blueprintable)

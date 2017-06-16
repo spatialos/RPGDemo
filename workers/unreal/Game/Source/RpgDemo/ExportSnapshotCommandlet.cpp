@@ -46,18 +46,18 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
     {
         snapshotEntities.emplace(npcId, CreateNPCEntity());
     }
-	worker::Option<std::string> Result = worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
-	if (!Result.empty())
-	{
-		std::string ErrorString = Result.value_or("");
-		UE_LOG(LogTemp, Display, TEXT("Error: %s"), UTF8_TO_TCHAR(ErrorString.c_str()));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
-	}
+    worker::Option<std::string> Result =
+        worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
+    if (!Result.empty())
+    {
+        std::string ErrorString = Result.value_or("");
+        UE_LOG(LogTemp, Display, TEXT("Error: %s"), UTF8_TO_TCHAR(ErrorString.c_str()));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
+    }
 }
-   
 
 const std::array<float, 5> verticalCorridors = {{-2.0f, 2.75f, 7.5f, 12.25f, 17.0f}};
 const std::array<float, 5> horizontalCorridors = {{-10.0f, -4.0f, 2.0f, 8.0f, 14.0f}};
@@ -69,15 +69,15 @@ worker::Entity UExportSnapshotCommandlet::CreateNPCEntity() const
 
     const Coordinates initialPosition{verticalCorridors[randomVerticalCorridor], 4.0,
                                       horizontalCorridors[randomHorizontalCorridor]};
-    //const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
+    // const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
 	auto snapshotEntity = worker::Entity();
 	snapshotEntity.Add<Metadata>(Metadata::Data{ "Npc" });
 	snapshotEntity.Add<Position>(Position::Data{initialPosition});
 	snapshotEntity.Add<Persistence>(Persistence::Data{});
 
-	WorkerAttributeSet unrealWorkerAttributeSet{ worker::List<std::string>{"UnrealWorker"} };
-    WorkerAttributeSet unrealClientAttributeSet{ worker::List<std::string>{"UnrealClient"}};
+    WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
+    WorkerAttributeSet unrealClientAttributeSet{worker::List<std::string>{"UnrealClient"}};
 
     WorkerRequirementSet unrealWorkerWritePermission{{unrealWorkerAttributeSet}};
     WorkerRequirementSet unrealClientWritePermission{{unrealClientAttributeSet}};
@@ -86,11 +86,10 @@ worker::Entity UExportSnapshotCommandlet::CreateNPCEntity() const
 
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
     componentAuthority.emplace(Position::ComponentId, unrealWorkerWritePermission);
-	componentAuthority.emplace(Metadata::ComponentId, unrealWorkerWritePermission);
-	componentAuthority.emplace(Persistence::ComponentId, unrealWorkerWritePermission);
+    componentAuthority.emplace(Metadata::ComponentId, unrealWorkerWritePermission);
+    componentAuthority.emplace(Persistence::ComponentId, unrealWorkerWritePermission);
 
-    snapshotEntity.Add<EntityAcl>(
-        EntityAcl::Data(anyWorkerReadPermission, componentAuthority));
+    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentAuthority));
 
     return snapshotEntity;
 }
@@ -101,11 +100,10 @@ worker::Entity UExportSnapshotCommandlet::CreateSpawnerEntity() const
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
     auto snapshotEntity = worker::Entity();
-	
 	snapshotEntity.Add<Metadata>(Metadata::Data("Spawner"));
     snapshotEntity.Add<Position>(Position::Data{initialPosition});
     snapshotEntity.Add<spawner::Spawner>(spawner::Spawner::Data{});
-	snapshotEntity.Add<Persistence>(Persistence::Data{});
+    snapshotEntity.Add<Persistence>(Persistence::Data{});
 
     WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
     WorkerAttributeSet unrealClientAttributeSet{worker::List<std::string>{"UnrealClient"}};
@@ -117,11 +115,10 @@ worker::Entity UExportSnapshotCommandlet::CreateSpawnerEntity() const
     worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
     componentAuthority.emplace(Position::ComponentId, unrealWorkerWritePermission);
     componentAuthority.emplace(spawner::Spawner::ComponentId, unrealWorkerWritePermission);
-	componentAuthority.emplace(Metadata::ComponentId, unrealWorkerWritePermission);
-	componentAuthority.emplace(Persistence::ComponentId, unrealWorkerWritePermission);
+    componentAuthority.emplace(Metadata::ComponentId, unrealWorkerWritePermission);
+    componentAuthority.emplace(Persistence::ComponentId, unrealWorkerWritePermission);
 
-    snapshotEntity.Add<EntityAcl>(
-        EntityAcl::Data(anyWorkerReadPermission, componentAuthority));
+    snapshotEntity.Add<EntityAcl>(EntityAcl::Data(anyWorkerReadPermission, componentAuthority));
 
     return snapshotEntity;
 }

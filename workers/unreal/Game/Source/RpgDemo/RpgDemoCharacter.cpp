@@ -7,10 +7,10 @@
 #include "OtherPlayerController.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
-#include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"
+#include "improbable/standard_library.h"
 
 using ::improbable::Position;
 using ::improbable::Coordinates;
@@ -84,8 +84,8 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
         const auto spatialOsPosition =
             UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
                 GetActorLocation());
-		const auto rawUpdate =
-			Position::Update().set_coords(Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
+        const auto rawUpdate = Position::Update().set_coords(
+            Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
 
         const auto update = NewObject<UPositionComponentUpdate>()->Init(rawUpdate);
         PositionComponent->SendComponentUpdate(update);
@@ -97,10 +97,10 @@ void ARpgDemoCharacter::BeginPlay()
     Super::BeginPlay();
 
     InitialiseAsOtherPlayer();
-    PositionComponent->OnAuthorityChange.AddDynamic(
-        this, &ARpgDemoCharacter::OnPositionAuthorityChange);
+    PositionComponent->OnAuthorityChange.AddDynamic(this,
+                                                    &ARpgDemoCharacter::OnPositionAuthorityChange);
     PositionComponent->OnComponentReady.AddDynamic(this,
-                                                    &ARpgDemoCharacter::OnPositionComponentReady);
+                                                   &ARpgDemoCharacter::OnPositionComponentReady);
 }
 
 void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
@@ -110,9 +110,9 @@ void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
 
 void ARpgDemoCharacter::OnPositionComponentReady()
 {
-	const auto unrealPosition =
-		UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
-			PositionComponent->GetCoords());
+    const auto unrealPosition =
+        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+            PositionComponent->GetCoords());
     SetActorLocation(unrealPosition);
 }
 
