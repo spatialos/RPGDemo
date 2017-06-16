@@ -2,7 +2,7 @@
 
 #include "RpgDemo.h"
 
-#include "ConversionsFunctionLibrary.h"
+#include "SpatialOSConversionFunctionLibrary.h"
 #include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "OtherPlayerController.h"
 #include "RpgDemoCharacter.h"
@@ -30,7 +30,7 @@ void AOtherPlayerController::UnPossess()
 void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
     const auto newUnrealPosition =
-        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
+		USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
     SetNewMoveDestination(newUnrealPosition);
 }
 

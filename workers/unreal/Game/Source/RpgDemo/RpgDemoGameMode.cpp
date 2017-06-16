@@ -1,7 +1,7 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "ConversionsFunctionLibrary.h"
+#include "SpatialOSConversionFunctionLibrary.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
@@ -52,7 +52,7 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
                                                               const FVector& position)
 {
     const auto& spatialOsPosition =
-        UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
+		USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                       spatialOsPosition.Z};
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};

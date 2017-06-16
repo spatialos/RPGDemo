@@ -1,7 +1,7 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "ConversionsFunctionLibrary.h"
+#include "SpatialOSConversionFunctionLibrary.h"
 #include "EntityRegistry.h"
 #include "improbable/standard_library.h"
 #include "OtherPlayerController.h"
@@ -82,7 +82,7 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
         UpdateCursorPosition();
 
         const auto spatialOsPosition =
-            UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
+			USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
                 GetActorLocation());
         const auto rawUpdate = Position::Update().set_coords(
             Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
@@ -111,7 +111,7 @@ void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
 void ARpgDemoCharacter::OnPositionComponentReady()
 {
     const auto unrealPosition =
-        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+		USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
             PositionComponent->GetCoords());
     SetActorLocation(unrealPosition);
 }
