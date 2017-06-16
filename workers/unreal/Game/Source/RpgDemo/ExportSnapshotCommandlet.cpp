@@ -40,11 +40,11 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 {
     const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
 
-    std::unordered_map<worker::EntityId, worker::SnapshotEntity> snapshotEntities;
-    snapshotEntities.emplace(0, CreateSpawnerSnapshotEntity());
+    std::unordered_map<worker::EntityId, worker::Entity> snapshotEntities;
+    snapshotEntities.emplace(0, CreateSpawnerEntity());
     for (int npcId = 1; npcId <= 5; npcId++)
     {
-        snapshotEntities.emplace(npcId, CreateNPCSnapshotEntity());
+        snapshotEntities.emplace(npcId, CreateNPCEntity());
     }
     worker::Option<std::string> Result =
         worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
@@ -62,7 +62,7 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 const std::array<float, 5> verticalCorridors = {{-2.0f, 2.75f, 7.5f, 12.25f, 17.0f}};
 const std::array<float, 5> horizontalCorridors = {{-10.0f, -4.0f, 2.0f, 8.0f, 14.0f}};
 
-worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() const
+worker::Entity UExportSnapshotCommandlet::CreateNPCEntity() const
 {
     const int randomVerticalCorridor = FMath::RandRange(0, verticalCorridors.size());
     const int randomHorizontalCorridor = FMath::RandRange(0, horizontalCorridors.size());
@@ -71,11 +71,10 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
                                       horizontalCorridors[randomHorizontalCorridor]};
     // const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
-    auto snapshotEntity = worker::SnapshotEntity();
-    snapshotEntity.Prefab = "Npc";
-    snapshotEntity.Add<Position>(Position::Data{initialPosition});
-    snapshotEntity.Add<Metadata>(Metadata::Data{"Npc"});
-    snapshotEntity.Add<Persistence>(Persistence::Data{});
+	auto snapshotEntity = worker::Entity();
+	snapshotEntity.Add<Metadata>(Metadata::Data{ "Npc" });
+	snapshotEntity.Add<Position>(Position::Data{initialPosition});
+	snapshotEntity.Add<Persistence>(Persistence::Data{});
 
     WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
     WorkerAttributeSet unrealClientAttributeSet{worker::List<std::string>{"UnrealClient"}};
@@ -95,15 +94,13 @@ worker::SnapshotEntity UExportSnapshotCommandlet::CreateNPCSnapshotEntity() cons
     return snapshotEntity;
 }
 
-worker::SnapshotEntity UExportSnapshotCommandlet::CreateSpawnerSnapshotEntity() const
+worker::Entity UExportSnapshotCommandlet::CreateSpawnerEntity() const
 {
     const Coordinates initialPosition{0, 0, 0};
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
-    auto snapshotEntity = worker::SnapshotEntity();
-    snapshotEntity.Prefab = "Spawner";
-
-    snapshotEntity.Add<Metadata>(Metadata::Data("Spawner"));
+    auto snapshotEntity = worker::Entity();
+	snapshotEntity.Add<Metadata>(Metadata::Data("Spawner"));
     snapshotEntity.Add<Position>(Position::Data{initialPosition});
     snapshotEntity.Add<spawner::Spawner>(spawner::Spawner::Data{});
     snapshotEntity.Add<Persistence>(Persistence::Data{});

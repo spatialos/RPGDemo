@@ -3,9 +3,12 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
-#include "EntitySpawner.h"
 #include "SpatialOS.h"
 #include "RPGDemoGameInstance.generated.h"
+
+class UEntityPipeline;
+class UEntityRegistry;
+class UCallbackDispatcher;
 
 /**
  *
@@ -21,22 +24,26 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     virtual void Init() override;
     virtual void Shutdown() override;
 
+	void ProcessEvents();
+
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
 
-    improbable::unreal::entity_spawning::FEntitySpawner* GetEntitySpawner();
-
+	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+	UEntityRegistry* GetEntityRegistry();
+	    	
   private:
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
+
+	UPROPERTY()
+	UEntityRegistry* EntityRegistry;
 
     UFUNCTION()
     void OnSpatialOsConnected();
 
     UFUNCTION()
-    void OnSpatialOsDisconneced();
-
-    TUniquePtr<improbable::unreal::entity_spawning::FEntitySpawner> EntitySpawner;
-
+    void OnSpatialOsDisconnected();
+	    
     FTimerHandle MetricsReporterHandle;
 };
