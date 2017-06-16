@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
-#include "EntitySpawner.h"
 #include "SpatialOS.h"
 #include "RPGDemoGameInstance.generated.h"
 
