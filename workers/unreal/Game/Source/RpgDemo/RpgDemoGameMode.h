@@ -13,7 +13,6 @@ class ARpgDemoGameMode : public AGameModeBase
 
   public:
     ARpgDemoGameMode();
-    virtual ~ARpgDemoGameMode();
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
     FString GetSpatialOsWorkerType() const;
@@ -48,13 +47,13 @@ class ARpgDemoGameMode : public AGameModeBase
 	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
 	UCommander* SendWorkerCommand();
 
-	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, NoClear)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
 	FString WorkerTypeOverride;
 
-	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, NoClear)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
 	FString WorkerIdOverride;
 
-	UPROPERTY(BluePrintReadWrite, EditDefaultsOnly, NoClear)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
 	bool UseExternalIp;
 
   private:

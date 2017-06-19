@@ -33,11 +33,6 @@ ARpgDemoGameMode::ARpgDemoGameMode()
     UnbindEntityQueryDelegate.BindUObject(this, &ARpgDemoGameMode::UnbindEntityQueryCallback);
 }
 
-ARpgDemoGameMode::~ARpgDemoGameMode()
-{
-    UnbindEntityQueryCallback();
-}
-
 FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
 {
     auto SpatialOS = GetSpatialOS();
@@ -181,6 +176,8 @@ void ARpgDemoGameMode::StartPlay()
 void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
+
+	UnbindEntityQueryCallback();
 
     auto SpatialOS = GetSpatialOS();
     if (SpatialOS != nullptr)
