@@ -27,7 +27,7 @@
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
-        "${IMPROBABLE_RECEPTIONIST_IP}",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
         "+receptionistPort",
         "${IMPROBABLE_RECEPTIONIST_PORT}",
         "+workerType",
@@ -47,7 +47,7 @@
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
-        "${IMPROBABLE_RECEPTIONIST_IP}",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
         "+receptionistPort",
         "${IMPROBABLE_RECEPTIONIST_PORT}",
         "+workerType",
@@ -69,6 +69,8 @@
         "arguments": [
           "+workerType",
           "UnrealWorker",
+          "+receptionistPort",
+          "9024",
           "log=unrealWorker.log"
         ]
       }
