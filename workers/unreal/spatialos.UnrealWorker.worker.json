@@ -69,8 +69,6 @@
         "arguments": [
           "+workerType",
           "UnrealWorker",
-          "+receptionistPort",
-          "9024",
           "log=unrealWorker.log"
         ]
       }
