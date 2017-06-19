@@ -11,6 +11,10 @@
 
 using namespace improbable;
 
+const int g_SpawnerEntityId = 1;
+const int g_NumberNPCEntitites = 5;
+const int g_NPCEntityIdStart = 10;
+
 UExportSnapshotCommandlet::UExportSnapshotCommandlet()
 {
 }
@@ -41,10 +45,10 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
     const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
 
     std::unordered_map<worker::EntityId, worker::Entity> snapshotEntities;
-    snapshotEntities.emplace(0, CreateSpawnerEntity());
-    for (int npcId = 1; npcId <= 5; npcId++)
+    snapshotEntities.emplace(std::make_pair(g_SpawnerEntityId, CreateSpawnerEntity()));
+    for (int npcId = 0; npcId <= g_NumberNPCEntitites; ++npcId)
     {
-        snapshotEntities.emplace(npcId, CreateNPCEntity());
+        snapshotEntities.emplace(std::make_pair(g_NPCEntityIdStart + npcId, CreateNPCEntity()));
     }
     worker::Option<std::string> Result =
         worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
@@ -69,7 +73,6 @@ worker::Entity UExportSnapshotCommandlet::CreateNPCEntity() const
 
     const Coordinates initialPosition{verticalCorridors[randomVerticalCorridor], 4.0,
                                       horizontalCorridors[randomHorizontalCorridor]};
-    // const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
 	auto snapshotEntity = worker::Entity();
 	snapshotEntity.Add<Metadata>(Metadata::Data{ "Npc" });
