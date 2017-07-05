@@ -66,7 +66,7 @@ void ARpgDemoPlayerController::MoveToTouchLocation(const ETouchIndex::Type Finge
     }
 }
 
-void ARpgDemoPlayerController::SetNewMoveDestination(const FVector DestLocation)
+void ARpgDemoPlayerController::SetNewMoveDestination(const FVector& DestLocation)
 {
     APawn* const pawn = GetPawn();
     if (pawn != nullptr)

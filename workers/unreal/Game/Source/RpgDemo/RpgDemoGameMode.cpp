@@ -1,10 +1,10 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "SpatialOSConversionFunctionLibrary.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
+#include "SpatialOSConversionFunctionLibrary.h"
 #include "SpatialOSWorkerConfigurationData.h"
 #include "WorkerConnection.h"
 #include "improbable/standard_library.h"
@@ -47,7 +47,7 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
                                                               const FVector& position)
 {
     const auto& spatialOsPosition =
-		USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
+        USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                       spatialOsPosition.Z};
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
@@ -177,7 +177,7 @@ void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
 
-	UnbindEntityQueryCallback();
+    UnbindEntityQueryCallback();
 
     auto SpatialOS = GetSpatialOS();
     if (SpatialOS != nullptr)
@@ -196,12 +196,12 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameModeBase::Tick(DeltaTime);
 
-	auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+    auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
-	if (GameInstance != nullptr)
-	{
-		GameInstance->ProcessOps();
-	}
+    if (GameInstance != nullptr)
+    {
+        GameInstance->ProcessOps();
+    }
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
