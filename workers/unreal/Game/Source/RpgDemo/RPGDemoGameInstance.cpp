@@ -41,11 +41,11 @@ void URPGDemoGameInstance::Shutdown()
         this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
 }
 
-void URPGDemoGameInstance::ProcessEvents()
+void URPGDemoGameInstance::ProcessOps()
 {
 	if (SpatialOSInstance != nullptr && SpatialOSInstance->GetEntityPipeline() != nullptr)
 	{
-		SpatialOSInstance->ProcessEvents();
+		SpatialOSInstance->ProcessOps();
 		SpatialOSInstance->GetEntityPipeline()->ProcessOps(SpatialOSInstance->GetView(), SpatialOSInstance->GetConnection(), GetWorld());
 	}
 }

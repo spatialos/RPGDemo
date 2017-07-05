@@ -200,7 +200,7 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 
 	if (GameInstance != nullptr)
 	{
-		GameInstance->ProcessEvents();
+		GameInstance->ProcessOps();
 	}
 }
 

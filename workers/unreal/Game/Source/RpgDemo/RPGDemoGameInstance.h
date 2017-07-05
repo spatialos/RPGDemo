@@ -24,7 +24,7 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     virtual void Init() override;
     virtual void Shutdown() override;
 
-	void ProcessEvents();
+	void ProcessOps();
 
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
