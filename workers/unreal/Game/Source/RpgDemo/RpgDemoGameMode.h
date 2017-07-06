@@ -1,9 +1,9 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 #pragma once
 
+#include "EntityId.h"
 #include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
 #include "SpatialOS.h"
-#include "EntityId.h"
 #include "RpgDemoGameMode.generated.h"
 
 UCLASS(minimalapi)
