@@ -20,6 +20,6 @@ class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
 
   private:
     void GenerateSnapshot(const FString& savePath) const;
-    worker::SnapshotEntity CreateNPCSnapshotEntity() const;
-    worker::SnapshotEntity CreateSpawnerSnapshotEntity() const;
+    worker::Entity CreateNPCEntity() const;
+    worker::Entity CreateSpawnerEntity() const;
 };
