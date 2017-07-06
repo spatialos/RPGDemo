@@ -1,8 +1,9 @@
 package improbable.spawner;
+import "improbable/standard_library.schema";
 
 type SpawnPlayerRequest
 {
-    Coordinates position = 1;
+     Coordinates position = 1;
 }
 
 type SpawnPlayerResponse

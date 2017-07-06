@@ -2,12 +2,14 @@
 
 #include "RpgDemo.h"
 #include "RPGDemoGameInstance.h"
-
+#include "SimpleEntitySpawnerBlock.h"
+#include "EntityRegistry.h"
+#include "SpatialOS.h"
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
 URPGDemoGameInstance::URPGDemoGameInstance()
-: SpatialOSInstance(), EntitySpawner(nullptr), MetricsReporterHandle()
+: SpatialOSInstance(), MetricsReporterHandle()
 {
 }
 
@@ -24,7 +26,9 @@ void URPGDemoGameInstance::Init()
     SpatialOSInstance->OnConnectedDelegate.AddDynamic(this,
                                                       &URPGDemoGameInstance::OnSpatialOsConnected);
     SpatialOSInstance->OnDisconnectedDelegate.AddDynamic(
-        this, &URPGDemoGameInstance::OnSpatialOsDisconneced);
+        this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
+
+	EntityRegistry = NewObject<UEntityRegistry>(this);	
 }
 
 void URPGDemoGameInstance::Shutdown()
@@ -34,7 +38,16 @@ void URPGDemoGameInstance::Shutdown()
     SpatialOSInstance->OnConnectedDelegate.RemoveDynamic(
         this, &URPGDemoGameInstance::OnSpatialOsConnected);
     SpatialOSInstance->OnDisconnectedDelegate.RemoveDynamic(
-        this, &URPGDemoGameInstance::OnSpatialOsDisconneced);
+        this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
+}
+
+void URPGDemoGameInstance::ProcessOps()
+{
+	if (SpatialOSInstance != nullptr && SpatialOSInstance->GetEntityPipeline() != nullptr)
+	{
+		SpatialOSInstance->ProcessOps();
+		SpatialOSInstance->GetEntityPipeline()->ProcessOps(SpatialOSInstance->GetView(), SpatialOSInstance->GetConnection(), GetWorld());
+	}
 }
 
 USpatialOS* URPGDemoGameInstance::GetSpatialOS()
@@ -42,22 +55,22 @@ USpatialOS* URPGDemoGameInstance::GetSpatialOS()
     return SpatialOSInstance;
 }
 
-improbable::unreal::entity_spawning::FEntitySpawner* URPGDemoGameInstance::GetEntitySpawner()
+UEntityRegistry* URPGDemoGameInstance::GetEntityRegistry()
 {
-    return EntitySpawner.Get();
+    return EntityRegistry;
 }
 
 void URPGDemoGameInstance::OnSpatialOsConnected()
 {
-    using namespace improbable::unreal::entity_spawning;
-    EntitySpawner.Reset(new FEntitySpawner(SpatialOSInstance->GetConnection(),
-                                           SpatialOSInstance->GetView(), GetWorld()));
+	auto EntitySpawnerBlock = NewObject<USimpleEntitySpawnerBlock>();
+	EntitySpawnerBlock->Init(EntityRegistry);
+	SpatialOSInstance->GetEntityPipeline()->AddBlock(EntitySpawnerBlock);
 
-    TArray<FString> BlueprintPaths;
-    BlueprintPaths.Add(TEXT(ENTITY_BLUEPRINTS_FOLDER));
+	TArray<FString> BlueprintPaths;
+	BlueprintPaths.Add(TEXT(ENTITY_BLUEPRINTS_FOLDER));
 
-    EntitySpawner->RegisterEntityBlueprints(BlueprintPaths);
-
+	EntityRegistry->RegisterEntityBlueprints(BlueprintPaths);
+		
     constexpr auto ShouldTimerLoop = true;
     constexpr auto InitialDelay = 2.0f;
     constexpr auto LoopDelay = 2.0f;
@@ -75,8 +88,7 @@ void URPGDemoGameInstance::OnSpatialOsConnected()
                                            ShouldTimerLoop, InitialDelay);
 }
 
-void URPGDemoGameInstance::OnSpatialOsDisconneced()
+void URPGDemoGameInstance::OnSpatialOsDisconnected()
 {
-    EntitySpawner.Reset(nullptr);
     GetWorld()->GetTimerManager().ClearTimer(MetricsReporterHandle);
 }

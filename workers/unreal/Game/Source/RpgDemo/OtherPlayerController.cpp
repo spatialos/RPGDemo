@@ -2,8 +2,8 @@
 
 #include "RpgDemo.h"
 
-#include "ConversionsFunctionLibrary.h"
-#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
+#include "SpatialOSConversionFunctionLibrary.h"
+#include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "OtherPlayerController.h"
 #include "RpgDemoCharacter.h"
 
@@ -15,21 +15,22 @@ void AOtherPlayerController::Possess(APawn* InPawn)
 {
     Super::Possess(InPawn);
     mOtherPlayer = Cast<ARpgDemoCharacter>(InPawn);
-    mOtherPlayer->GetTransformComponent()->OnPositionUpdate.AddDynamic(
+
+    mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.AddDynamic(
         this, &AOtherPlayerController::OnPositionUpdate);
 }
 
 void AOtherPlayerController::UnPossess()
 {
     Super::UnPossess();
-    mOtherPlayer->GetTransformComponent()->OnPositionUpdate.RemoveDynamic(
+    mOtherPlayer->GetPositionComponent()->OnCoordsUpdate.RemoveDynamic(
         this, &AOtherPlayerController::OnPositionUpdate);
 }
 
 void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
 {
     const auto newUnrealPosition =
-        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
+		USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(newSpatialOsPosition);
     SetNewMoveDestination(newUnrealPosition);
 }
 
