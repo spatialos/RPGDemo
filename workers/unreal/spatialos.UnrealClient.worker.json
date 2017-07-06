@@ -17,9 +17,6 @@
     "component_delivery": {
       "default": "RELIABLE_ORDERED",
       "checkout_all_initially": true
-    },
-    "asset_context": {
-      "use_player_context_if_authoritative": false
     }
   },
   "external": {

@@ -17,8 +17,7 @@
     "component_delivery": {
       "default": "RELIABLE_ORDERED",
       "checkout_all_initially": true
-    },
-    "asset_context": {}
+    }
   },
   "managed": {
     "windows": {
@@ -28,7 +27,7 @@
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
-        "${IMPROBABLE_RECEPTIONIST_IP}",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
         "+receptionistPort",
         "${IMPROBABLE_RECEPTIONIST_PORT}",
         "+workerType",
@@ -42,12 +41,13 @@
     },
     "linux": {
       "artifact_name": "UnrealWorker@Linux.zip",
-      "command": "RpgDemoServer.sh",
+      "command": "StartServer.sh",
       "arguments": [
+        "RpgDemoServer",
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
         "+receptionistIp",
-        "${IMPROBABLE_RECEPTIONIST_IP}",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
         "+receptionistPort",
         "${IMPROBABLE_RECEPTIONIST_PORT}",
         "+workerType",

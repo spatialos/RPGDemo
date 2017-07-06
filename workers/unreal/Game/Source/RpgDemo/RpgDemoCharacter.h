@@ -1,5 +1,6 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 #pragma once
+#include "EntityId.h"
 #include "GameFramework/Character.h"
 #include "RpgDemoCharacter.generated.h"
 
@@ -27,13 +28,13 @@ class ARpgDemoCharacter : public ACharacter
         return CameraBoom;
     }
 
-    FORCEINLINE class UTransformComponent* GetTransformComponent() const
+    FORCEINLINE class UPositionComponent* GetPositionComponent() const
     {
-        return TransformComponent;
+        return PositionComponent;
     }
 
     UFUNCTION(BlueprintPure, Category = "RpgDemoCharacter")
-    int GetEntityId() const;
+    FEntityId GetEntityId() const;
 
   private:
     void UpdateCursorPosition() const;
@@ -59,11 +60,11 @@ class ARpgDemoCharacter : public ACharacter
     /** The transform component */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "RpgDemoCharacter",
               meta = (AllowPrivateAccess = "true"))
-    class UTransformComponent* TransformComponent;
+    class UPositionComponent* PositionComponent;
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-    void OnTransformComponentReady();
+    void OnPositionComponentReady();
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-    void OnTransformAuthorityChange(bool newAuthority);
+    void OnPositionAuthorityChange(bool newAuthority);
 };
