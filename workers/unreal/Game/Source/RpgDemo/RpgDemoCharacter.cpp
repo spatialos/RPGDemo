@@ -1,15 +1,19 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "ConversionsFunctionLibrary.h"
-#include "EntitySpawner.h"
-#include "Improbable/Generated/cpp/unreal/TransformComponent.h"
+#include "SpatialOSConversionFunctionLibrary.h"
+#include "EntityRegistry.h"
+#include "improbable/standard_library.h"
 #include "OtherPlayerController.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"
+#include "improbable/standard_library.h"
+
+using ::improbable::Position;
+using ::improbable::Coordinates;
 
 ARpgDemoCharacter::ARpgDemoCharacter()
 {
@@ -64,7 +68,7 @@ ARpgDemoCharacter::ARpgDemoCharacter()
     PrimaryActorTick.bStartWithTickEnabled = true;
 
     // Create a transform component
-    TransformComponent = CreateDefaultSubobject<UTransformComponent>(TEXT("TransformComponent"));
+    PositionComponent = CreateDefaultSubobject<UPositionComponent>(TEXT("PositionComponent"));
 
     SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
@@ -73,19 +77,18 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
-    if (TransformComponent->HasAuthority())
+    if (PositionComponent->HasAuthority())
     {
         UpdateCursorPosition();
 
         const auto spatialOsPosition =
-            UConversionsFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
+			USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
                 GetActorLocation());
-        const auto rawUpdate =
-            improbable::common::Transform::Update().set_position(improbable::math::Coordinates(
-                spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
+        const auto rawUpdate = Position::Update().set_coords(
+            Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
 
-        const auto update = NewObject<UTransformComponentUpdate>()->Init(rawUpdate);
-        TransformComponent->SendComponentUpdate(update);
+        const auto update = NewObject<UPositionComponentUpdate>()->Init(rawUpdate);
+        PositionComponent->SendComponentUpdate(update);
     }
 }
 
@@ -94,22 +97,22 @@ void ARpgDemoCharacter::BeginPlay()
     Super::BeginPlay();
 
     InitialiseAsOtherPlayer();
-    TransformComponent->OnAuthorityChange.AddDynamic(
-        this, &ARpgDemoCharacter::OnTransformAuthorityChange);
-    TransformComponent->OnComponentReady.AddDynamic(this,
-                                                    &ARpgDemoCharacter::OnTransformComponentReady);
+    PositionComponent->OnAuthorityChange.AddDynamic(this,
+                                                    &ARpgDemoCharacter::OnPositionAuthorityChange);
+    PositionComponent->OnComponentReady.AddDynamic(this,
+                                                   &ARpgDemoCharacter::OnPositionComponentReady);
 }
 
-void ARpgDemoCharacter::OnTransformAuthorityChange(bool newAuthority)
+void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
 {
     Initialise(newAuthority);
 }
 
-void ARpgDemoCharacter::OnTransformComponentReady()
+void ARpgDemoCharacter::OnPositionComponentReady()
 {
     const auto unrealPosition =
-        UConversionsFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
-            TransformComponent->GetPosition());
+		USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+            PositionComponent->GetCoords());
     SetActorLocation(unrealPosition);
 }
 
@@ -233,17 +236,18 @@ void ARpgDemoCharacter::UpdateCursorPosition() const
     }
 }
 
-int ARpgDemoCharacter::GetEntityId() const
+FEntityId ARpgDemoCharacter::GetEntityId() const
 {
     auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
     if (GameInstance != nullptr)
     {
-        auto EntitySpawner = GameInstance->GetEntitySpawner();
-        if (EntitySpawner != nullptr)
-        {
-            return EntitySpawner->GetEntityId(this);
-        }
+        auto EntityRegistry = GameInstance->GetEntityRegistry();
+		if (EntityRegistry != nullptr)
+		{
+			FEntityId(EntityRegistry->GetEntityIdFromActor(this));
+		}
     }
-    return -1;
+
+    return FEntityId();
 }

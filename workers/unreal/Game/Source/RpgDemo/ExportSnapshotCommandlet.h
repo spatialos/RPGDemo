@@ -3,9 +3,7 @@
 #pragma once
 
 #include "Commandlets/Commandlet.h"
-#define IMPROBABLE_MATH_NO_PROTO 1
 #include <improbable/worker.h>
-#undef IMPROBABLE_MATH_NO_PROTO
 #include "ExportSnapshotCommandlet.generated.h"
 
 UCLASS()
@@ -20,6 +18,6 @@ class RPGDEMO_API UExportSnapshotCommandlet : public UCommandlet
 
   private:
     void GenerateSnapshot(const FString& savePath) const;
-    worker::SnapshotEntity CreateNPCSnapshotEntity() const;
-    worker::SnapshotEntity CreateSpawnerSnapshotEntity() const;
+    worker::Entity CreateNPCEntity() const;
+    worker::Entity CreateSpawnerEntity() const;
 };
