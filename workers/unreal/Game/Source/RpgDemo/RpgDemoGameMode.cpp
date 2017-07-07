@@ -1,10 +1,11 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "SpatialOSConversionFunctionLibrary.h"
+#include "EntityBuilder.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoGameMode.h"
 #include "RpgDemoPlayerController.h"
+#include "SpatialOSConversionFunctionLibrary.h"
 #include "SpatialOSWorkerConfigurationData.h"
 #include "WorkerConnection.h"
 #include "improbable/standard_library.h"
@@ -47,10 +48,9 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
                                                               const FVector& position)
 {
     const auto& spatialOsPosition =
-		USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
+        USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                       spatialOsPosition.Z};
-    const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
     const WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
 
@@ -58,8 +58,8 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const std::string clientAttribute = "workerId:" + clientWorkerIdString;
     UE_LOG(LogTemp, Warning, TEXT("Making ourselves authoritative over Player Transform and "
                                   "HeartbeatReceiver with worker ID %s"),
-
            *FString(clientAttribute.c_str()))
+
     const WorkerAttributeSet ownUnrealClientAttributeSet{
         worker::List<std::string>{clientAttribute}};
     const WorkerAttributeSet allUnrealClientsAttributeSet{
@@ -70,17 +70,18 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const WorkerRequirementSet globalRequirementSet{
         {allUnrealClientsAttributeSet, unrealWorkerAttributeSet}};
 
-    worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
+    auto playerTemplate =
+        improbable::unreal::FEntityBuilder::Begin()
+            .AddPositionComponent(Position::Data{initialPosition}, ownClientRequirementSet)
+            .AddMetadataComponent(Metadata::Data{"Player"})
+            .SetPersistence(false)
+            .SetReadAcl(globalRequirementSet)
+            .AddComponent<player::HeartbeatSender>(player::HeartbeatSender::Data{},
+                                                   workerRequirementSet)
+            .AddComponent<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{},
+                                                     ownClientRequirementSet)
+            .Build();
 
-    componentAuthority.emplace(Position::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatReceiver::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatSender::ComponentId, workerRequirementSet);
-
-    worker::Entity playerTemplate;
-    playerTemplate.Add<Position>(Position::Data{initialPosition});
-    playerTemplate.Add<player::HeartbeatSender>(player::HeartbeatSender::Data{});
-    playerTemplate.Add<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{});
-    playerTemplate.Add<EntityAcl>(EntityAcl::Data{globalRequirementSet, componentAuthority});
     return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
 }
 
@@ -177,7 +178,7 @@ void ARpgDemoGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     AGameModeBase::EndPlay(EndPlayReason);
 
-	UnbindEntityQueryCallback();
+    UnbindEntityQueryCallback();
 
     auto SpatialOS = GetSpatialOS();
     if (SpatialOS != nullptr)
@@ -196,12 +197,12 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 {
     AGameModeBase::Tick(DeltaTime);
 
-	auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
+    auto GameInstance = Cast<URPGDemoGameInstance>(GetWorld()->GetGameInstance());
 
-	if (GameInstance != nullptr)
-	{
-		GameInstance->ProcessOps();
-	}
+    if (GameInstance != nullptr)
+    {
+        GameInstance->ProcessOps();
+    }
 }
 
 bool ARpgDemoGameMode::IsConnectedToSpatialOs() const
