@@ -1,15 +1,15 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
 #include "RpgDemo.h"
-#include "SpatialOSConversionFunctionLibrary.h"
 #include "EntityRegistry.h"
-#include "improbable/standard_library.h"
 #include "OtherPlayerController.h"
 #include "RPGDemoGameInstance.h"
 #include "RpgDemoCharacter.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"
+#include "SpatialOSConversionFunctionLibrary.h"
+#include "improbable/standard_library.h"
 #include "improbable/standard_library.h"
 
 using ::improbable::Position;
@@ -82,7 +82,7 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
         UpdateCursorPosition();
 
         const auto spatialOsPosition =
-			USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
+            USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
                 GetActorLocation());
         const auto rawUpdate = Position::Update().set_coords(
             Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
@@ -111,7 +111,7 @@ void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
 void ARpgDemoCharacter::OnPositionComponentReady()
 {
     const auto unrealPosition =
-		USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
+        USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
             PositionComponent->GetCoords());
     SetActorLocation(unrealPosition);
 }
@@ -243,10 +243,10 @@ FEntityId ARpgDemoCharacter::GetEntityId() const
     if (GameInstance != nullptr)
     {
         auto EntityRegistry = GameInstance->GetEntityRegistry();
-		if (EntityRegistry != nullptr)
-		{
-			FEntityId(EntityRegistry->GetEntityIdFromActor(this));
-		}
+        if (EntityRegistry != nullptr)
+        {
+            FEntityId(EntityRegistry->GetEntityIdFromActor(this));
+        }
     }
 
     return FEntityId();
