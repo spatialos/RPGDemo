@@ -10,6 +10,7 @@
 #include "improbable/standard_library.h"
 #include <improbable/player/heartbeat.h>
 #include <improbable/spawner/spawner.h>
+#include "EntityBuilder.h"
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
@@ -50,7 +51,6 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
 		USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                       spatialOsPosition.Z};
-    const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
     const WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
 
@@ -58,9 +58,9 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const std::string clientAttribute = "workerId:" + clientWorkerIdString;
     UE_LOG(LogTemp, Warning, TEXT("Making ourselves authoritative over Player Transform and "
                                   "HeartbeatReceiver with worker ID %s"),
-
            *FString(clientAttribute.c_str()))
-    const WorkerAttributeSet ownUnrealClientAttributeSet{
+
+	const WorkerAttributeSet ownUnrealClientAttributeSet{
         worker::List<std::string>{clientAttribute}};
     const WorkerAttributeSet allUnrealClientsAttributeSet{
         worker::List<std::string>{"UnrealClient"}};
@@ -70,18 +70,16 @@ UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWork
     const WorkerRequirementSet globalRequirementSet{
         {allUnrealClientsAttributeSet, unrealWorkerAttributeSet}};
 
-    worker::Map<std::uint32_t, WorkerRequirementSet> componentAuthority;
+	auto playerTemplate = improbable::unreal::FEntityBuilder::Begin()
+		.AddPositionComponent(Position::Data{ initialPosition }, ownClientRequirementSet)
+		.AddMetadataComponent(Metadata::Data{ "Player" })
+		.SetPersistence(false)
+		.SetReadAcl(globalRequirementSet)
+		.AddComponent<player::HeartbeatSender>(player::HeartbeatSender::Data{}, workerRequirementSet)
+		.AddComponent<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{}, ownClientRequirementSet)
+		.Build();
 
-    componentAuthority.emplace(Position::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatReceiver::ComponentId, ownClientRequirementSet);
-    componentAuthority.emplace(player::HeartbeatSender::ComponentId, workerRequirementSet);
-
-    worker::Entity playerTemplate;
-    playerTemplate.Add<Position>(Position::Data{initialPosition});
-    playerTemplate.Add<player::HeartbeatSender>(player::HeartbeatSender::Data{});
-    playerTemplate.Add<player::HeartbeatReceiver>(player::HeartbeatReceiver::Data{});
-    playerTemplate.Add<EntityAcl>(EntityAcl::Data{globalRequirementSet, componentAuthority});
-    return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
+	return NewObject<UEntityTemplate>(this, UEntityTemplate::StaticClass())->Init(playerTemplate);
 }
 
 void ARpgDemoGameMode::GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback,
