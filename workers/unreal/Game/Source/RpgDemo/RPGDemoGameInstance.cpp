@@ -1,8 +1,9 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
+#include "RpgDemo.h"
+
 #include "RPGDemoGameInstance.h"
 #include "EntityRegistry.h"
-#include "RpgDemo.h"
 #include "SimpleEntitySpawnerBlock.h"
 #include "SpatialOS.h"
 
