@@ -3,10 +3,10 @@
 #include "RpgDemo.h"
 
 #include "ExportSnapshotCommandlet.h"
-#include <improbable/worker.h>
 #include "improbable/collections.h"
 #include "improbable/standard_library.h"
 #include <improbable/spawner/spawner.h>
+#include <improbable/worker.h>
 #include <array>
 
 using namespace improbable;
@@ -74,10 +74,10 @@ worker::Entity UExportSnapshotCommandlet::CreateNPCEntity() const
     const Coordinates initialPosition{verticalCorridors[randomVerticalCorridor], 4.0,
                                       horizontalCorridors[randomHorizontalCorridor]};
 
-	auto snapshotEntity = worker::Entity();
-	snapshotEntity.Add<Metadata>(Metadata::Data{ "Npc" });
-	snapshotEntity.Add<Position>(Position::Data{initialPosition});
-	snapshotEntity.Add<Persistence>(Persistence::Data{});
+    auto snapshotEntity = worker::Entity();
+    snapshotEntity.Add<Metadata>(Metadata::Data{"Npc"});
+    snapshotEntity.Add<Position>(Position::Data{initialPosition});
+    snapshotEntity.Add<Persistence>(Persistence::Data{});
 
     WorkerAttributeSet unrealWorkerAttributeSet{worker::List<std::string>{"UnrealWorker"}};
     WorkerAttributeSet unrealClientAttributeSet{worker::List<std::string>{"UnrealClient"}};
@@ -103,7 +103,7 @@ worker::Entity UExportSnapshotCommandlet::CreateSpawnerEntity() const
     const worker::List<float> initialRotation{1.0f, 0.0f, 0.0f, 0.0f};
 
     auto snapshotEntity = worker::Entity();
-	snapshotEntity.Add<Metadata>(Metadata::Data("Spawner"));
+    snapshotEntity.Add<Metadata>(Metadata::Data("Spawner"));
     snapshotEntity.Add<Position>(Position::Data{initialPosition});
     snapshotEntity.Add<spawner::Spawner>(spawner::Spawner::Data{});
     snapshotEntity.Add<Persistence>(Persistence::Data{});

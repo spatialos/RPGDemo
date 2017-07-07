@@ -24,26 +24,26 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     virtual void Init() override;
     virtual void Shutdown() override;
 
-	void ProcessOps();
+    void ProcessOps();
 
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
 
-	UFUNCTION(BlueprintCallable, Category = "SpatialOS")
-	UEntityRegistry* GetEntityRegistry();
-	    	
+    UFUNCTION(BlueprintCallable, Category = "SpatialOS")
+    UEntityRegistry* GetEntityRegistry();
+
   private:
     UPROPERTY()
     USpatialOS* SpatialOSInstance;
 
-	UPROPERTY()
-	UEntityRegistry* EntityRegistry;
+    UPROPERTY()
+    UEntityRegistry* EntityRegistry;
 
     UFUNCTION()
     void OnSpatialOsConnected();
 
     UFUNCTION()
     void OnSpatialOsDisconnected();
-	    
+
     FTimerHandle MetricsReporterHandle;
 };
