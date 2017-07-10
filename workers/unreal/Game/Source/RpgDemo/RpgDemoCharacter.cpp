@@ -245,7 +245,7 @@ FEntityId ARpgDemoCharacter::GetEntityId() const
         auto EntityRegistry = GameInstance->GetEntityRegistry();
         if (EntityRegistry != nullptr)
         {
-            FEntityId(EntityRegistry->GetEntityIdFromActor(this));
+            return EntityRegistry->GetEntityIdFromActor(this);
         }
     }
 
