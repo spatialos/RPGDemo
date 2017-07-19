@@ -21,7 +21,7 @@ class RPGDEMO_API AOtherPlayerController : public AAIController
 
   protected:
     UFUNCTION(BlueprintCallable, Category = "OtherPlayerController")
-    void OnPositionUpdate(FVector newSpatialOsPosition);
+    void OnPositionUpdate(const FVector& newSpatialOsPosition);
 
     void SetNewMoveDestination(const FVector& DestLocation);
 

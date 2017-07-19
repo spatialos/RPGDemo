@@ -43,6 +43,7 @@
       "artifact_name": "UnrealWorker@Linux.zip",
       "command": "StartServer.sh",
       "arguments": [
+        "${IMPROBABLE_WORKER_ID}",
         "RpgDemoServer",
         "+appName",
         "${IMPROBABLE_PROJECT_NAME}",
@@ -55,8 +56,7 @@
         "+workerId",
         "${IMPROBABLE_WORKER_ID}",
         "+linkProtocol",
-        "RakNet",
-        "log=${IMPROBABLE_LOG_FILE}"
+        "RakNet"
       ]
     }
   },
