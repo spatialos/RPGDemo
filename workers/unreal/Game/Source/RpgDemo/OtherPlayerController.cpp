@@ -27,7 +27,7 @@ void AOtherPlayerController::UnPossess()
         this, &AOtherPlayerController::OnPositionUpdate);
 }
 
-void AOtherPlayerController::OnPositionUpdate(FVector newSpatialOsPosition)
+void AOtherPlayerController::OnPositionUpdate(const FVector& newSpatialOsPosition)
 {
     const auto newUnrealPosition =
         USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
