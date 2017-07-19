@@ -54,10 +54,10 @@ class ARpgDemoGameMode : public AGameModeBase
 	FString WorkerIdOverride;
 
 	/*
-    * Note: The flag UseExternalIp is required to connect to a deployment using 
-    * the terminal command `spatial connect`. It is also required when you launch
-    * your worker using the SpatialOS launcher.
-    */
+	* Note: The flag UseExternalIp is required to connect to a deployment using 
+	* the terminal command `spatial connect`. It is also required when you launch
+	* your worker using the SpatialOS launcher.
+	*/
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
 	bool UseExternalIp;
 
