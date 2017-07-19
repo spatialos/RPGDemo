@@ -2,8 +2,8 @@
 
 #include "RpgDemo.h"
 
-#include "RPGDemoGameInstance.h"
 #include "EntityRegistry.h"
+#include "RPGDemoGameInstance.h"
 #include "SimpleEntitySpawnerBlock.h"
 #include "SpatialOS.h"
 

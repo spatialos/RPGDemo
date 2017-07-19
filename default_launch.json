@@ -22,7 +22,7 @@
       "worker_type": "UnrealWorker",
       "flags": [],
       "load_balancing": {
-          "auto_hex_grid": {
+        "auto_hex_grid": {
           "num_workers": 2
         }
       },
