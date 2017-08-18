@@ -22,5 +22,5 @@ The main documentation for [SpatialOS](http://www.spatialos.com) can be found [h
 
 #### To use the repository
 
-For detailed instructions on how to build and run this demo, see the [Setting up the example projects](https://spatialos.improbable.io/docs/reference/latest/workers/unreal/setup-example-projects)
+For detailed instructions on how to build and run this demo, see the [Setting up the example project](https://spatialos.improbable.io/docs/reference/latest/workers/unreal/setup-example-project)
 page in the SpatialOS documentation.

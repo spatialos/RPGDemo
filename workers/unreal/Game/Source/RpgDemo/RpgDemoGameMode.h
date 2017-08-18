@@ -6,6 +6,8 @@
 #include "SpatialOS.h"
 #include "RpgDemoGameMode.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, FEntityId, spawnerEntityId);
+
 UCLASS(minimalapi)
 class ARpgDemoGameMode : public AGameModeBase
 {
@@ -29,9 +31,6 @@ class ARpgDemoGameMode : public AGameModeBase
     UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
     UEntityTemplate* CreatePlayerEntityTemplate(FString clientWorkerId, const FVector& position);
 
-    // clang-format off
-    DECLARE_DYNAMIC_DELEGATE_ThreeParams(FGetSpawnerEntityIdResultDelegate, bool, success, FString, errorMessage, FEntityId, spawnerEntityId);
-    // clang-format on    
     UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
     void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);
 
