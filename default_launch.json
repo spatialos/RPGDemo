@@ -34,6 +34,10 @@
     },
     {
       "worker_type": "UnrealClient",
+      "flags": [],
+      "load_balancing": {
+        "singleton_worker": {}
+      },
       "permissions": [
         {
           "all": {}
