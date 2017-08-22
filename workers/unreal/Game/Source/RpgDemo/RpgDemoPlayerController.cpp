@@ -1,8 +1,9 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RpgDemo.h"
-#include "AI/Navigation/NavigationSystem.h"
 #include "RpgDemoPlayerController.h"
+
+#include "AI/Navigation/NavigationSystem.h"
+#include "RpgDemo.h"
 
 ARpgDemoPlayerController::ARpgDemoPlayerController()
 {

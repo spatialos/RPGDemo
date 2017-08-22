@@ -1,6 +1,7 @@
 {
   "build": {
-    "tasks_filename": "Game/spatialos.unreal.client.build.json"
+    "tasks_filename": "Game/Intermediate/Improbable/spatialos.unreal.client.build.json",
+    "generated_build_scripts_type": "unreal"
   },
   "bridge": {
     "worker_attribute_set": {
@@ -21,11 +22,13 @@
   },
   "external": {
     "default": {
-      "run_type": "EXECUTABLE_ZIP",
+      "run_type": "EXECUTABLE",
       "windows": {
-        "artifactName": "UnrealClient@Windows.zip",
-        "command": "./RpgDemo/Binaries/Win64/RpgDemo.exe",
+        "command": "${UNREAL_HOME}\\Engine\\Binaries\\Win64\\UE4Editor.exe",
         "arguments": [
+          "${IMPROBABLE_WORKER_DIR}/Game/RpgDemo.uproject",
+          "-game",
+          "-stdout",
           "+workerType",
           "UnrealClient"
         ]

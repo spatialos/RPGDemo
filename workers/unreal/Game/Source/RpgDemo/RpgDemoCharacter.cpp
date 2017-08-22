@@ -1,10 +1,12 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RpgDemo.h"
+#include "RpgDemoCharacter.h"
+
 #include "EntityRegistry.h"
 #include "OtherPlayerController.h"
+#include "PositionComponent.h"
 #include "RPGDemoGameInstance.h"
-#include "RpgDemoCharacter.h"
+#include "RpgDemo.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "SpatialOS.h"

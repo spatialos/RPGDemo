@@ -1,16 +1,18 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RpgDemo.h"
+#include "RpgDemoGameMode.h"
+
+#include "Commander.h"
 #include "EntityBuilder.h"
 #include "RPGDemoGameInstance.h"
-#include "RpgDemoGameMode.h"
+#include "RpgDemo.h"
 #include "RpgDemoPlayerController.h"
 #include "SpatialOSConversionFunctionLibrary.h"
 #include "SpatialOSWorkerConfigurationData.h"
 #include "WorkerConnection.h"
+#include "improbable/player/heartbeat.h"
+#include "improbable/spawner/spawner.h"
 #include "improbable/standard_library.h"
-#include <improbable/player/heartbeat.h>
-#include <improbable/spawner/spawner.h>
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
@@ -153,7 +155,7 @@ void ARpgDemoGameMode::StartPlay()
             this, &ARpgDemoGameMode::OnSpatialOsFailedToConnect);
         SpatialOS->OnDisconnectedDelegate.AddDynamic(this,
                                                      &ARpgDemoGameMode::OnSpatialOsDisconnected);
-        UE_LOG(LogSpatialOS, Display, TEXT("Startplay called to SpatialOS"))
+        UE_LOG(LogTemp, Display, TEXT("Startplay called to SpatialOS"))
 
         auto workerConfig = FSOSWorkerConfigurationData();
 
