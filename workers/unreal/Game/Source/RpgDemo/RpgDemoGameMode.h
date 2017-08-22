@@ -2,7 +2,7 @@
 #pragma once
 
 #include "EntityId.h"
-#include "Improbable/Generated/cpp/unreal/EntityTemplate.h"
+#include "EntityTemplate.h"
 #include "SpatialOS.h"
 #include "RpgDemoGameMode.generated.h"
 
@@ -34,39 +34,39 @@ class ARpgDemoGameMode : public AGameModeBase
     UFUNCTION(BlueprintCallable, Category = "RpgDemoGameMode")
     void GetSpawnerEntityId(const FGetSpawnerEntityIdResultDelegate& callback, int timeoutMs);
 
-	void StartPlay() override;
+    void StartPlay() override;
 
-	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	void Tick(float DeltaTime) override;
+    void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
-	bool IsConnectedToSpatialOs() const;
+    UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
+    bool IsConnectedToSpatialOs() const;
 
-	UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
-	UCommander* SendWorkerCommand();
+    UFUNCTION(BlueprintPure, Category = "RpgDemoGameMode")
+    UCommander* SendWorkerCommand();
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
-	FString WorkerTypeOverride;
+    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
+    FString WorkerTypeOverride;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
-	FString WorkerIdOverride;
+    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
+    FString WorkerIdOverride;
 
-	/*
-	* Note: The flag UseExternalIp is required to connect to a deployment using 
-	* the terminal command `spatial connect`. It is also required when you launch
-	* your worker using the SpatialOS launcher.
-	*/
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
-	bool UseExternalIp;
+    /*
+    * Note: The flag UseExternalIp is required to connect to a deployment using
+    * the terminal command `spatial connect`. It is also required when you launch
+    * your worker using the SpatialOS launcher.
+    */
+    UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, NoClear)
+    bool UseExternalIp;
 
   private:
     DECLARE_DELEGATE(FUnbindDelegate);
 
-	USpatialOS* GetSpatialOS() const;
+    USpatialOS* GetSpatialOS() const;
 
-	UPROPERTY()
-	UCommander* Commander;
+    UPROPERTY()
+    UCommander* Commander;
 
     FGetSpawnerEntityIdResultDelegate* GetSpawnerEntityIdResultCallback;
 

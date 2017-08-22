@@ -7,12 +7,12 @@ using System.IO;
 
 public class RpgDemo : ModuleRules
 {
-	public RpgDemo(TargetInfo Target)
-	{
-        var SpatialOS = new SpatialOSModule(this, Target, this.GetType().Name);
-		SpatialOS.SetupSpatialOS();
-		SpatialOS.GenerateCode();
+    public RpgDemo(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        bFasterWithoutUnity = true;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
-	}
+
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "SpatialOS" });        
+    }
 }

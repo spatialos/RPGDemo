@@ -1,9 +1,9 @@
 // Copyright (c) Improbable Worlds Ltd, All Rights Reserved
 
-#include "RpgDemo.h"
-
-#include "Improbable/Generated/cpp/unreal/PositionComponent.h"
 #include "OtherPlayerController.h"
+
+#include "PositionComponent.h"
+#include "RpgDemo.h"
 #include "RpgDemoCharacter.h"
 #include "SpatialOSConversionFunctionLibrary.h"
 
