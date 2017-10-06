@@ -27,12 +27,9 @@ void AOtherPlayerController::UnPossess()
         this, &AOtherPlayerController::OnPositionUpdate);
 }
 
-void AOtherPlayerController::OnPositionUpdate(const FVector& newSpatialOsPosition)
+void AOtherPlayerController::OnPositionUpdate()
 {
-    const auto newUnrealPosition =
-        USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
-            newSpatialOsPosition);
-    SetNewMoveDestination(newUnrealPosition);
+    SetNewMoveDestination(mOtherPlayer->GetPositionComponent()->Coords);
 }
 
 void AOtherPlayerController::SetNewMoveDestination(const FVector& DestLocation)

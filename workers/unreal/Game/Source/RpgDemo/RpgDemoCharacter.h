@@ -38,7 +38,7 @@ class ARpgDemoCharacter : public ACharacter
 
   private:
     void UpdateCursorPosition() const;
-    void Initialise(bool authority);
+    void Initialise(EAuthority authority);
     void InitialiseAsOwnPlayer();
     void InitialiseAsOtherPlayer();
 
@@ -66,5 +66,5 @@ class ARpgDemoCharacter : public ACharacter
     void OnPositionComponentReady();
 
     UFUNCTION(BlueprintCallable, Category = "RpgDemoCharacter")
-    void OnPositionAuthorityChange(bool newAuthority);
+    void OnPositionAuthorityChange(EAuthority newAuthority);
 };

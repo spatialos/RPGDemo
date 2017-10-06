@@ -79,18 +79,11 @@ void ARpgDemoCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
-    if (PositionComponent->HasAuthority())
+    if (PositionComponent->GetAuthority() == EAuthority::Authoritative || PositionComponent->GetAuthority() == EAuthority::AuthorityLossImminent)
     {
         UpdateCursorPosition();
 
-        const auto spatialOsPosition =
-            USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(
-                GetActorLocation());
-        const auto rawUpdate = Position::Update().set_coords(
-            Coordinates(spatialOsPosition.X, spatialOsPosition.Y, spatialOsPosition.Z));
-
-        const auto update = NewObject<UPositionComponentUpdate>()->Init(rawUpdate);
-        PositionComponent->SendComponentUpdate(update);
+		PositionComponent->Coords = GetActorLocation();
     }
 }
 
@@ -105,25 +98,22 @@ void ARpgDemoCharacter::BeginPlay()
                                                    &ARpgDemoCharacter::OnPositionComponentReady);
 }
 
-void ARpgDemoCharacter::OnPositionAuthorityChange(bool newAuthority)
+void ARpgDemoCharacter::OnPositionAuthorityChange(EAuthority newAuthority)
 {
     Initialise(newAuthority);
 }
 
 void ARpgDemoCharacter::OnPositionComponentReady()
 {
-    const auto unrealPosition =
-        USpatialOSConversionFunctionLibrary::SpatialOsCoordinatesToUnrealCoordinates(
-            PositionComponent->GetCoords());
-    SetActorLocation(unrealPosition);
+	SetActorLocation(PositionComponent->Coords);
 }
 
 /** If this is our player, then possess it with the player controller and activate the camera and
  *the cursor,
  *	otherwise, add an OtherPlayerController */
-void ARpgDemoCharacter::Initialise(bool authority)
+void ARpgDemoCharacter::Initialise(EAuthority authority)
 {
-    if (authority)
+    if (authority == EAuthority::Authoritative || authority == EAuthority::AuthorityLossImminent)
     {
         InitialiseAsOwnPlayer();
         UE_LOG(LogTemp, Warning,
