@@ -7,11 +7,13 @@
 #include "RpgDemo.h"
 #include "SimpleEntitySpawnerBlock.h"
 #include "SpatialOS.h"
+#include "SpatialOSComponentUpdater.h"
 
 #define ENTITY_BLUEPRINTS_FOLDER "/Game/EntityBlueprints"
 
-URPGDemoGameInstance::URPGDemoGameInstance() : SpatialOSInstance(), MetricsReporterHandle()
+URPGDemoGameInstance::URPGDemoGameInstance() : SpatialOSInstance(), MetricsReporterHandle(), SpatialOSComponentUpdater()
 {
+	SpatialOSComponentUpdater = CreateDefaultSubobject<USpatialOSComponentUpdater>(TEXT("SpatialOSComponentUpdater"));
 }
 
 URPGDemoGameInstance::~URPGDemoGameInstance()
@@ -42,13 +44,14 @@ void URPGDemoGameInstance::Shutdown()
         this, &URPGDemoGameInstance::OnSpatialOsDisconnected);
 }
 
-void URPGDemoGameInstance::ProcessOps()
+void URPGDemoGameInstance::ProcessOps(float DeltaTime)
 {
     if (SpatialOSInstance != nullptr && SpatialOSInstance->GetEntityPipeline() != nullptr)
     {
         SpatialOSInstance->ProcessOps();
         SpatialOSInstance->GetEntityPipeline()->ProcessOps(
             SpatialOSInstance->GetView(), SpatialOSInstance->GetConnection(), GetWorld());
+		SpatialOSComponentUpdater->UpdateComponents(EntityRegistry, DeltaTime);
     }
 }
 

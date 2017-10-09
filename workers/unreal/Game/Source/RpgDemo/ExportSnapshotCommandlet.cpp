@@ -4,6 +4,7 @@
 
 #include "EntityBuilder.h"
 #include "RpgDemo.h"
+#include "SpatialOSCommon.h"
 #include "improbable/collections.h"
 #include "improbable/spawner/spawner.h"
 #include "improbable/standard_library.h"
@@ -45,23 +46,19 @@ void UExportSnapshotCommandlet::GenerateSnapshot(const FString& savePath) const
 {
     const FString fullPath = FPaths::Combine(*savePath, TEXT("default.snapshot"));
 
-    std::unordered_map<worker::EntityId, worker::Entity> snapshotEntities;
-    snapshotEntities.emplace(std::make_pair(g_SpawnerEntityId, CreateSpawnerEntity()));
-    for (int npcId = 0; npcId < g_NumberNPCEntitites; ++npcId)
-    {
-        snapshotEntities.emplace(std::make_pair(g_NPCEntityIdStart + npcId, CreateNPCEntity()));
-    }
-    worker::Option<std::string> Result =
-        worker::SaveSnapshot(TCHAR_TO_UTF8(*fullPath), snapshotEntities);
-    if (!Result.empty())
-    {
-        std::string ErrorString = Result.value_or("");
-        UE_LOG(LogTemp, Display, TEXT("Error: %s"), UTF8_TO_TCHAR(ErrorString.c_str()));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
-    }
+	worker::SnapshotOutputStream stream(improbable::unreal::Components{}, TCHAR_TO_UTF8(*fullPath));
+	stream.WriteEntity(g_SpawnerEntityId, CreateSpawnerEntity());
+	for (int npcId = 0; npcId < g_NumberNPCEntitites; ++npcId)
+	{
+		worker::Option<std::string> Result = stream.WriteEntity(g_NPCEntityIdStart + npcId, CreateNPCEntity());
+		if (!Result.empty())
+		{
+			std::string ErrorString = Result.value_or("");
+			UE_LOG(LogTemp, Display, TEXT("Error: %s"), UTF8_TO_TCHAR(ErrorString.c_str()));
+			return;
+		}
+	}
+    UE_LOG(LogTemp, Display, TEXT("Snapshot exported to the path %s"), *fullPath);
 }
 
 const std::array<float, 5> verticalCorridors = {{-2.0f, 2.75f, 7.5f, 12.25f, 17.0f}};

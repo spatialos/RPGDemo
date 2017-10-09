@@ -49,7 +49,7 @@ FString ARpgDemoGameMode::GetSpatialOsWorkerType() const
 UEntityTemplate* ARpgDemoGameMode::CreatePlayerEntityTemplate(FString clientWorkerId,
                                                               const FVector& position)
 {
-    const auto& spatialOsPosition =
+	const auto& spatialOsPosition =
         USpatialOSConversionFunctionLibrary::UnrealCoordinatesToSpatialOsCoordinates(position);
     const Coordinates initialPosition{spatialOsPosition.X, spatialOsPosition.Y,
                                       spatialOsPosition.Z};
@@ -203,7 +203,7 @@ void ARpgDemoGameMode::Tick(float DeltaTime)
 
     if (GameInstance != nullptr)
     {
-        GameInstance->ProcessOps();
+        GameInstance->ProcessOps(DeltaTime);
     }
 }
 

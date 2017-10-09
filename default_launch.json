@@ -43,10 +43,6 @@
           "all": {}
         }
       ]
-    },
-    {
-      "worker_type": "gsim",
-      "flags": []
     }
   ]
 }

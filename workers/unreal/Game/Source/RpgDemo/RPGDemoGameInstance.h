@@ -9,6 +9,7 @@
 class UEntityPipeline;
 class UEntityRegistry;
 class UCallbackDispatcher;
+class USpatialOSComponentUpdater;
 
 /**
  *
@@ -24,7 +25,7 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
     virtual void Init() override;
     virtual void Shutdown() override;
 
-    void ProcessOps();
+    void ProcessOps(float DeltaTime);
 
     UFUNCTION(BlueprintCallable, Category = "SpatialOS")
     USpatialOS* GetSpatialOS();
@@ -38,6 +39,9 @@ class RPGDEMO_API URPGDemoGameInstance : public UGameInstance
 
     UPROPERTY()
     UEntityRegistry* EntityRegistry;
+
+	UPROPERTY()
+	USpatialOSComponentUpdater* SpatialOSComponentUpdater;
 
     UFUNCTION()
     void OnSpatialOsConnected();

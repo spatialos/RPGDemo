@@ -10,6 +10,10 @@ Copyright Improbable 2017
 
 *****
 
+### Deprecation notice
+
+As from the release of SpatialOS 12.0.0, we're no longer maintaining the RPG demo. Alternative starter projects and demos can be found [here](https://spatialos.improbable.io/docs/reference/latest/).
+
 ### Introduction
 
 This repository contains the SpatialOS project "RPG demo" built with the [Unreal Engine 4](https://www.unrealengine.com/) integration for [SpatialOS](http://www.spatialos.com).
